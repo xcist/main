@@ -1,0 +1,18 @@
+# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+
+CSOURCES = \
+gemsfilt.c \
+pd3dbpsemi.c \
+DD2Back.c \
+DD2Proj.c \
+DD2WBack.c \
+DD3WBack.c \
+pd2dbpcurved.c \
+pd2dbpflat.c \
+extractsino.c \
+viewshift.c \
+spline.c \
+xybowtie.c \
+DD2ParProj.c \
+analytic_projector.c \
+rndpoi.c

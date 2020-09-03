@@ -1,0 +1,26 @@
+# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+
+CPPSOURCES = \
+MatVec.cpp \
+BaseObject.cpp \
+ClipPlane.cpp \
+Transformation.cpp \
+Intersection.cpp \
+Interpolate.cpp \
+main.cpp \
+Photon.cpp \
+CrossSectionHandler.cpp \
+Volume.cpp \
+Detector.cpp \
+CrossSection.cpp \
+Phantom.cpp \
+DD3Proj.cpp \
+DD3Proj_roi_notrans_mm.cpp \
+voxelized_projector.cpp \
+getMemorySize.cpp
+
+OBJECTS = $(patsubst %.cpp,%.o,$(CPPSOURCES))
+OBJECTS += $(patsubst %.c,%.o,$(CSOURCES))
+
+CC = gcc
+CXX = g++
