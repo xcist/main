@@ -63,7 +63,7 @@ def one_scan(cfg):
         
         if cfg.sim.viewCount>10 and (viewId+1)%round(cfg.sim.viewCount/10)==0:
             print("Simulated view %d/%d, time: %.1f s" % (viewId+1, cfg.sim.viewCount, time.time()-cfg.sim.timer))
-    print("Total sim time: %.1f s" % (time.time()-cfg.sim.timer))
+    print("Scan sim time: %.1f s" % (time.time()-cfg.sim.timer))
 
     return cfg
 

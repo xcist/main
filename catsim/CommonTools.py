@@ -137,7 +137,7 @@ def source_cfg(*para):
     return cfg
     
 def vectornorm(xyz):
-    if xyz.shape[0] is not 3:
+    if xyz.shape[0]!=3:
         print('ERROR : argument of vectornorm has to be of size 3 x n');
         return
     else:
