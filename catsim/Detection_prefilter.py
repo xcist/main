@@ -18,6 +18,7 @@ def Detection_prefilter( cfg ):
             mu = GetMu(material, Evec)
             Wvec = Wvec*np.exp(-mu*depth*0.1)
     Wvec = nm.repmat(Wvec, cfg.det.totalNumCells, 1)
+    Wvec = Wvec.astype(np.single)
     
     return Wvec
     

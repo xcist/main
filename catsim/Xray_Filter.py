@@ -34,7 +34,7 @@ def flat_filter(cfg):
             material = cfg.protocol.flatFilter[2*ii]
             depth = cfg.protocol.flatFilter[2*ii+1]
             mu = GetMu(material, Evec)
-            trans *= np.exp(-depth*0.1*cosineFactors @ mu.reshape(1, len(mu)))
+            trans *= np.exp(-depth*0.1*cosineFactors @ mu.reshape(1, mu.size))
     cfg.src.filterTrans *= trans
     
     return cfg
@@ -74,7 +74,7 @@ def bowtie_filter(cfg):
         mu = GetMu(bowtieMaterials[i], Evec)
         f = interpolate.interp1d(gammas0, t0[:, i], kind='linear', fill_value='extrapolate')
         t1 = f(gammas1)/cfg.det.cosAlphas
-        muT += t1 @ mu.reshape(1, len(mu))
+        muT += t1 @ mu.reshape(1, mu.size)
     
     trans = np.exp(-muT)
     cfg.src.filterTrans *= trans

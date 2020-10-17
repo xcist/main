@@ -24,8 +24,9 @@ def Spectrum(cfg):
     ###------------- monochromatic
     if cfg.physics.monochromatic>0:
         cfg.spec.nEbin = 1
-        cfg.spec.Evec = cfg.physics.monochromatic
-        cfg.spec.Ivec = 1.2e6*np.ones([1, cfg.det.totalNumCells], dtype=np.single)*specScale
+        cfg.spec.Evec = np.array(cfg.physics.monochromatic, dtype=np.single)
+        cfg.spec.Ivec = 1.2e6*np.ones([cfg.det.totalNumCells, 1], dtype=np.single)*specScale
+        cfg.sim.Evec = cfg.spec.Evec
         return cfg
     
     ###------------- polychromatic

@@ -53,6 +53,7 @@ def Phantom_Voxelized(cfg):
         
         volumeData = volumeData.reshape(dims[2], dims[1], dims[0])
         volumeData = np.transpose(volumeData, (1, 2, 0)).ravel()
+        volumeData = volumeData.astype(np.float32)
         
         materialIndex = i+1        
         set_voxelized_volume(cfg, volumeData, volumeDims, offsets, voxelsize, xyMask, materialIndex, numberOfMaterials)

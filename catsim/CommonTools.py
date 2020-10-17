@@ -198,12 +198,21 @@ def get_vector_boundaries(x):
     return b
 
 def rawread(fname, dataShape, dataType):
-    # dataType is for numpy, can be 'float' or 'single', 'double', 'int', 'uint' ONLY
-    #          they are single, double, int32, uin32
+    # dataType is for numpy, ONLY allows: 'float'/'single', 'double', 'int'/'int32', 'uint'/'uint32', 'int8', 'int16' 
+    #          they are single, double, int32, uin32, int8, int16
     with open(fname, 'rb') as fin:
         data = fin.read()
     
-    switcher = {'float': ['f', 4, np.single], 'single': ['f', 4, np.single], 'double': ['d', 8, np.double], 'int': ['i', 4, np.int32], 'uint': ['I', 4, np.uint32]}
+    # https://docs.python.org/3/library/struct.html
+    switcher = {'float': ['f', 4, np.single], 
+                'single': ['f', 4, np.single], 
+                'double': ['d', 8, np.double], 
+                'int': ['i', 4, np.int32], 
+                'uint': ['I', 4, np.uint32],  
+                'int32': ['i', 4, np.int32], 
+                'uint32': ['I', 4, np.uint32], 
+                'int8': ['b', 1, np.int8], 
+                'int16': ['h', 2, np.int16]}
     fmt = switcher[dataType]
     data = struct.unpack("%d%s" % (len(data)/fmt[1], fmt[0]), data)
     
