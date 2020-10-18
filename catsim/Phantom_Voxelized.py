@@ -67,7 +67,7 @@ def Phantom_Voxelized(cfg):
 def set_material(cfg, materialList):
     Evec = cfg.spec.Evec
     nMat = len(materialList)
-    Mus = np.zeros([len(Evec), nMat], dtype=np.single)
+    Mus = np.zeros([Evec.size, nMat], dtype=np.single)
     for i in range(nMat):
         Mus[:, i] = GetMu(materialList[i], Evec)/10 # cm^-1 --> mm^-1
         
@@ -75,7 +75,7 @@ def set_material(cfg, materialList):
     fun = cfg.clib.set_material_info_vox
     fun.argtypes = [c_int, c_int, ndpointer(c_float)]
     fun.restype = None
-    fun(nMat, len(Evec), Mus)
+    fun(nMat, Evec.size, Mus)
 
 def set_voxelized_volume(cfg, volumeData, volumeDims, offsets, voxelsize, xyMask, materialIndex, numberOfMaterials):
     fun = cfg.clib.set_phantom_info_vox
