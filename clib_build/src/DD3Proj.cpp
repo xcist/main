@@ -1,5 +1,11 @@
 // Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
+#ifdef WIN32
+#define DLLEXPORT __declspec(dllexport)
+#else
+#define DLLEXPORT
+#endif
+
 #include <math.h> // fabs(), sqrt(), sin(), cos()
 #include <stdlib.h> // malloc(), free()
 #include <stdio.h>
@@ -361,7 +367,7 @@ void DD3Boundaries(int nrBoundaries,
  */
 extern "C"{
 
-void DD3Proj(float x0,
+DLLEXPORT void DD3Proj(float x0,
 	     float y0,
 	     float z0,
 	     int nrdetcols,
