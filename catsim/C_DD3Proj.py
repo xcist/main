@@ -6,7 +6,7 @@ from numpy.ctypeslib import ndpointer
 from catsim.CommonTools import *
 
 '''
-Wrapper of DD3 Projectors.
+Wrapper of DD3 Projector.
 All vector/matrix input/output are numpy array.
 Mingye Wu
 '''
@@ -21,7 +21,7 @@ def DD3Proj(x0, y0, z0,  # source coordinates
     nrcols, nrrows, nrplanes,  # original image 
     pOrig):
 
-    ###------- load dll lib and material data path
+    ###------- load C lib
     clib = load_C_lib()
     
     ###------- C function and interface
