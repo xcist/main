@@ -445,9 +445,6 @@ DLLEXPORT void DD3Proj(float x0,
   scales=(float*)malloc((nrdetcols+2)*sizeof(float)); /* provide 1 pixel margin
 							 each side */
 
-
-  printf("Bruno's code.\n");
-
   /*
    * Loop for all views
    */

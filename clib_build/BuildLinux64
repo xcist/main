@@ -3,3 +3,4 @@
 cd src
 make -f ../Makefile
 make -f ../Makefile clean
+cd ..
