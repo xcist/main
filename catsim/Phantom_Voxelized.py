@@ -28,7 +28,7 @@ def Phantom_Voxelized(cfg):
     for i in range(numberOfMaterials):
         dims = np.array([vp['cols'][i], vp['rows'][i], vp['slices'][i]], dtype=np.int32)
         offsets = np.array([vp['x_offset'][i], vp['y_offset'][i], vp['z_offset'][i]], dtype=np.single)
-        voxelsize = np.array([vp['x_size'][i], vp['y_size'][i], vp['z_size'][i]], dtype=np.single)
+        voxelsize = np.array([vp['x_size'][i], vp['y_size'][i], vp['z_size'][i]], dtype=np.single)*cfg.phantom.scale
         voxelsizeXY = voxelsize[0]
         voxelsizeZ  = voxelsize[2]
         
