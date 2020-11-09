@@ -1,5 +1,10 @@
 // Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
+// 1. Enabled: materials can have different dimensions, to save memory and computing time.
+// 2. Added: free phantom memory at the last projection.
+// 3. Bug fixed: memory not cleaned up during view loop (xds, yds, zds).
+// Mingye Wu, Nov 8 2020
+
 #define MAX(a,b) (((a) > (b)) ? (a) : (b))
 #define MIN(a,b) (((a) > (b)) ? (b) : (a))
 #define VERY_BIG 1e300
@@ -15,18 +20,20 @@
 #include <stdlib.h>
 #include <time.h>
 #include <stdarg.h>
+#ifndef WIN32
 #include <pthread.h>
 #include <unistd.h>
+#endif
 #include "DD3_roi_notrans_mm.hpp"
 #include <iostream>
 #include "getMemorySize.h"
 
-//#define DEBUG
+// #define DEBUG
 #if defined(DEBUG)
 
 #define DEBUG_00 // Prints "where am I" info
 #define DEBUG_10 // Prints info in convert_modular_detector
-//#define DEBUG_20 // Prints info in voxelized_projector
+// #define DEBUG_20 // Prints info in voxelized_projector
 
 #endif
 
@@ -68,17 +75,17 @@ static int debug_flag = 0;
 
 struct phantom_info
   {
-  int *dims;
+  int **dims;
   float **volume; // volume is a pointer to pointers because the voxelized phantom may have multiple materials
-  float xoff;
-  float yoff;
-  float zoff;
-  float dxy;
-  float dz;
-  unsigned char *xy_mask;
+  float *xoff;
+  float *yoff;
+  float *zoff;
+  float *dxy;
+  float *dz;
+  unsigned char **xy_mask;
   };
 
-static struct phantom_info phantom = {NULL,NULL,0,0,0,0,0,NULL};
+static struct phantom_info phantom = {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL};
 
 //////////////////////////////////////////////
 
@@ -184,90 +191,79 @@ DLLEXPORT void set_material_info_vox(int materialCount, int eBinCount, float *mu
 extern "C" {
 DLLEXPORT void set_phantom_info_vox(int *Status, float *vol, int *dims, float xoff, float yoff, float zoff, float dxy, float dz, unsigned char *xy_mask, int MaterialIndex, int NumOfMaterials)
   {
-  int Material;
   static unsigned long previously_allocated_memory_size;
-  unsigned long phantom_num_voxels_one_material  = (unsigned long)dims[0]*(unsigned long)dims[1]*(unsigned long)dims[2];
-  unsigned long phantom_num_voxels_all_materials = phantom_num_voxels_one_material*(unsigned long)dims[3];
-  unsigned long required_memory_size_one_material  = phantom_num_voxels_one_material *(unsigned long)sizeof(float);
-  unsigned long required_memory_size_all_materials = phantom_num_voxels_all_materials*(unsigned long)sizeof(float);
+  static unsigned long system_memory_size;
+  unsigned long phantom_num_voxels_this_material  = (unsigned long)dims[0]*(unsigned long)dims[1]*(unsigned long)dims[2];
+  unsigned long required_memory_size_this_material  = phantom_num_voxels_this_material *(unsigned long)sizeof(float);
   unsigned long reserved_memory_size = (unsigned long)2*(unsigned long)1024*(unsigned long)1024*(unsigned long)1024; // reserve 2GB memory to store sinogram and other things;
-  unsigned long system_memory_size;
-  
-  *Status = 0;
-  
-  #if defined(DEBUG_00)
-  Report(sprintf(OutputString, "In set_phantom_info_vox\n"));
-  #endif
 
-  if (phantom.dims == NULL)
-    previously_allocated_memory_size = 0;
-  
-  if ( (phantom.volume  == NULL) || (previously_allocated_memory_size < required_memory_size_all_materials) )
-    {
-  	system_memory_size = getMemorySize( );
-    Report(sprintf(OutputString, "Preparing to allocate memory for material volume data...\n"));
-    Report(sprintf(OutputString, "Phantom is %4i * %4i * %4i voxels * %2i materials,\n", dims[0], dims[1], dims[2], dims[3] ));
-    Report(sprintf(OutputString, "         which requires %16lu bytes.\n", required_memory_size_all_materials ));
-  	Report(sprintf(OutputString, "  System memory size is %16lu bytes.\n", system_memory_size ));
-  	Report(sprintf(OutputString, "              Reserving %16lu bytes for other needs,\n", reserved_memory_size ));
-  	Report(sprintf(OutputString, "            this leaves %16lu bytes available for the phantom.\n", (system_memory_size - reserved_memory_size) ));
-    if ( (system_memory_size - reserved_memory_size) <  (required_memory_size_all_materials) )
-      {
-      Report(sprintf(OutputString, "Insuffucient system memory available.\n"));
-      *Status = -2;
-      return;
-      }
-    else
-      {
-      phantom.volume = (float **)malloc(sizeof(float *) * NumOfMaterials);
-      if (phantom.volume==NULL)
-        {
-        Report(sprintf(OutputString, "Memory allocation error - couldn't allocate memory for pointers to materials.\n"));
-        *Status = -1;
-        return;
-        }
-      #if defined(DEBUG_00)
-      Report(sprintf(OutputString, "Allocated pointers to materials\n"));
-      #endif
-      for (Material = 1; Material <= NumOfMaterials; Material++ )
-        {
-        (phantom.volume)[Material-1] = (float *) malloc(required_memory_size_one_material);
-        if (phantom.volume[Material-1]==NULL)
-          {
-          Report(sprintf(OutputString, "Memory allocation error - couldn't allocate memory for material %i.\n", Material));
-          *Status = -1;
-          return;
-          }
-        Report(sprintf(OutputString, "Allocated memory for image volume for material %2i\n", Material));
-        previously_allocated_memory_size += required_memory_size_one_material;
-        }
-      Report(sprintf(OutputString, "   Allocated a total of %16lu bytes.\n", previously_allocated_memory_size ));
-      }
-    }
+	*Status = 0;
+	
+	if(phantom.volume==NULL) {
+		previously_allocated_memory_size = 0;
+		system_memory_size = getMemorySize();
+		
+		Report(sprintf(OutputString, "Preparing to allocate memory for material volume data...\n"));
+		phantom.volume = (float **)malloc(sizeof(float *) * NumOfMaterials);
+		phantom.dims = (int **)malloc(sizeof(int *) * NumOfMaterials);
+		phantom.xy_mask = (unsigned char **)malloc(sizeof(unsigned char *) * NumOfMaterials);
+		
+		phantom.xoff = (float *)malloc(sizeof(float) * NumOfMaterials);
+		phantom.yoff = (float *)malloc(sizeof(float) * NumOfMaterials);
+		phantom.zoff = (float *)malloc(sizeof(float) * NumOfMaterials);
+		phantom.dxy = (float *)malloc(sizeof(float) * NumOfMaterials);
+		phantom.dz = (float *)malloc(sizeof(float) * NumOfMaterials);
 
-  Report(sprintf(OutputString, "Copying data for material %2d into C memory...", MaterialIndex));
-  memcpy( (phantom.volume)[MaterialIndex-1], vol, dims[0]*dims[1]*dims[2]*sizeof(float));
-  Report(sprintf(OutputString,                                                  " done.\n"));
-  
-  phantom.dims = my_memcpyi(dims, phantom.dims, 4*sizeof(int));
-  phantom.xoff = xoff;
-  phantom.yoff = yoff;
-  phantom.zoff = zoff;
-  phantom.dxy = dxy;
-  phantom.dz = dz;
-  phantom.xy_mask = new unsigned char[dims[0]*dims[1]*2];
-  
-  memcpy(phantom.xy_mask,xy_mask,sizeof(unsigned char)*dims[0]*dims[1]);
-  #if defined(DEBUG_00)
-  Report(sprintf(OutputString, "Copied mask into C memory\n"));
-  #endif
-  unsigned char *transposeMask = phantom.xy_mask + dims[0]*dims[1];
-  for(int i = 0;i < dims[0];i++)
-    for(int j = 0;j < dims[1];j++)
-      transposeMask[j+i*dims[1]] = xy_mask[i+j*dims[0]]; 
-  #if defined(DEBUG_00)
-  Report(sprintf(OutputString, "Transposed mask\n"));
-  #endif
+		if(phantom.volume==NULL || phantom.dims==NULL || phantom.xy_mask==NULL) {
+			Report(sprintf(OutputString, "Memory allocation error - couldn't allocate memory for pointers to materials.\n"));
+			*Status = -1;
+			return;
+		}
+	}
+	
+	if(system_memory_size - reserved_memory_size < previously_allocated_memory_size + required_memory_size_this_material) {
+		Report(sprintf(OutputString, "Insuffucient system memory available.\n"));
+		*Status = -2;
+		return;
+	} else {
+		(phantom.volume)[MaterialIndex-1] = (float *)malloc(required_memory_size_this_material);
+		(phantom.dims)[MaterialIndex-1] = (int *)malloc(4*sizeof(int));
+		phantom.xy_mask[MaterialIndex-1] = (unsigned char *)malloc(dims[0]*dims[1]*2*sizeof(unsigned char));
+		if(phantom.volume[MaterialIndex-1]==NULL || phantom.dims[MaterialIndex-1]==NULL) {
+			Report(sprintf(OutputString, "Memory allocation error - couldn't allocate memory for material %i.\n", MaterialIndex));
+			*Status = -1;
+			return;
+		}
+		Report(sprintf(OutputString, "Allocated memory for image volume for material %2i\n", MaterialIndex));
+		previously_allocated_memory_size += required_memory_size_this_material;
+	}
+	
+	Report(sprintf(OutputString, "Copying data for material %2d into C memory...", MaterialIndex));
+	memcpy( (phantom.volume)[MaterialIndex-1], vol, dims[0]*dims[1]*dims[2]*sizeof(float) );
+	Report(sprintf(OutputString, " done.\n"));
+	
+	memcpy( phantom.dims[MaterialIndex-1], dims, 4*sizeof(int) );
+	phantom.xoff[MaterialIndex-1] = xoff;
+	phantom.yoff[MaterialIndex-1] = yoff;
+	phantom.zoff[MaterialIndex-1] = zoff;
+	phantom.dxy[MaterialIndex-1] = dxy;
+	phantom.dz[MaterialIndex-1] = dz;
+	
+	// phantom.xy_mask[MaterialIndex-1] = new unsigned char[dims[0]*dims[1]*2];
+	memcpy( phantom.xy_mask[MaterialIndex-1], xy_mask, sizeof(unsigned char)*dims[0]*dims[1] );
+	#if defined(DEBUG_00)
+	Report(sprintf(OutputString, "Copied mask into C memory\n"));
+	#endif
+	unsigned char *transposeMask = phantom.xy_mask[MaterialIndex-1] + dims[0]*dims[1];
+	for(int i = 0;i < dims[0];i++)
+		for(int j = 0;j < dims[1];j++)
+			transposeMask[j+i*dims[1]] = xy_mask[i+j*dims[0]]; 
+	#if defined(DEBUG_00)
+	Report(sprintf(OutputString, "Transposed mask\n"));
+	#endif
+	
+	if(MaterialIndex==NumOfMaterials)
+		Report(sprintf(OutputString, "Allocated a total of %6lu MB.\n", previously_allocated_memory_size/((unsigned long)(1024*1024))));
   }
 }
 
@@ -472,8 +468,8 @@ int convert_modular_detector(float **xds, float **yds, float **zds, int *nrdetco
 extern "C" {
 DLLEXPORT 
 void voxelized_projector(
-      int *Status,                    // Output: scalar. 0=normal, 1=Detector definition error
-      float unused1,                  // Input: scalar
+			int *Status,                    // Output: scalar. 0=normal, 1=Detector definition error
+			float unused1,                  // Input: scalar
 			float *thisView,                // Output: [nrdetcols*nrdetrows][materials.eBinCount]
 			float *sourcePoints,            // Input: [nSubSources][3]
 			int nSubSources,                // Input: scalar
@@ -489,7 +485,8 @@ void voxelized_projector(
 			int unused6,                    // Input: scalar
 			int MaterialIndex,              // Input: scalar, Material Index to look up mu table 
 			int MaterialIndexInMemory,      // Input: scalar, Material Index to materials stored in phantom.volume
-			float unused7)                  // Input: scalar
+			float unused7,                  // Input: scalar
+			int freeTheMemory)              // Input: scalar, free and clean up memory if it's 1
   {
   float *xds = NULL, *yds = NULL, *zds = NULL, x0 = 0, y0 = 0, z0 = 0, totalWt = 0, viewangle;
   int nrdetcols, nrdetrows;
@@ -534,7 +531,8 @@ void voxelized_projector(
 
     float zoffset = 0.0;
 
-  DD3Proj_roi_notrans_mm(x0, y0, z0, nrdetcols, nrdetrows, xds, yds, zds, phantom.xoff, phantom.yoff, phantom.zoff, &viewangle, &zoffset, 1, thisViewProj, phantom.dims[0], phantom.dims[1], phantom.dims[2], (phantom.volume)[MaterialIndexInMemory-1], phantom.dxy, phantom.dz, phantom.xy_mask);
+  int m = MaterialIndexInMemory-1;
+  DD3Proj_roi_notrans_mm(x0, y0, z0, nrdetcols, nrdetrows, xds, yds, zds, phantom.xoff[m], phantom.yoff[m], phantom.zoff[m], &viewangle, &zoffset, 1, thisViewProj, phantom.dims[m][0], phantom.dims[m][1], phantom.dims[m][2], (phantom.volume)[m], phantom.dxy[m], phantom.dz[m], phantom.xy_mask[m]);
 
   #if defined(DEBUG_20)
   Report(sprintf(OutputString, "materials.muTable[0] = %f\n", materials.muTable[0]));
@@ -555,6 +553,32 @@ void voxelized_projector(
   #endif
 
   delete thisViewProj;
+  delete xds;  // xds, yds, zds are newed in calling convert_modular_detector
+  delete yds;
+  delete zds;
+  
+	// Free phantom memory
+	if(freeTheMemory==1) {
+		for(int i=0; i<MaterialIndexInMemory; i++) {
+			free(phantom.volume[i]);
+			free(phantom.dims[i]);
+			free(phantom.xy_mask[i]);
+		}
+		free(phantom.xoff);
+		free(phantom.yoff);
+		free(phantom.zoff);
+		free(phantom.dxy);
+		free(phantom.dz);
+		
+		phantom.dims = NULL;
+		phantom.volume = NULL;
+		phantom.xoff = NULL;
+		phantom.yoff = NULL;
+		phantom.zoff = NULL;
+		phantom.dxy = NULL;
+		phantom.dz = NULL;
+		phantom.xy_mask = NULL;
+	}
   }
 }
 

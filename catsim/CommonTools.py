@@ -45,7 +45,8 @@ def load_C_lib():
     myPath = get_path()
 
     # add lib path to environment value "PATH" for depending DLLs
-    os.environ["PATH"] = myPath.lib+';'+os.environ["PATH"]
+    if not myPath.lib in os.environ["PATH"]:
+        os.environ["PATH"] = myPath.lib+';'+os.environ["PATH"]
 
     # load C/C++ lib
     ll = ctypes.cdll.LoadLibrary
@@ -71,7 +72,8 @@ class CFG:
         cfg.resultsName = "simulation_test"
 
         cfg.path = get_path()
-        cfg.clib = load_C_lib()
+        if not hasattr(cfg, 'clib'):
+            cfg.clib = load_C_lib()
         
         # source cfgFiles if para are defined
         # note: the later cfgFile overrides the former ones

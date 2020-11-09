@@ -27,7 +27,7 @@ def Detection_Flux(cfg):
     
     cfg.spec.netIvec = cfg.spec.Ivec*cfg.src.filterTrans
     cfg.detFlux = np.single(cfg.spec.netIvec*detActiveArea*distanceFactor)
-
+    
     return cfg
 
 if __name__ == "__main__":
