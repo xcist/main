@@ -1,11 +1,4 @@
-% -----------------------------------------------------------------------
-%   Program Name: ncat_cartilage                            
-%   Author: unknown
-%   Organization: GE Global Research and GE Healthcare, General Electric Company
-%   Version:  6.0.3
-%   Date:  Feb 3, 2015
-%   Class: GE Confidential. General Electric Proprietary Data (c) 2012 General Electric Company
-% -----------------------------------------------------------------------
+# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 11
 1.10
 1 0.096

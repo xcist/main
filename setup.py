@@ -6,7 +6,7 @@
 from setuptools import setup
 
 setup(name='catsim',
-      version='0.1.1',
+      version='0.1.2',
       description='Simulation toolkit for X-ray based cancer imaging',
       url='https://github.com/xcist',
       author='Mingye Wu, Paul FitzGerald, Brion Sarachan, Bruno De Man',
@@ -16,4 +16,4 @@ setup(name='catsim',
       packages=['catsim'],
       zip_safe=False,
       package_data={'catsim':[r'lib/*.*', r'cfg/*.cfg', r'data/bowtie/*.dat', r'data/material/*', r'data/phantom/*.*', r'data/spectrum/*.dat', r'data/material/edlp/*/*.dat', ]},
-      include_package_data=False)
+      include_package_data=True)
