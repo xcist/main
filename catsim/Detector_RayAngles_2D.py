@@ -42,7 +42,7 @@ def Detector_RayAngles_2D(cfg):
         
         wvec = np.cross(det.uvecs[m, :], det.vvecs[m, :])        
         xyzR = xyzR/nm.repmat(vectornorm(xyzR.T), 1, 3)
-        betasTmp = np.arccos(xyzR @ wvec)
+        betasTmp = np.arccos(np.minimum(xyzR @ wvec, 1))
         
         isLeftMod = xyzR[:, 0]<wvec[0] # betas of the left mod are opposite to the right mod
         betasTmp[isLeftMod] *= -1

@@ -53,7 +53,8 @@ def one_scan(cfg):
                 if cfg.physics.scatterCallback:
                     cfg = feval(cfg.physics.scatterCallback, cfg, viewId, subViewId)
             
-            # detection, the output: cfg.thisView [col, row]
+            # detection, the input: cfg.thisSubView [col-row, energy]
+            #            the output: cfg.thisView [col, row]
             cfg = feval(cfg.scanner.detectionCallback, cfg, viewId, subViewId)
             
             cfg.time += cfg.subViewTime
