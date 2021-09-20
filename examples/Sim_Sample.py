@@ -5,7 +5,7 @@ import catsim as xc
 
 
 ##--------- Initialize 
-ct = xc.CatSim("Phantom_Sample", "Scanner_Sample_generic", "Protocol_Sample_axial")  # initialization
+ct = xc.CatSim("Phantom_Head", "Scanner_Sample_generic", "Protocol_Sample_axial")  # initialization
 
 ##--------- Make changes to parameters (optional)
 ct.resultsName = "test"

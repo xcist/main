@@ -112,3 +112,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+catsim/data/phantom/head_hd_1.density_0
+catsim/data/phantom/head_hd_1.density_1

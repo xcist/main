@@ -4,6 +4,7 @@ import numpy as np
 import copy, time
 import matplotlib.pyplot as plt
 from catsim.CommonTools import *
+from ConvertDICOM import ConvertDICOM
 
 def one_scan(cfg):
     cfg = initialize_scan(cfg)
@@ -75,6 +76,14 @@ def initialize_scan(cfg):
     cfg.sim.isPhantomScan = not(cfg.sim.isAirScan or cfg.sim.isOffsetScan)
     
     if cfg.sim.isPhantomScan:
+        # check if the phantom is a folder - if so the folder is assumed to be a set of DICOM images
+        # Generate a phantom based on those images and use the generated phantom
+        # paths = get_path()
+        # if '.json' in (cfg.phantom.filename):
+        #     pass
+        # else:
+        #     ConvertDICOM(paths.Phantom + cfg.phantomname)
+        #     cfg.phantom.filename = cfg.phantom.filename + '.json'
         cfg.sim.startViewId = cfg.protocol.startViewId
         cfg.sim.stopViewId = cfg.protocol.stopViewId
         cfg.sim.subViewCount = cfg.physics.viewSampleCount

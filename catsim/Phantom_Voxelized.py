@@ -7,9 +7,20 @@ from numpy.ctypeslib import ndpointer
 import os, json
 from catsim.GetMu import GetMu
 from catsim.CommonTools import *
+from catsim.ConvertDICOM import *
+
+def update_phantom(cfg):
+    # if the filename is a json file do nothing
+    # if the filename is a folder call the dicom_to_voxelized_phantom
+    if '.json' in cfg.phantom.filename:
+        pass
+    else:
+        ConvertDICOM(cfg.phantom)
+        cfg.phantom.filename = cfg.phantom.filename + '.json'
+    return cfg
 
 def Phantom_Voxelized(cfg):
-    
+    cfg = update_phantom(cfg)
     ###----------- phantom file (vp file is json format)
     if not os.path.isfile(cfg.phantom.filename):
         myPath = get_path()
