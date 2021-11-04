@@ -109,7 +109,7 @@ def initialize_scan(cfg):
 
 def update_scan_time(cfg, subViewId):
     cfg.time += cfg.subViewTime
-    if cfg.protocol.dutyRatio<1 and subViewId==cfg.sim.subViewCount-1
+    if cfg.protocol.dutyRatio<1 and subViewId==cfg.sim.subViewCount-1:
         cfg.time = cfg.time+(1-cfg.protocol.dutyRatio)*cfg.viewTime
 
 if __name__ == "__main__":
