@@ -57,7 +57,7 @@ def one_scan(cfg):
             #            the output: cfg.thisView [col, row]
             cfg = feval(cfg.scanner.detectionCallback, cfg, viewId, subViewId)
             
-            cfg.time += cfg.subViewTime
+            cfg = update_scan_time(cfg, subViewId)
             
         # save cfg.thisView to file
         cfg = feval(cfg.physics.outputCallback, cfg, viewId)
@@ -96,9 +96,10 @@ def initialize_scan(cfg):
     
     # scan time
     startTime = 0
-    viewTime = cfg.protocol.rotationTime/cfg.protocol.viewsPerRotation
-    subViewTime = viewTime*cfg.protocol.dutyRatio/cfg.sim.subViewCount
+    viewTime = cfg.protocol.rotationTime/cfg.protocol.viewsPerRotation  # view interval
+    subViewTime = viewTime*cfg.protocol.dutyRatio/cfg.sim.subViewCount  # beam-on time oversampling
     cfg.time = startTime + cfg.protocol.startViewId*viewTime - 0.5*viewTime + 0.5*subViewTime
+    cfg.viewTime = viewTime
     cfg.subViewTime = subViewTime
     
     # simulation time
@@ -106,6 +107,10 @@ def initialize_scan(cfg):
     
     return cfg
 
+def update_scan_time(cfg, subViewId):
+    cfg.time += cfg.subViewTime
+    if cfg.protocol.dutyRatio<1 and subViewId==cfg.sim.subViewCount-1
+        cfg.time = cfg.time+(1-cfg.protocol.dutyRatio)*cfg.viewTime
 
 if __name__ == "__main__":
 
