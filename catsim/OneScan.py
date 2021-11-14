@@ -56,9 +56,9 @@ def one_scan(cfg):
             # detection, the input: cfg.thisSubView [col-row, energy]
             #            the output: cfg.thisView [col, row]
             cfg = feval(cfg.scanner.detectionCallback, cfg, viewId, subViewId)
-            
+
             cfg = update_scan_time(cfg, subViewId)
-            
+
         # save cfg.thisView to file
         cfg = feval(cfg.physics.outputCallback, cfg, viewId)
         
@@ -110,7 +110,10 @@ def initialize_scan(cfg):
 def update_scan_time(cfg, subViewId):
     cfg.time += cfg.subViewTime
     if cfg.protocol.dutyRatio<1 and subViewId==cfg.sim.subViewCount-1:
-        cfg.time = cfg.time+(1-cfg.protocol.dutyRatio)*cfg.viewTime
+        cfg.time = cfg.time + (1-cfg.protocol.dutyRatio) * cfg.viewTime
+
+    return cfg
+
 
 if __name__ == "__main__":
 
