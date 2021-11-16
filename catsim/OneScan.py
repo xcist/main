@@ -114,7 +114,6 @@ def update_scan_time(cfg, subViewId):
 
     return cfg
 
-
 if __name__ == "__main__":
 
     cfg = source_cfg("./cfg/default.cfg")
