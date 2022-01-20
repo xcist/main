@@ -191,10 +191,10 @@ DLLEXPORT void set_material_info_vox(int materialCount, int eBinCount, float *mu
 extern "C" {
 DLLEXPORT void set_phantom_info_vox(int *Status, float *vol, int *dims, float xoff, float yoff, float zoff, float dxy, float dz, unsigned char *xy_mask, int MaterialIndex, int NumOfMaterials)
   {
-  static unsigned long previously_allocated_memory_size;
-  static unsigned long system_memory_size;
-  unsigned long phantom_num_voxels_this_material  = (unsigned long)dims[0]*(unsigned long)dims[1]*(unsigned long)dims[2];
-  unsigned long required_memory_size_this_material  = phantom_num_voxels_this_material *(unsigned long)sizeof(float);
+  static unsigned long long previously_allocated_memory_size;
+  static unsigned long long system_memory_size;
+  unsigned long long phantom_num_voxels_this_material  = (unsigned long)dims[0]*(unsigned long)dims[1]*(unsigned long)dims[2];
+  unsigned long long required_memory_size_this_material  = phantom_num_voxels_this_material *(unsigned long)sizeof(float);
   unsigned long reserved_memory_size = (unsigned long)2*(unsigned long)1024*(unsigned long)1024*(unsigned long)1024; // reserve 2GB memory to store sinogram and other things;
 
 	*Status = 0;

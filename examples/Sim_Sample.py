@@ -23,7 +23,7 @@ ct.run_all()  # run the scans defined by protocol.scanTypes
 import numpy as np
 import matplotlib.pyplot as plt
 
-prep = xc.rawread(ct.resultsName+'.prep', [ct.protocol.viewCount, ct.scanner.detectorColCount, ct.scanner.detectorRowCount], 'float')
+prep = xc.rawread(ct.resultsName+'.prep', [ct.protocol.viewCount, ct.scanner.detectorRowCount, ct.scanner.detectorColCount], 'float')
 prep = prep[-1, :, :]
-plt.plot(prep[:, 7])
+plt.plot(prep[7, :])
 plt.show()

@@ -32,7 +32,7 @@ clean:
 	@echo . Cleaning ...
 	@echo .
 	@echo .
-	del -f *.o
+	rm -f *.o
 	@echo .
 	@echo .
 	@echo . Done cleaning.
