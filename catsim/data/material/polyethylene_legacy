@@ -1,0 +1,21 @@
+# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made from a legacy file. 
+# Molecular weights source unknown.
+# Density source unknown.
+# Material composition source unknown.
+
+# Material name:
+# polyethylene_legacy
+
+# Number of elements:
+2
+
+# Density:
+0.9300
+
+# Atomic number(s) and corresponding mass fraction(s):
+1    0.143716    # hydrogen
+6    0.856284    # carbon
+
+# Note: this is a legacy material specification and is included for those who may want to repeat prior experiments that used it.
+# There are multiple types of polyethylene. For new work, LDPE, MDPE, HDPE, or a specification of your design may be preferred.

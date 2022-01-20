@@ -1,0 +1,20 @@
+# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.0.
+# Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
+# Density source: https://en.wikipedia.org/wiki/Polystyrene
+# Material composition source: same as density
+
+# Material name:
+# polystyrene (PS)
+
+# Number of elements:
+2
+
+# Density:
+1.000000
+
+# Atomic number(s) and corresponding mass fraction(s):
+1    0.077426    # hydrogen
+6    0.922574    # carbon
+
+# Note: There are multiple types of polystyrene. For a specific material (e.g. for foam), a new file can be made by revising the density.

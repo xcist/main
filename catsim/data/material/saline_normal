@@ -1,0 +1,23 @@
+# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.0.
+# Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
+# Density source: https://en.wikipedia.org/wiki/Saline_(medicine)
+# Material composition source: trial and error ratio of water to NaCl - see resulting formula below.
+
+# Material name:
+# normal saline (9% NaCl in water)
+
+# Number of elements:
+4
+
+# Density:
+1.004600
+
+# Atomic number(s) and corresponding mass fraction(s):
+1    0.110899    # hydrogen
+8    0.880142    # oxygen
+11    0.003524    # sodium
+17    0.005435    # chlorine
+
+# Formula: H(71770)O(35885)Na(100)Cl(100)
+# NaCl mass concentration = (0.003524 + 0.005435) * 1.004600 g/mL = 9.0002114 g/L.

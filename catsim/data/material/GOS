@@ -1,0 +1,20 @@
+# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made from a legacy file.
+# Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
+# Density souce: unknown - legacy material specification
+# Material composition source: same as density
+
+# Material name:
+# gallium oxysulfide (GOS)
+
+# Number of elements:
+4
+
+# Density:
+7.2
+
+# Atomic number(s) and corresponding mass fraction(s):
+6    0.375000    # carbon
+8    0.052829    # oxygen
+16    0.052939    # sulfur
+64    0.519232    # gadolinium

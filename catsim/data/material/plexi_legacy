@@ -1,0 +1,22 @@
+# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made from a legacy file. 
+# Molecular weights source unknown.
+# Density source unknown.
+# Material composition source unknown.
+
+# Material name:
+# plexi_legacy (apparently short for Plexiglas).
+
+# Number of elements:
+3
+
+# Density:
+1.190
+ 	
+# Atomic number(s) and corresponding mass fraction(s):
+1    0.080541    # hydrogen
+6    0.599846    # carbon
+8    0.319613    # oxygen
+
+# Note: this is a legacy material specification and is included for those who may want to repeat prior experiments that used it.
+# For new work, PMMA may be a preferred specification.

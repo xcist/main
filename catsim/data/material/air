@@ -1,0 +1,26 @@
+# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.0.
+# Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
+# Density souce: https://physics.nist.gov/PhysRefData/XrayMassCoef/tab2.html
+# Material composition source: same as density
+
+# Material name:
+# air
+
+# Number of elements:
+4
+
+# Density:
+0.001205
+
+# Atomic number(s) and corresponding mass fraction(s):
+6    0.000122    # carbon
+7    0.760067    # nitrogen
+8    0.227236    # oxygen
+18    0.012575    # argon
+
+
+
+
+
+

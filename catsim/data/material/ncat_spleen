@@ -1,0 +1,27 @@
+# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.0.
+# Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
+# Density souce: NCAT software distribution
+# Material composition source: same as density
+
+# Material name:
+# NCAT spleen
+
+# Number of elements:
+11
+
+# Density:
+1.060
+
+# Atomic number(s) and corresponding mass fraction(s):
+1    0.103    # hydrogen
+6    0.113    # carbon
+7    0.032    # nitrogen
+8    0.741    # oxygen
+11    0.001    # sodium
+15    0.003    # phosphorus
+16    0.002    # sulfur
+17    0.002    # chlorine
+19    0.003    # potassium
+20    0.000    # calcium
+21    0.000    # scandium

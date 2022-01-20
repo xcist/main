@@ -1,0 +1,17 @@
+# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.0.
+
+# Density from https://physics.nist.gov/PhysRefData/XrayMassCoef/tab1.html.
+
+
+# Elemental material: 
+# He (helium)
+
+# Number of elements:
+1
+
+# Density:
+0.000166
+
+# Atomic number(s) and corresponding mass fraction(s):
+2    1.000000    # helium

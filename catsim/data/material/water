@@ -1,0 +1,17 @@
+# Made with CatSim material calculator, version 1.0.
+# Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
+# Density souce: https://physics.nist.gov/PhysRefData/XrayMassCoef/tab2.html
+# Material composition source: same as density
+
+# Material name:
+# water
+
+# Number of elements:
+2
+
+# Density:
+1.000000
+
+# Atomic number(s) and corresponding mass fraction(s):
+1    0.111902    # hydrogen
+8    0.888098    # oxygen

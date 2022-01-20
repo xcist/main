@@ -1,0 +1,18 @@
+# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.0.
+# Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
+# Density source: https://en.wikipedia.org/wiki/Polyethylene#High-density_(HDPE)
+# Material composition source: same as density
+
+# Material name:
+# high density polyethylene (HDPE) - C2H4
+
+# Number of elements:
+2
+
+# Density:
+0.941000
+
+# Atomic number(s) and corresponding mass fraction(s):
+1    0.143724    # hydrogen
+6    0.856276    # carbon

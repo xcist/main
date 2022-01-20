@@ -1,0 +1,17 @@
+# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.0.
+
+# Density from https://physics.nist.gov/PhysRefData/XrayMassCoef/tab1.html.
+
+
+# Elemental material: 
+# Re (rhenium)
+
+# Number of elements:
+1
+
+# Density:
+21.020000
+
+# Atomic number(s) and corresponding mass fraction(s):
+75    1.000000    # rhenium

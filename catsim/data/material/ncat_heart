@@ -1,0 +1,27 @@
+# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.0.
+# Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
+# Density souce: NCAT software distribution
+# Material composition source: same as density
+
+# Material name:
+# NCAT heart
+
+# Number of elements:
+11
+
+# Density:
+1.050
+
+# Atomic number(s) and corresponding mass fraction(s):
+1    0.104    # hydrogen
+6    0.139    # carbon
+7    0.029    # nitrogen
+8    0.718    # oxygen
+11    0.001    # sodium
+15    0.002    # phosphorus
+16    0.002    # sulfur
+17    0.002    # chlorine
+19    0.003    # potassium
+20    0.000    # calcium
+21    0.000    # scandium

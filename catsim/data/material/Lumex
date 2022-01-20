@@ -1,0 +1,19 @@
+# Made with CatSim material calculator, version 1.0.
+# Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
+# Density souce: S.J. Duclos et al. / Nuclear Instruments and Methods in Physics Research A 505 (2003) 68–71. https://doi.org/10.1016/S0168-9002(03)01022-2
+# Material composition source: same as density
+
+# Material name:
+# Lumex - Y(1.34)Gd(0.60)Eu(O.06)O(3)
+
+# Number of elements:
+4
+
+# Density:
+5.95
+
+# Atomic number(s) and corresponding mass fraction(s):
+8    0.177377    # oxygen
+39    0.440259    # yttrium
+63    0.033695    # europium
+64    0.348670    # gadolinium

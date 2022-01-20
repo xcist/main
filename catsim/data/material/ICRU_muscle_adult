@@ -1,0 +1,25 @@
+# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.0.
+# Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
+# Density souce: Report No. 46: Photon, electron, proton, and neutron interaction data for body tissues (1992)
+# Material composition source: same as density
+
+# Material name:
+# ICRU muscle adult
+
+# Number of elements:
+9
+
+# Density:
+1.05
+
+# Atomic number(s) and corresponding mass fraction(s):
+1    0.102    # hydrogen
+6    0.143    # carbon
+7    0.034    # nitrogen
+8    0.710    # oxygen
+11    0.001    # sodium
+15    0.002    # phosphorus
+16    0.003    # sulfur
+17    0.001    # chlorine
+19    0.004    # potassium
