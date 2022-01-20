@@ -19,5 +19,5 @@
 17    0.567257
 
 # Note: this is a legacy material specification and is included for those who may want to repeat prior experiments that used it.
-# There are multiple types of pvc. The density used here is higher than found for most polystyrene.
+# There are multiple types of PVC. The density used here is higher than found for most PVC.
 # For new work, PVC_rigid, PVC_flexible or a specification of your design may be preferred.
