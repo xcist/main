@@ -82,29 +82,34 @@ def recon(cfg, prep):
     DistD = sdd
     Radius = cfg.recon.fov/2
     ProjData = prep.transpose(2,1,0)
+    ProjData = ProjData[::-1,:,:]
     ProjScale = cfg.protocol.viewsPerRotation
     DecFanAng = nMod*2*math.atan(modWidth/2/sdd)
     Dgy = np.array(ProjData, dtype=np.float32)
     YL = int(cfg.scanner.detectorColCount)
     ZL = int(cfg.scanner.detectorRowCount)
+    YCtr = (YL - 1) * 0.5
+    ZCtr = (ZL - 1) * 0.5
     YOffSet = cfg.scanner.detectorColOffset
     ZOffSet = 0
     DecHeigh = rowSize*ZL
+    
     DeltaUW = DecFanAng/(YL-1)
     DeltaU2 = 2*DeltaUW
+    DeltaZ = DecHeigh / ZL
     
     
-    ############## pre-weighting
-    for Yindex in range(1, YL-1):
-       Dgy[Yindex,:,:]=(ProjData[Yindex+1,:,:]-ProjData[Yindex-1,:,:])/DeltaU2
-
-    Dgy[0,:,:] = Dgy[1,:,:]
-    Dgy[YL-1,:,:]= Dgy[YL-2,:,:]
+    ############## pre-weighting for ramp-filter
+    for Yindex in range(YL):
+        for zindex in range(ZL):
+            Dgy[Yindex, zindex, :] = (DistD / np.sqrt(DistD ** 2 + ((zindex - ZCtr) * DeltaZ) ** 2)) * ProjData[Yindex,
+                                    zindex,:] * math.cos((Yindex - YCtr) * DeltaUW)
 
     Dg=Dgy
 
     ############## filtering
-    WindowType=1
+    WindowType = cfg.recon.kernelType
+    print(WindowType)
     nn=int(math.pow(2,(math.ceil(math.log2(abs(YL)))+1)))
     HS=CreateHSP(nn,WindowType)
     nn2= nn*2
@@ -147,14 +152,13 @@ def recon(cfg, prep):
 
     t.AngleNumber = ProjScale
     t.Radius = Radius
-    
-    t.RecSize = 128
-    t.centerX = 64
-    t.centerY = 64
-    t.centerZ = 64
-    t.FOILength = 128
-    t.FOIWidth = 128
-    t.FOIHeigh = 128
+    t.RecSize = cfg.recon.imageSize
+    t.centerX = cfg.recon.centerX
+    t.centerY = cfg.recon.centerY
+    t.centerZ = cfg.recon.centerZ
+    t.FOILength = cfg.recon.FOILength
+    t.FOIWidth = cfg.recon.FOIWidth
+    t.FOIHeigh = cfg.recon.FOIHeigh
     
     # Generate a 2D ctypes array from numpy array
     GF_ptr = double3darray2pointer(GF)
@@ -170,7 +174,7 @@ def recon(cfg, prep):
 
     # Convert ctypes 2D arrays to numpy arrays
     RecA = double3dpointer2array(RecIm_ptr, *RecIm.shape)
-    
+
     plt.figure()
-    plt.imshow(RecA[:, :, 64], cmap='gray')
+    plt.imshow(RecA[:, :, 0], cmap='gray')
     plt.show()

@@ -8,8 +8,8 @@ import catsim as xc
 import recon
 
 
-##--------- Initialize 
-ct = xc.CatSim('../cfg/Physics_VCT','../cfg/Protocol_VCT','../cfg/Scanner_VCT')  # initialization
+# ##--------- Initialize
+ct = xc.CatSim('../cfg/Physics','../cfg/Protocol','../cfg/Scanner', '../cfg/Recon')  # initialization
 
 ##--------- Make changes to parameters (optional)
 ct.resultsName = "../sim/View/test"
@@ -21,12 +21,13 @@ ct.protocol.mA = 800
 ct.protocol.spectrumFilename = "tungsten_tar7_120_unfilt.dat"
 ct.physics.energyCount = 12
 # ct.physics.monochromatic = 70
+# ct.recon.imageSize
 
-ct.phantom.filename = 'C:/Users/302017896/Downloads/Duke_phantom/CatSim_Adult_Male_Standard_Lung_Phantom_1700x1050x900/Slab_400/reduced/adult_male_standard_lung.json'
+ct.phantom.filename = 'E:/main-master/reconstruction/wrapper/Adult_Male_Standard_Lung_Phantom/adult_male_standard_lung.json'
 
-##--------- Run simulation
+# ##--------- Run simulation
 # cfg = ct.run_all()  # run the scans defined by protocol.scanTypes
-cfg = ct.get_current_cfg();
+cfg = ct.get_current_cfg()
 recon.FDK(cfg)
 
 
