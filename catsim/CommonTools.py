@@ -227,3 +227,37 @@ def rawread(fname, dataShape, dataType):
 def rawwrite(fname, data):
     with open(fname, 'wb') as fout:
         fout.write(data)
+
+def conv2(img, h, mode='same'):
+    h = np.rot90(h, 2) # rotate 180 degree
+    img_row, img_col = img.shape
+    h_row, h_col = h.shape
+    if mode == 'full':
+        zeroPad = np.zeros((h_row-1, img_col))
+        extImg = np.vstack((zeroPad, img, zeroPad))
+        zeroPad = np.zeros((extImg.shape[0], h_col-1))
+        extImg = np.column_stack((zeroPad, extImg, zeroPad))
+    elif mode == 'same':
+        zeroPad = np.zeros((int(h_row/2), img_col))
+        extImg = np.vstack((zeroPad, img, zeroPad))
+        zeroPad = np.zeros((extImg.shape[0], int(h_col/2)))
+        extImg = np.column_stack((zeroPad, extImg, zeroPad))
+    else:
+        extImg = img
+    
+    row_start, row_end = 0, extImg.shape[0]-h.shape[0]+1
+    col_start, col_end = 0, extImg.shape[1]-h.shape[1]+1
+    img_conv = np.zeros((row_end, col_end))
+    for r in range(row_start, row_end):
+        for c in range(col_start, col_end):
+            cur_region = extImg[r:r+h_row, c:c+h_col]
+            img_conv[r, c] = np.sum(cur_region * h)
+    
+    if mode == 'same':
+        if h_row%2 == 0:
+            img_conv = img_conv[1:,:]
+        if h_col%2 == 0:
+            img_conv = img_conv[:,1:]
+    
+    return img_conv
+    
