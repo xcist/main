@@ -35,9 +35,11 @@ def get_path():
     myPath.main = os.path.dirname(os.path.abspath(__file__))
     myPath.cfg = myPath.main+'/cfg'
     myPath.lib = myPath.main+'/lib'
+    myPath.data = myPath.main+'/data'
     myPath.bowtie = myPath.main+'/data/bowtie'
     myPath.material = myPath.main+'/data/material'
     myPath.phantom = myPath.main+'/data/phantom'
+    myPath.scatter = myPath.main+'/data/scatter'
     myPath.spectrum = myPath.main+'/data/spectrum'
     return myPath
 

@@ -3,6 +3,13 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Simulated data in examples
+examples/*.air
+examples/*.offset
+examples/*.scan
+examples/*.prep
+examples/*.recon
+
 # Distribution / packaging
 .Python
 pip-wheel-metadata/
