@@ -4,44 +4,53 @@ import math
 import scipy.io as scio
 import matplotlib.pyplot as plt
 from CreateHSP import CreateHSP
+from mapReconVariables import mapReconVariables
 from catsim.CommonTools import *
+import scipy.interpolate
+from scipy.interpolate import interp1d
+
 
 # Init ctypes types
-DOUBLE = ct.c_double
-PtrDOUBLE = ct.POINTER(DOUBLE)
-PtrPtrDOUBLE = ct.POINTER(PtrDOUBLE)
-PtrPtrPtrDOUBLE = ct.POINTER(PtrPtrDOUBLE)
+FLOAT = ct.c_float
+PtrFLOAT = ct.POINTER(FLOAT)
+PtrPtrFLOAT = ct.POINTER(PtrFLOAT)
+PtrPtrPtrFLOAT = ct.POINTER(PtrPtrFLOAT)
 
 
 class TestStruct(ct.Structure):
     _fields_ = [
-                ("ScanR", ct.c_double),         # Radius of the scanning trajectory of x-ray source
-                ("DecFanAng", ct.c_double),     # Fan angle coverage of the detector element along the horizontal diretion
-                ("DecHeigh", ct.c_double),      # Physical heigth of the detector along the vertical direction
+                ("ScanR", ct.c_float),         # Radius of the scanning trajectory of x-ray source
+                ("DecFanAng", ct.c_float),     # Fan angle coverage of the detector element along the horizontal diretion
+                ("startangle", ct.c_float),     # recon startangle
+                ("DecHeight", ct.c_float),      # Physical height of the detector along the vertical direction
                 ("YL", ct.c_int),               # Detector cell number on each row along the horizontal direction
                 ("ZL", ct.c_int),               # Detector cell number on each column along the vertical direction
-                ("YOffSet", ct.c_double),       # Detector offset along the horizontal direction (pixel, e.g. quarter pixel)  
-                ("ZOffSet", ct.c_double),       # Detector offset along the vertical direcion (pixel, e.g. quarter pixel)
+                ("dectorYoffset", ct.c_float),               # Detector along the horizontal direction (pixel, e.g. quarter pixel)
+                ("dectorYoffset", ct.c_float),               # Detector offset along the vertical direcion (pixel, e.g. quarter pixel)
+                ("XOffSet", ct.c_float),       # recon offset along the x axis
+                ("YOffSet", ct.c_float),       # recon offset along the y axis
+                ("ZOffSet", ct.c_float),       # recon offset along the z axis
                 ("AngleNumber", ct.c_int),      # Number of view samples on the scanning trajectory
-                ("DistD", ct.c_double),         # Distance between the x-ray source and the detector 
-                ("Radius", ct.c_double),        # Radius of the phantom
+                ("DistD", ct.c_float),         # Distance between the x-ray source and the detector
+                ("Radius", ct.c_float),        # Radius of the phantom
                 ("RecSize", ct.c_int),          # Reconstructed size
-                ("centerX", ct.c_int),          # Reconstructed center on x axis
-                ("centerY", ct.c_int),          # Reconstructed center on y axis
-                ("centerZ", ct.c_int),          # Reconstructed center on z axis
+                ("sliceThickness", ct.c_float),   # Reconstructed thickness
+                ("centerX", ct.c_float),          # Reconstructed center on x axis
+                ("centerY", ct.c_float),          # Reconstructed center on y axis
+                ("centerZ", ct.c_float),          # Reconstructed center on z axis
                 ("FOILength", ct.c_int),        # Reconstructed length on x axis
                 ("FOIWidth", ct.c_int),         # Reconstructed length on y axis
-                ("FOIHeigh", ct.c_int),         # Reconstructed length on z axis
-                ("GF", PtrPtrPtrDOUBLE),        # Projection data/ Sinogram data
-                ("RecIm", PtrPtrPtrDOUBLE)      # Reconstructed 3D image data
+                ("FOIHeight", ct.c_int),         # Reconstructed length on z axis
+                ("GF", PtrPtrPtrFLOAT),        # Projection data/ Sinogram data
+                ("RecIm", PtrPtrPtrFLOAT)      # Reconstructed 3D image data
                 ]
 
 
 def double3darray2pointer(arr):
     # Converts a 3D numpy to ctypes 3D array.
-    arr_dimx = DOUBLE * arr.shape[2]
-    arr_dimy = PtrDOUBLE * arr.shape[1]
-    arr_dimz = PtrPtrDOUBLE * arr.shape[0]
+    arr_dimx = FLOAT * arr.shape[2]
+    arr_dimy = PtrFLOAT * arr.shape[1]
+    arr_dimz = PtrPtrFLOAT * arr.shape[0]
 
     arr_ptr = arr_dimz()
 
@@ -66,8 +75,8 @@ def double3dpointer2array(ptr, n, m, o):
     return arr
 
 
-def recon(cfg, prep):
-    # geometry
+def FDK_equiAngle(cfg, prep):
+    # scanner geometry
     sid = cfg.scanner.sid
     sdd = cfg.scanner.sdd
     nRow = cfg.scanner.detectorRowsPerMod
@@ -76,27 +85,34 @@ def recon(cfg, prep):
     rowSize = cfg.scanner.detectorRowSize
     colSize = cfg.scanner.detectorColSize
     modWidth = cfg.scanner.detectorColsPerMod*colSize
-    
+    dectorYoffset = cfg.scanner.detectorColOffset
+    dectorZoffset = cfg.scanner.detectorRowOffset
+
+    # Recon geometry
+
+    fov, imagesize, sliceCount, kernelType, sliceThickness, centerOffset, startangle = mapReconVariables(cfg)
+
     # initialize parameters
     ScanR = sid
     DistD = sdd
-    Radius = cfg.recon.fov/2
+    Radius = fov/2
     ProjData = prep.transpose(2,1,0)
-    ProjData = ProjData[::-1,:,:]
+    # ProjData = ProjData[::-1,:,:]
     ProjScale = cfg.protocol.viewsPerRotation
     DecFanAng = nMod*2*math.atan(modWidth/2/sdd)
     Dgy = np.array(ProjData, dtype=np.float32)
     YL = int(cfg.scanner.detectorColCount)
     ZL = int(cfg.scanner.detectorRowCount)
+
     YCtr = (YL - 1) * 0.5
     ZCtr = (ZL - 1) * 0.5
     YOffSet = cfg.scanner.detectorColOffset
     ZOffSet = 0
-    DecHeigh = rowSize*ZL
+    DecHeight = rowSize*ZL
     
     DeltaUW = DecFanAng/(YL-1)
     DeltaU2 = 2*DeltaUW
-    DeltaZ = DecHeigh / ZL
+    DeltaZ = DecHeight / ZL
     
     
     ############## pre-weighting for ramp-filter
@@ -108,30 +124,28 @@ def recon(cfg, prep):
     Dg=Dgy
 
     ############## filtering
-    WindowType = cfg.recon.kernelType
-    print(WindowType)
-    nn=int(math.pow(2,(math.ceil(math.log2(abs(YL)))+1)))
-    HS=CreateHSP(nn,WindowType)
-    nn2= nn*2
-    k = int(nn/2)
-    TempF=np.zeros(nn2)
-    TempF[0:k]=HS[k:nn]
-    TempF[k+nn:nn2]=HS[0:k]
-    HS=TempF*complex(0,1)
-    FFT_F=np.fft.fft(HS)
+    nn = int(math.pow(2, (math.ceil(math.log2(abs(YL))) + 1)))
+    nn2 = nn*2
+    FFT_F = CreateHSP(nn, kernelType)
 
-    GF=Dg
-    for ProjIndex in range(0,ProjScale):
+    GF = Dg
+
+    for ProjIndex in range(0, ProjScale):
         for j in range(ZL):
-           TempData=np.ones(YL)
-           for k in range(YL):
-             TempData[k]=Dg[k,j,ProjIndex]
-           FFT_S=np.fft.fft(TempData,nn2)
-           TempData=np.fft.ifft(FFT_S*FFT_F).imag
-           for k in range(YL):
-            GF[k,j,ProjIndex]=-TempData[k]
-    
-    
+            TempData = np.ones(YL)
+            for k in range(YL):
+                TempData[k] = Dg[k, j, ProjIndex]
+            FFT_S = np.fft.fft(TempData, nn2)
+            TempData = np.fft.ifft(FFT_S * FFT_F).imag
+            for k in range(YL):
+                GF[k, j, ProjIndex] = -TempData[k]
+
+    # special case when ZL is 1
+    if ZL == 1:
+        GF = np.append(GF, GF, axis=1)
+        ZL = 2
+
+
     ############## FBP
     # Load the compiled library
     recon = ct.CDLL("./fdk_equiAngle.dll")
@@ -146,26 +160,35 @@ def recon(cfg, prep):
     t.ScanR = ScanR
     t.DistD = DistD
     t.DecFanAng = DecFanAng
-    t.DecHeigh = DecHeigh
+    t.startangle = startangle
+    t.DecHeight = DecHeight
     t.YL = YL
     t.ZL = ZL
+    t.dectorYoffset = dectorYoffset
+    t.dectorZoffset = dectorZoffset
+
 
     t.AngleNumber = ProjScale
     t.Radius = Radius
-    t.RecSize = cfg.recon.imageSize
-    t.centerX = cfg.recon.centerX
-    t.centerY = cfg.recon.centerY
-    t.centerZ = cfg.recon.centerZ
-    t.FOILength = cfg.recon.FOILength
-    t.FOIWidth = cfg.recon.FOIWidth
-    t.FOIHeigh = cfg.recon.FOIHeigh
+    t.RecSize = imagesize
+    t.sliceThickness = sliceThickness
+    t.FOILength = imagesize
+    t.FOIWidth = imagesize
+    t.FOIHeight = sliceCount
+    t.centerX = (t.RecSize - 1)*0.5
+    t.centerY = (t.RecSize - 1)*0.5
+    t.centerZ = (t.FOIHeight - 1)*0.5
+    t.XOffSet = centerOffset[0]
+    t.YOffSet = centerOffset[1]
+    t.ZOffSet = centerOffset[2]
+
     
     # Generate a 2D ctypes array from numpy array
     GF_ptr = double3darray2pointer(GF)
     t.GF = GF_ptr
 
     # RecIm = np.zeros(shape=(t.RecSize, t.RecSize, t.RecSize))
-    RecIm = np.zeros(shape=(t.FOILength, t.FOIWidth, t.FOIHeigh))
+    RecIm = np.zeros(shape=(t.FOILength, t.FOIWidth, t.FOIHeight))
     RecIm_ptr = double3darray2pointer(RecIm)
     t.RecIm = RecIm_ptr
 
@@ -174,7 +197,11 @@ def recon(cfg, prep):
 
     # Convert ctypes 2D arrays to numpy arrays
     RecA = double3dpointer2array(RecIm_ptr, *RecIm.shape)
+    RecA = RecA[:,:,::-1]
 
-    plt.figure()
-    plt.imshow(RecA[:, :, 0], cmap='gray')
-    plt.show()
+    return RecA
+
+    #
+    # plt.figure()
+    # plt.imshow(RecA[:, :, 2], cmap='gray')
+    # plt.show()
