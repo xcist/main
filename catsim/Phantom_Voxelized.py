@@ -25,6 +25,8 @@ def Phantom_Voxelized(cfg):
     set_material(cfg, materialList)
     
     ###----------- pass volume info to C
+    # import matplotlib.pyplot as plt # Only needed for plots of phantom (below)
+
     for i in range(numberOfMaterials):
         dims = np.array([vp['cols'][i], vp['rows'][i], vp['slices'][i]], dtype=np.int32)
         offsets = np.array([vp['x_offset'][i], vp['y_offset'][i], vp['z_offset'][i]], dtype=np.single)
@@ -54,10 +56,21 @@ def Phantom_Voxelized(cfg):
         volumeData = volumeData.reshape(dims[2], dims[1], dims[0])
         volumeData = np.transpose(volumeData, (1, 2, 0)).ravel()
         volumeData = volumeData.astype(np.float32)
-        
+
+        # # Plot slice 0 for each material
+        # plt.figure(i)
+        # plt.imshow(volumeData.reshape(dims[2], dims[1], dims[0])[0], cmap='gray')
+        # plt.title(materialList[i])
+
         materialIndex = i+1        
         set_voxelized_volume(cfg, volumeData, volumeDims, offsets, voxelsize, xyMask, materialIndex, numberOfMaterials)
     
+    # plt.pause(1)
+    # print('*******************************************')
+    # print('* Press Enter to close plots and continue *')
+    # input('*******************************************')
+    # plt.close('all')
+
     ###----------- pass detector and source info to C
     set_detector(cfg)
     set_source(cfg)
