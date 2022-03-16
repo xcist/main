@@ -97,12 +97,9 @@ def fdk_equiAngle(cfg, prep):
 
     YCtr = (YL - 1) * 0.5
     ZCtr = (ZL - 1) * 0.5
-    YOffSet = dectorYoffset
-    ZOffSet = 0
     DecHeight = rowSize*ZL
     
     DeltaUW = DecFanAng/(YL-1)
-    DeltaU2 = 2*DeltaUW
     DeltaZ = DecHeight / ZL
     
     
@@ -159,14 +156,14 @@ def fdk_equiAngle(cfg, prep):
     t.ScanR = ScanR
     t.DistD = DistD
     t.DecFanAng = DecFanAng
-    t.startangle = startAngle
+    t.startangle = startAngle # Inconsistent C variable name - should be startAngle
     t.DecHeight = DecHeight
     t.YL = YL
     t.ZL = ZL
     t.dectorYoffset = dectorYoffset
     t.dectorZoffset = dectorZoffset
-
     t.AngleNumber = ProjScale
+
     t.Radius = Radius
     t.RecSize = imageSize
     t.sliceThickness = sliceThickness
@@ -179,6 +176,29 @@ def fdk_equiAngle(cfg, prep):
     t.XOffSet = centerOffset[0]
     t.YOffSet = centerOffset[1]
     t.ZOffSet = centerOffset[2]
+
+    print('* Reconstruction parameters:')
+    print('* SID: {} mm'.format(t.ScanR))
+    print('* SDD: {} mm'.format(t.DistD))
+    print('* Fan angle: {} degrees'.format(t.DecFanAng))
+    print('* Start angle: {} degrees'.format(t.startangle))
+    print('* Number of detector cols: {}'.format(t.YL))
+    print('* Number of detector rows: {}'.format(t.ZL))
+    print('* Detector height: {} mm'.format(t.DecHeight))
+    print('* Detector X offset: {} mm'.format(t.dectorYoffset))
+    print('* Detector Z offset: {} mm'.format(t.dectorZoffset))
+    print('* Scan number of views: {} '.format(t.AngleNumber))
+    print('* Recon FOV: {} mm'.format(2*t.Radius))
+    print('* Recon XY pixel size: {} mm'.format(t.RecSize))
+    print('* Recon Slice thickness: {} mm'.format(t.sliceThickness))
+    print('* Recon XY: {} pixels'.format(t.FOIWidth))
+    print('* Recon Z: {} slices'.format(t.FOIHeight))
+    print('* Recon X center: {} pixels'.format(t.centerX))
+    print('* Recon Y center: {} pixels'.format(t.centerY))
+    print('* Recon Z center: {} slices'.format(t.centerZ))
+    print('* Recon X offset: {} mm'.format(t.XOffSet))
+    print('* Recon Y offset: {} mm'.format(t.YOffSet))
+    print('* Recon Z offset: {} mm'.format(t.ZOffSet))
 
     print('* Converting projection data from a numpy array to a C array...')
     GF_ptr = float3Darray2pointer(GF)
