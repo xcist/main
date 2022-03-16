@@ -18,6 +18,7 @@ def recon(cfg):
      
 def load_prep(cfg):
 
+    print('* Loading the projection data...')
     prep = rawread(cfg.resultsName + '.prep',
                   [cfg.protocol.viewCount, cfg.scanner.detectorRowCount, cfg.scanner.detectorColCount],
                   'float')
@@ -27,6 +28,7 @@ def load_prep(cfg):
 
 def save_raw(cfg, matrix):
 
+    print('* Writing the recon results to file...')
     if cfg.recon.unit =='hu':
         matrix = matrix*(1000/(cfg.recon.mu))
         matrix = matrix + cfg.recon.huOffset
@@ -36,6 +38,8 @@ def save_raw(cfg, matrix):
         matrix = matrix*10
 
     matrix_size_string = str(cfg.recon.imageSize) + 'x' + str(cfg.recon.imageSize) + 'x' + str(cfg.recon.sliceCount)
-    fname = cfg.resultsName + '.recon_' + matrix_size_string + '.raw'
-    # rawwrite(fname, matrix)
-    matrix.tofile(fname)
+    fname = cfg.resultsName + matrix_size_string + '.raw'
+     
+    matrix = matrix.transpose(2, 0, 1)
+    matrix = matrix.copy(order='C')
+    rawwrite(fname, matrix)

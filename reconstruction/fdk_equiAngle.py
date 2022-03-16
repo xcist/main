@@ -47,8 +47,7 @@ class TestStruct(ct.Structure):
 
 
 
-def double3darray2pointer(arr):
-    print('* In double3darray2pointer')
+def float3Darray2pointer(arr):
     # Converts a 3D numpy to ctypes 3D array.
     arr_dimx = FLOAT * arr.shape[2]
     arr_dimy = PtrFLOAT * arr.shape[1]
@@ -65,8 +64,7 @@ def double3darray2pointer(arr):
     return arr_ptr
 
 
-def double3dpointer2array(ptr, n, m, o):
-    print('* In double3dpointer2array')
+def float3Dpointer2array(ptr, n, m, o):
     # Converts ctypes 3D array into a 3D numpy array.
     arr = np.zeros(shape=(n, m, o))
 
@@ -110,8 +108,7 @@ def fdk_equiAngle(cfg, prep):
     
     ############## pre-weighting for ramp-filter
 
-    print('* Building the filter')
-
+    print('* Building the filter...')
     for Yindex in range(YL):
         for zindex in range(ZL):
             Dgy[Yindex, zindex, :] = (DistD / np.sqrt(DistD ** 2 + ((zindex - ZCtr) * DeltaZ) ** 2)) * ProjData[Yindex,
@@ -121,8 +118,7 @@ def fdk_equiAngle(cfg, prep):
 
     ############## filtering
 
-    print('* Applying the filter')
-
+    print('* Applying the filter...')
     nn = int(math.pow(2, (math.ceil(math.log2(abs(YL))) + 1)))
     nn2 = nn*2
     FFT_F = CreateHSP(nn, kernelType)
@@ -147,12 +143,13 @@ def fdk_equiAngle(cfg, prep):
 
     ############## FBP
  
-    print('* Running the reconstruction *')
-
+    print('* Running the reconstruction...')
     # Load the compiled library
     recon = ct.CDLL("C:/Users/200003237/Documents/GitHub/CatSim/reconstruction/lib/fdk_equiAngle.dll")
+
     # Define arguments of the C function
     recon.fbp.argtypes = [ct.POINTER(TestStruct)]
+
     # Define the return type of the C function
     recon.fbp.restype = None
     
@@ -162,13 +159,12 @@ def fdk_equiAngle(cfg, prep):
     t.ScanR = ScanR
     t.DistD = DistD
     t.DecFanAng = DecFanAng
-    t.startangle = startAngle + 180
+    t.startangle = startAngle
     t.DecHeight = DecHeight
     t.YL = YL
     t.ZL = ZL
     t.dectorYoffset = dectorYoffset
     t.dectorZoffset = dectorZoffset
-
 
     t.AngleNumber = ProjScale
     t.Radius = Radius
@@ -184,22 +180,20 @@ def fdk_equiAngle(cfg, prep):
     t.YOffSet = centerOffset[1]
     t.ZOffSet = centerOffset[2]
 
-    
-    # Generate a 2D ctypes array from numpy array
-    GF_ptr = double3darray2pointer(GF)
+    print('* Converting projection data from a numpy array to a C array...')
+    GF_ptr = float3Darray2pointer(GF)
     t.GF = GF_ptr
 
-    # RecIm = np.zeros(shape=(t.RecSize, t.RecSize, t.RecSize))
+    print('* Allocating a C array for the recon results...')
     RecIm = np.zeros(shape=(t.FOILength, t.FOIWidth, t.FOIHeight))
-    RecIm_ptr = double3darray2pointer(RecIm)
+    RecIm_ptr = float3Darray2pointer(RecIm)
     t.RecIm = RecIm_ptr
 
-    # interface with C function
     print('* In C...')
     recon.fbp(ct.byref(t))
 
-    # Convert ctypes 2D arrays to numpy arrays
-    RecA = double3dpointer2array(RecIm_ptr, *RecIm.shape)
+    print('* Converting the recon results from a C array to a numpy array...')
+    RecA = float3Dpointer2array(RecIm_ptr, *RecIm.shape)
     RecA = RecA[:,:,::-1]
 
 
@@ -220,7 +214,7 @@ def fdk_equiAngle(cfg, prep):
         plt.imshow(sliceToPlot, cmap='gray')
         plt.title("slice " + str(sliceIndexToPlot+1) + " of " + str(t.FOIHeight))
         sliceToPlot = sliceToPlot.copy(order='C')
-        fileName = "Slice" + str(sliceIndexToPlot+1) + "_" + str(t.FOILength) + "r" + str(t.FOIWidth) + "s1.raw"
+        fileName = cfg.resultsName + "_Slice" + str(sliceIndexToPlot+1) + "_" + str(t.FOILength) + "x" + str(t.FOIWidth) + "x1.raw"
         rawwrite(fileName, sliceToPlot)
 
     plt.draw()

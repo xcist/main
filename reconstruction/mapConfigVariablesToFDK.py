@@ -18,7 +18,7 @@ def mapConfigVariablesToFDK(cfg):
     sliceCount = cfg.recon.sliceCount
     sliceThickness = cfg.recon.sliceThickness
     centerOffset = cfg.recon.centerOffset
-    startAngle = cfg.recon.startAngle
+    startAngle = cfg.recon.startAngle + 180
     kernelType = cfg.recon.kernelType
 
     return sid, sdd, nRow, nCol, nMod, rowSize, colSize, modWidth, dectorYoffset, dectorZoffset, \
