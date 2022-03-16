@@ -66,7 +66,7 @@ def float3Darray2pointer(arr):
 
 def float3Dpointer2array(ptr, n, m, o):
     # Converts ctypes 3D array into a 3D numpy array.
-    arr = np.zeros(shape=(n, m, o))
+    arr = np.zeros(shape=(n, m, o), dtype=np.single)
 
     for i in range(n):
         for j in range(m):
@@ -205,7 +205,7 @@ def fdk_equiAngle(cfg, prep):
     t.GF = GF_ptr
 
     print('* Allocating a C array for the recon results...')
-    RecIm = np.zeros(shape=(t.FOILength, t.FOIWidth, t.FOIHeight))
+    RecIm = np.zeros(shape=(t.FOILength, t.FOIWidth, t.FOIHeight), dtype=np.single)
     RecIm_ptr = float3Darray2pointer(RecIm)
     t.RecIm = RecIm_ptr
 
