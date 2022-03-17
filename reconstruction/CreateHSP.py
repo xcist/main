@@ -1,3 +1,5 @@
+# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+
 import numpy as np
 import math
 import scipy.interpolate
@@ -9,6 +11,7 @@ def CreateHSP(Length, kernelType):
     Center = int((Length) / 2)
     PI = 3.14159265358979
     nn = Length
+    nn2 = nn * 2
 
     if kernelType == 'RL':
         HS[0] = 0
@@ -18,7 +21,6 @@ def CreateHSP(Length, kernelType):
 
         for k in range((Center + 1), Length):
             HS[k] = -np.power((math.sin(PI * (k - Center) / 2)), 2) / (PI * PI * (k - Center) * (k - Center))
-        nn2 = nn * 2
         k = int(nn / 2)
         TempF = np.zeros(nn2)
         TempF[0:k] = HS[k:nn]
@@ -30,7 +32,6 @@ def CreateHSP(Length, kernelType):
     elif kernelType == 'SL':
         for i in range(Length):
             HS[i] = -2 / (PI * PI * (4 * (i - Center) * (i - Center) - 1))
-        nn2 = nn * 2
         k = int(nn / 2)
         TempF = np.zeros(nn2)
         TempF[0:k] = HS[k:nn]
