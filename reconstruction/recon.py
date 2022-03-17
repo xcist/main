@@ -75,6 +75,7 @@ def saveSingleImages(cfg, imageVolume3D):
         sliceNumberString = 'slice' + str(sliceIndexToSave+1).zfill(3) + 'of' + str(cfg.recon.sliceCount).zfill(3)
         fileName = cfg.resultsName + '_' + sliceNumberString + '_' + imageVolume3D_size_string + '.raw'
         sliceToSave = imageVolume3D[:, :, sliceIndexToSave]
+        sliceToSave = sliceToSave.copy(order='C')
         rawwrite(fileName, sliceToSave)
 
 
