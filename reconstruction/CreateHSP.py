@@ -4,13 +4,13 @@ import scipy.interpolate
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 
-def CreateHSP(Length, index):
+def CreateHSP(Length, kernelType):
     HS = np.zeros(Length)
     Center = int((Length) / 2)
     PI = 3.14159265358979
     nn = Length
 
-    if index == 'RL':
+    if kernelType == 'RL':
         HS[0] = 0
         HS[Center] = 0.25
         for i in range(1, Center):
@@ -27,7 +27,7 @@ def CreateHSP(Length, index):
         FFT_F = np.fft.fft(HS)
 
 
-    elif index == 'SL':
+    elif kernelType == 'SL':
         for i in range(Length):
             HS[i] = -2 / (PI * PI * (4 * (i - Center) * (i - Center) - 1))
         nn2 = nn * 2
@@ -39,7 +39,7 @@ def CreateHSP(Length, index):
         FFT_F = np.fft.fft(HS)
 
 
-    elif index == 'Soft':
+    elif kernelType == 'Soft':
         x = np.array([0, 0.25, 0.5, 0.75, 1])
         y = np.array([1, 0.815, 0.4564, 0.1636, 0])
         # y = np.array([1, 1.0485, 1.17, 1.2202, 0.9201])
@@ -52,7 +52,7 @@ def CreateHSP(Length, index):
         FFT_F= FFT_F * complex(0,1)
 
 
-    elif index == 'Standard':
+    elif kernelType == 'Standard':
         x = np.array([0, 0.25, 0.5, 0.75, 1])
         # y = np.array([1, 0.815, 0.4564, 0.1636, 0])
         # y = np.array([1, 1.0485, 1.17, 1.2202, 0.9201])
@@ -65,7 +65,7 @@ def CreateHSP(Length, index):
         FFT_F = FFT_F * complex(0, 1)
 
 
-    elif index == 'Bone':
+    elif kernelType == 'Bone':
         x = np.array([0, 0.25, 0.5, 0.75, 1])
         # y = np.array([1, 0.815, 0.4564, 0.1636, 0])
         y = np.array([1, 1.0485, 1.17, 1.2202, 0.9201])
@@ -79,6 +79,6 @@ def CreateHSP(Length, index):
 
 
     else: 
-        print("Wrong Kernel type.")
+        print("An unsupported kernel was specified: {:s}.".format(kernelType))
 
     return FFT_F

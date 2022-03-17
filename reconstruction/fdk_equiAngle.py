@@ -216,32 +216,4 @@ def fdk_equiAngle(cfg, prep):
     RecA = float3Dpointer2array(RecIm_ptr, *RecIm.shape)
     RecA = RecA[:,:,::-1]
 
-
-    ##--------- Show results
-
-    if t.FOIHeight== 1:
-        sliceIndicesToPlot = [0]
-    elif t.FOIHeight<= 16:
-        sliceIndicesToPlot = range(0, t.FOIHeight)
-    else:
-        sliceIndicesToPlot = [0, 1, 2,
-                              int(t.FOIHeight/2), 
-                              t.FOIHeight-3, t.FOIHeight-2, t.FOIHeight-1]
-
-    for sliceIndexToPlot in sliceIndicesToPlot:
-        plt.figure(int(sliceIndexToPlot+1))
-        sliceToPlot = RecA[:, :, sliceIndexToPlot]
-        plt.imshow(sliceToPlot, cmap='gray')
-        plt.title("slice " + str(sliceIndexToPlot+1) + " of " + str(t.FOIHeight))
-        sliceToPlot = sliceToPlot.copy(order='C')
-        fileName = cfg.resultsName + "_Slice" + str(sliceIndexToPlot+1) + "_" + str(t.FOILength) + "x" + str(t.FOIWidth) + "x1.raw"
-        rawwrite(fileName, sliceToPlot)
-
-    plt.draw()
-    plt.pause(1)
-    print('*******************************************')
-    print('* Press Enter to close plots and continue *')
-    input('*******************************************')
-    plt.close('all')
-
     return RecA
