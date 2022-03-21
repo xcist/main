@@ -100,7 +100,7 @@ def fdk_equiAngle(cfg, prep):
     ZCtr = (ZL - 1) * 0.5
     DecHeight = rowSize*ZL
     
-    DeltaUW = DecFanAng/(YL-1)
+    DeltaUW = DecFanAng/ YL
     DeltaZ = DecHeight / ZL
     
     
@@ -121,7 +121,7 @@ def fdk_equiAngle(cfg, prep):
     nn2 = nn*2
     FFT_F = createHSP(nn, kernelType)
 
-    GF = Dg
+    GF = Dg/DeltaUW
 
     for ProjIndex in range(0, ProjScale):
         for j in range(ZL):
