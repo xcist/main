@@ -4,12 +4,9 @@ def mapConfigVariablesToFDK(cfg):
 
     sid = cfg.scanner.sid
     sdd = cfg.scanner.sdd
-    nRow = cfg.scanner.detectorRowsPerMod
-    nCol = cfg.scanner.detectorColsPerMod
-    nMod = ceil(cfg.scanner.detectorColCount/nCol)
+    nMod = ceil(cfg.scanner.detectorColCount/cfg.scanner.detectorColsPerMod)
     rowSize = cfg.scanner.detectorRowSize
-    colSize = cfg.scanner.detectorColSize
-    modWidth = cfg.scanner.detectorColsPerMod*colSize
+    modWidth = cfg.scanner.detectorColsPerMod*cfg.scanner.detectorColSize
     dectorYoffset = cfg.scanner.detectorColOffset
     dectorZoffset = cfg.scanner.detectorRowOffset
 
@@ -18,8 +15,18 @@ def mapConfigVariablesToFDK(cfg):
     sliceCount = cfg.recon.sliceCount
     sliceThickness = cfg.recon.sliceThickness
     centerOffset = cfg.recon.centerOffset
-    startAngle = cfg.recon.startAngle + 180
+
+    # The FDK recon seems to be using a "start view" rather than a "start angele".
+    # This is a hack until that gets fixed.
+    startView_at_view_angle_equals_0 = cfg.protocol.viewCount/2
+    if cfg.recon.startAngle <= 180:
+        startView = startView_at_view_angle_equals_0 + int(cfg.protocol.viewCount*cfg.recon.startAngle/360)
+    elif cfg.recon.startAngle > 180:
+        startView = startView_at_view_angle_equals_0 - int(cfg.protocol.viewCount*cfg.recon.startAngle/360)
+    else:
+        raise Exception('******** Error! Invalid start angle = {} specified: {:s}. ********'.format(cfg.recon.startAngle))
+
     kernelType = cfg.recon.kernelType
 
-    return sid, sdd, nRow, nCol, nMod, rowSize, colSize, modWidth, dectorYoffset, dectorZoffset, \
-           fov, imageSize, sliceCount, sliceThickness, centerOffset, startAngle, kernelType
+    return sid, sdd, nMod, rowSize, modWidth, dectorYoffset, dectorZoffset, \
+           fov, imageSize, sliceCount, sliceThickness, centerOffset, startView, kernelType
