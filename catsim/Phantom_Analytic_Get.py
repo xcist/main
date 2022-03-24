@@ -155,12 +155,12 @@ def Phantom_Analytic_Get(cfg):
         # Set the objects, and pass to C.
         objs['params'] = np.array(objs['params'])
         #objs['clip'] = np.array(objs['clip'])
-        phantObject = Phantom_Analytic_SetObjects(objs)
+        phantObject, numObjects, T, cumCP, NumCP, materialIndex, X, K, Q, Eta, S, D = Phantom_Analytic_SetObjects(objs)
         objs['params'] = Phantom_Analytic_ConvertTori(phantObject,objs['params'],objs['clip'])
         phantObject = Phantom_Analytic_BoundObjects(phantObject,objs['params'])
         print('... done with phantom.')
     
-    return phantObject, phobject
+    return phantObject, phobject, numObjects, T, cumCP, NumCP, materialIndex, X, K, Q, Eta, S, D
     
     
 def Rmat(p=None):

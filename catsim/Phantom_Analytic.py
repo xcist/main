@@ -38,21 +38,20 @@ def Phantom_Analytic(cfg):
     
     print("Starting to read ANALYTIC phantom...")
 
-    phobj, phobject = Phantom_Analytic_Get(cfg)
+    phobj, phobject, numObjects, T, cumCP, NumCP, materialIndex, X, K, Q, Eta, S, D = Phantom_Analytic_Get(cfg)
     #NumberOfMaterials = len(Materials)
 
     cfg.phantom.numberOfMaterials = len(phobject['materialList'])
     set_materials(cfg, phobject['materialList'])
     #TODO: need to read c source code to finish this part
-    #set_volume(cfg, phobj)
+    set_volume(cfg, numObjects, T, cumCP, NumCP, materialIndex, X, K, Q, Eta, S, D)
     set_detector(cfg)
-    set_source(cfg, phobj)
+    set_source(cfg)
 
     #print('Phantom contains {%d} materials'.format(NumberOfMaterials))
     print('... done reading phantom.')
     #return Materials,NumberOfMaterials
 
-    #should return cfg
     return cfg
 
 # TODO: need materialsList passed in here
@@ -70,20 +69,14 @@ def set_materials(cfg, materialList):
     fun(nMat, Evec.size, Mus)
     #breakpoint()
 
-#TODO: not done yet
-# what excatly does set_volume mean?
 # in C: void set_phantom_info(int numObjs, int *objType, int *clipStInd, int *nPlanes, int *matInd, double *objCent, double *shp, dou     ble *Qmat, double *clipNormVec, double *clipDist, double *den, int totalNumPlanes)
 # in matlabe: calllib(CatSimLib, 'set_phantom_info', numObjects, T, cumCP, NumCP, materialIndex, X, K, Q, Eta, S, D, cumCP_end);
-def set_volume(cfg, phobj):
+def set_volume(cfg, numObjects, T, cumCP, NumCP, materialIndex, X, K, Q, Eta, S, D):
     fun = cfg.clib.set_phantom_info
-    fun.argtypes = [POINTER(c_int), ndpointer(c_float), ndpointer(c_int), \
-        c_float, c_float, c_float, c_float, c_float, ndpointer(c_ubyte), c_int, c_int]
+    fun.argtypes = [c_int, ndpointer(c_int), ndpointer(c_int), ndpointer(c_int), ndpointer(c_int), ndpointer(c_double), ndpointer(c_double), ndpointer(c_double), ndpointer(c_double), ndpointer(c_double), ndpointer(c_double), c_int]
     fun.restype = None
     
-    Status = [0]
-    Status = (c_int*1)(*Status)
-    fun(Status, volumeData, volumeDims, \
-        offsets[0], offsets[1], offsets[2], voxelsize[0], voxelsize[2], xyMask, materialIndex, numberOfMaterials)
+    fun(numObjects, T, cumCP, NumCP, materialIndex, X, K, Q, Eta, S, D, cumCP[-1]);
 
 def set_source(cfg):
     SourceWeights = cfg.src.weights

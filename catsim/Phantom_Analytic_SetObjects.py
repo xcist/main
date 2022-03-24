@@ -193,7 +193,8 @@ def Phantom_Analytic_SetObjects(objs=None, debug=False):
     func.restype = None
     #breakpoint()
     func(numObjects, T, cumCP, NumCP, materialIndex, X, K, Q, Eta, S, D, cumCP[-1])
-    return phantObject
+    # we need to return T to cumCP back to Phantom_analytic so that we can set volumne correctly
+    return phantObject, numObjects, T, cumCP, NumCP, materialIndex, X, K, Q, Eta, S, D
     
 if __name__ == '__main__':
     from scipy import io as sio
