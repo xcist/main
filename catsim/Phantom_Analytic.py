@@ -70,6 +70,7 @@ def set_materials(cfg, materialList):
     fun(nMat, Evec.size, Mus)
     #breakpoint()
 
+#TODO: not done yet
 # what excatly does set_volume mean?
 # in C: void set_phantom_info(int numObjs, int *objType, int *clipStInd, int *nPlanes, int *matInd, double *objCent, double *shp, dou     ble *Qmat, double *clipNormVec, double *clipDist, double *den, int totalNumPlanes)
 # in matlabe: calllib(CatSimLib, 'set_phantom_info', numObjects, T, cumCP, NumCP, materialIndex, X, K, Q, Eta, S, D, cumCP_end);
