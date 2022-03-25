@@ -50,6 +50,9 @@ def scaleReconData(cfg, imageVolume3D):
         imageVolume3D = imageVolume3D
     elif cfg.recon.unit == '/cm':
         imageVolume3D = imageVolume3D*10
+    else:
+        raise Exception('******** Error! An recon unit was specified: {:s}. ********'.format(cfg.recon.unit))
+
 
     return imageVolume3D
 

@@ -5,7 +5,7 @@ import numpy as np
 import math
 import scipy.io as scio
 import matplotlib.pyplot as plt
-from reconstruction.CreateHSP import CreateHSP
+from reconstruction.createHSP import createHSP
 from reconstruction.mapConfigVariablesToFDK import mapConfigVariablesToFDK
 from catsim.CommonTools import *
 import scipy.interpolate
@@ -48,7 +48,6 @@ class TestStruct(ct.Structure):
                 ]
 
 
-
 def float3Darray2pointer(arr):
     # Converts a 3D numpy to ctypes 3D array.
     arr_dimx = FLOAT * arr.shape[2]
@@ -81,8 +80,8 @@ def float3Dpointer2array(ptr, n, m, o):
 def fdk_equiAngle(cfg, prep):
 
     # scanner & recon geometry
-    sid, sdd, nRow, nCol, nMod, rowSize, colSize, modWidth, dectorYoffset, dectorZoffset, \
-    fov, imageSize, sliceCount, sliceThickness, centerOffset, startAngle, kernelType      \
+    sid, sdd, nMod, rowSize, modWidth, dectorYoffset, dectorZoffset, \
+    fov, imageSize, sliceCount, sliceThickness, centerOffset, startView, kernelType      \
         = mapConfigVariablesToFDK(cfg)
 
     # initialize parameters
@@ -101,13 +100,13 @@ def fdk_equiAngle(cfg, prep):
     ZCtr = (ZL - 1) * 0.5
     DecHeight = rowSize*ZL
     
-    DeltaUW = DecFanAng/(YL-1)
+    DeltaUW = DecFanAng/ YL
     DeltaZ = DecHeight / ZL
     
     
     ############## pre-weighting for ramp-filter
 
-    print('* Building the filter...')
+    print('* Pre-weighting the filter...')
     for Yindex in range(YL):
         for zindex in range(ZL):
             Dgy[Yindex, zindex, :] = (DistD / np.sqrt(DistD ** 2 + ((zindex - ZCtr) * DeltaZ) ** 2)) * ProjData[Yindex,
@@ -120,9 +119,9 @@ def fdk_equiAngle(cfg, prep):
     print('* Applying the filter...')
     nn = int(math.pow(2, (math.ceil(math.log2(abs(YL))) + 1)))
     nn2 = nn*2
-    FFT_F = CreateHSP(nn, kernelType)
+    FFT_F = createHSP(nn, kernelType)
 
-    GF = Dg
+    GF = Dg/DeltaUW
 
     for ProjIndex in range(0, ProjScale):
         for j in range(ZL):
@@ -158,7 +157,7 @@ def fdk_equiAngle(cfg, prep):
     t.ScanR = ScanR
     t.DistD = DistD
     t.DecFanAng = DecFanAng
-    t.startangle = startAngle # Inconsistent C variable name - should be startAngle
+    t.startangle = startView # Inconsistent C variable name - should be startAngle. Also, this seems to be the start view, not angle.
     t.DecHeight = DecHeight
     t.YL = YL
     t.ZL = ZL
@@ -183,7 +182,7 @@ def fdk_equiAngle(cfg, prep):
     print('* SID: {} mm'.format(t.ScanR))
     print('* SDD: {} mm'.format(t.DistD))
     print('* Fan angle: {} degrees'.format(t.DecFanAng))
-    print('* Start angle: {} degrees'.format(t.startangle))
+    print('* Start view: {}'.format(t.startangle))
     print('* Number of detector cols: {}'.format(t.YL))
     print('* Number of detector rows: {}'.format(t.ZL))
     print('* Detector height: {} mm'.format(t.DecHeight))
