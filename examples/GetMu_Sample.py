@@ -9,7 +9,7 @@ Mu.append(GetMu('water', 70))
 Mu.append(GetMu('water', 70.0))
 Mu.append(GetMu('bone', (30, 50, 70)))
 Mu.append(GetMu('bone', [30, 50, 70]))
-Mu.append(GetMu('al', range(10, 60, 10)))
+Mu.append(GetMu('Al', range(10, 60, 10)))
 types = ['int', 'float', 'tuple', 'list', 'range']
 
 for mu in Mu:
