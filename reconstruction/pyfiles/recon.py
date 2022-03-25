@@ -15,19 +15,21 @@ def recon(cfg):
 
     # A hack until the previos line is fixed.
     imageVolume3D = fdk_equiAngle(cfg, prep)
+    imageVolume3D = scaleReconData(cfg, imageVolume3D)
 
-    if cfg.recon.saveImageVolume or cfg.recon.saveSingleImages:
-        imageVolume3D = scaleReconData(cfg, imageVolume3D)
-        if cfg.recon.saveImageVolume:
-            saveImageVolume(cfg, imageVolume3D)
-        if cfg.recon.saveSingleImages:
-            saveSingleImages(cfg, imageVolume3D)
+    if cfg.recon.saveImageVolume:
+        saveImageVolume(cfg, imageVolume3D)
+
+    if cfg.recon.saveSingleImages:
+        saveSingleImages(cfg, imageVolume3D)
 
     if cfg.recon.displayImagePictures:
-        displayImagePictures(cfg, imageVolume3D)
+        cfg = displayImagePictures(cfg, imageVolume3D)
 
     if cfg.recon.saveImagePictureFiles:
-        saveImagePictureFiles(cfg, imageVolume3D)
+        cfg = saveImagePictureFiles(cfg, imageVolume3D)
+
+    return cfg
 
      
 def load_prep(cfg):
@@ -84,43 +86,60 @@ def saveSingleImages(cfg, imageVolume3D):
 
 def displayImagePictures(cfg, imageVolume3D):
 
-    sliceIndicesToDisplay = range(0, cfg.recon.sliceCount)
-    for sliceIndexToDisplay in sliceIndicesToDisplay:
-        sliceToDisplay = imageVolume3D[:, :, sliceIndexToDisplay]
-        sliceToDisplay = sliceToDisplay.copy(order='C')
-        plt.figure(int(sliceIndexToDisplay+1))
-        plt.imshow(sliceToDisplay, cmap='gray')
-        # plt.title("slice " + str(sliceIndexToDisplay+1) + " of " + str(cfg.recon.sliceCount))
-        spectrumString = "cfg.physics.monochromatic = {};".format(cfg.physics.monochromatic)
-        eNoiseString = "cfg.physics.enableElectronicNoise = {};".format(cfg.physics.enableElectronicNoise)
-        qNoiseString = "cfg.physics.enableQuantumNoise = {}; cfg.protocol.mA = {}".format(cfg.physics.enableQuantumNoise, cfg.protocol.mA)
-        plt.title(spectrumString + "\n" + eNoiseString + "\n" + qNoiseString, fontsize=10)
-        
-    plt.draw()
-    plt.pause(1)
-    if cfg.waitForKeypress:
-        print('********************************************')
-        print('* Press Enter to close images and continue *')
-        input('********************************************')
-    plt.close('all')
+    cfg = drawImages('screen', cfg, imageVolume3D)
+    
+    return cfg
 
 
 def saveImagePictureFiles(cfg, imageVolume3D):
 
     print('* Saving the recon results to individual .png files...')
 
-    sliceIndicesToSave = range(0, cfg.recon.sliceCount)
-    for sliceIndexToSave in sliceIndicesToSave:
-        sliceToSave = imageVolume3D[:, :, sliceIndexToSave]
-        sliceToSave = sliceToSave.copy(order='C')
-        sliceNumberString = 'slice' + str(sliceIndexToSave+1).zfill(3) + 'of' + str(cfg.recon.sliceCount).zfill(3)
+    cfg = drawImages('file', cfg, imageVolume3D)
+    
+    return cfg
+
+def drawImages(drawTo, cfg, imageVolume3D):
+
+    sliceIndicesToDraw = range(0, cfg.recon.sliceCount)
+
+    if hasattr(cfg, 'vmin') and hasattr(cfg, 'vmax'):
+        # If vmin and vmax are passed in, use them.
+        vmin = cfg.vmin
+        vmax = cfg.vmax
+    else:
+        # Otherwise, find vmin and vmax.
+        vmin = np.min(imageVolume3D)
+        vmax = np.max(imageVolume3D)
+      
+    for sliceIndexToDraw in sliceIndicesToDraw:
+        sliceToDraw = imageVolume3D[:, :, sliceIndexToDraw]
+        sliceToDraw = sliceToDraw.copy(order='C')
+        sliceNumberString = 'slice' + str(sliceIndexToDraw+1).zfill(3) + 'of' + str(cfg.recon.sliceCount).zfill(3)
         fileName = cfg.resultsName + '_' + sliceNumberString + '.png'
-        plt.figure  
-        plt.imshow(sliceToSave, cmap='gray')
-        sliceString = "slice " + str(sliceIndexToSave+1) + " of " + str(cfg.recon.sliceCount) + "\n"
-        spectrumString = "cfg.physics.monochromatic = {};".format(cfg.physics.monochromatic)
-        eNoiseString = "cfg.physics.enableElectronicNoise = {};".format(cfg.physics.enableElectronicNoise)
-        qNoiseString = "cfg.physics.enableQuantumNoise = {}; cfg.protocol.mA = {}".format(cfg.physics.enableQuantumNoise, cfg.protocol.mA)
-        plt.title(spectrumString + "\n" + eNoiseString + "\n" + qNoiseString, fontsize=10)
-        plt.savefig(fileName, bbox_inches='tight')
-        plt.close()
+        plt.figure(int(sliceIndexToDraw+1))
+        plt.imshow(sliceToDraw, cmap='gray', vmin=vmin, vmax=vmax)
+        sliceString = "slice " + str(sliceIndexToDraw+1) + " of " + str(cfg.recon.sliceCount) + "\n"
+        string1 = "vmin = {:.3f}; vmax = {:.3f}; cfg.physics.monochromatic = {};".format(vmin, vmax, cfg.physics.monochromatic)
+        string2 = "cfg.physics.enableElectronicNoise = {}; cfg.protocol.spectrumScaling = {};".format(cfg.physics.enableElectronicNoise, cfg.protocol.spectrumScaling)
+        string3 = "cfg.physics.enableQuantumNoise = {}; cfg.protocol.mA = {}".format(cfg.physics.enableQuantumNoise, cfg.protocol.mA)
+        plt.title(string1 + "\n" + string2 + "\n" + string3, fontsize=10)
+
+        if drawTo == 'file':
+            plt.savefig(fileName, bbox_inches='tight')
+            plt.close()
+        elif drawTo == 'screen':
+            plt.draw()
+            
+    if drawTo == 'screen':
+        plt.pause(1)
+        if cfg.waitForKeypress:
+            print('********************************************')
+            print('* Press Enter to close images and continue *')
+            input('********************************************')
+        plt.close('all')
+
+    cfg.vmin = vmin
+    cfg.vmax = vmax
+    
+    return cfg
