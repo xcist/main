@@ -3,7 +3,7 @@
 from catsim.CommonTools import *
 import matplotlib.pyplot as plt
 # Need to import new recons as they are added
-from reconstruction.fdk_equiAngle import fdk_equiAngle
+from reconstruction.pyfiles.fdk_equiAngle import fdk_equiAngle
 
 
 def recon(cfg):
@@ -11,7 +11,7 @@ def recon(cfg):
     prep = load_prep(cfg)
 
     # The following line doesn't work - need to fix it when new recons are added.
-    # imageVolume3D = feval('reconstruction.' + cfg.recon.reconType, cfg, prep)
+    # imageVolume3D = feval("reconstruction." + cfg.recon.reconType, cfg, prep)
 
     # A hack until the previos line is fixed.
     imageVolume3D = fdk_equiAngle(cfg, prep)
@@ -32,8 +32,8 @@ def recon(cfg):
      
 def load_prep(cfg):
 
-    print('* Loading the projection data...')
-    prep = rawread(cfg.resultsName + '.prep',
+    print("* Loading the projection data...")
+    prep = rawread(cfg.resultsName + ".prep",
                   [cfg.protocol.viewCount, cfg.scanner.detectorRowCount, cfg.scanner.detectorColCount],
                   'float')
                   
@@ -51,7 +51,7 @@ def scaleReconData(cfg, imageVolume3D):
     elif cfg.recon.unit == '/cm':
         imageVolume3D = imageVolume3D*10
     else:
-        raise Exception('******** Error! An recon unit was specified: {:s}. ********'.format(cfg.recon.unit))
+        raise Exception('******** Error! An unsupported recon unit was specified: {:s}. ********'.format(cfg.recon.unit))
 
 
     return imageVolume3D
@@ -90,13 +90,18 @@ def displayImagePictures(cfg, imageVolume3D):
         sliceToDisplay = sliceToDisplay.copy(order='C')
         plt.figure(int(sliceIndexToDisplay+1))
         plt.imshow(sliceToDisplay, cmap='gray')
-        plt.title("slice " + str(sliceIndexToDisplay+1) + " of " + str(cfg.recon.sliceCount))
-
+        # plt.title("slice " + str(sliceIndexToDisplay+1) + " of " + str(cfg.recon.sliceCount))
+        spectrumString = "cfg.physics.monochromatic = {};".format(cfg.physics.monochromatic)
+        eNoiseString = "cfg.physics.enableElectronicNoise = {};".format(cfg.physics.enableElectronicNoise)
+        qNoiseString = "cfg.physics.enableQuantumNoise = {}; cfg.protocol.mA = {}".format(cfg.physics.enableQuantumNoise, cfg.protocol.mA)
+        plt.title(spectrumString + "\n" + eNoiseString + "\n" + qNoiseString, fontsize=10)
+        
     plt.draw()
     plt.pause(1)
-    print('********************************************')
-    print('* Press Enter to close images and continue *')
-    input('********************************************')
+    if cfg.waitForKeypress:
+        print('********************************************')
+        print('* Press Enter to close images and continue *')
+        input('********************************************')
     plt.close('all')
 
 
@@ -112,6 +117,10 @@ def saveImagePictureFiles(cfg, imageVolume3D):
         fileName = cfg.resultsName + '_' + sliceNumberString + '.png'
         plt.figure  
         plt.imshow(sliceToSave, cmap='gray')
-        plt.title("slice " + str(sliceIndexToSave+1) + " of " + str(cfg.recon.sliceCount))
+        sliceString = "slice " + str(sliceIndexToSave+1) + " of " + str(cfg.recon.sliceCount) + "\n"
+        spectrumString = "cfg.physics.monochromatic = {};".format(cfg.physics.monochromatic)
+        eNoiseString = "cfg.physics.enableElectronicNoise = {};".format(cfg.physics.enableElectronicNoise)
+        qNoiseString = "cfg.physics.enableQuantumNoise = {}; cfg.protocol.mA = {}".format(cfg.physics.enableQuantumNoise, cfg.protocol.mA)
+        plt.title(spectrumString + "\n" + eNoiseString + "\n" + qNoiseString, fontsize=10)
         plt.savefig(fileName, bbox_inches='tight')
         plt.close()

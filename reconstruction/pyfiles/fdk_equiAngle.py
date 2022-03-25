@@ -5,8 +5,8 @@ import numpy as np
 import math
 import scipy.io as scio
 import matplotlib.pyplot as plt
-from reconstruction.createHSP import createHSP
-from reconstruction.mapConfigVariablesToFDK import mapConfigVariablesToFDK
+from reconstruction.pyfiles.createHSP import createHSP
+from reconstruction.pyfiles.mapConfigVariablesToFDK import mapConfigVariablesToFDK
 from catsim.CommonTools import *
 import scipy.interpolate
 from scipy.interpolate import interp1d
@@ -77,6 +77,27 @@ def float3Dpointer2array(ptr, n, m, o):
     return arr
 
 
+def load_C_recon_lib():
+    
+    myPath = get_path()
+
+    # add recon lib path to environment value "PATH" for depending DLLs
+    pathParts = os.path.split(myPath.main)
+    myPath.reconlib = pathParts[0] + "/reconstruction/lib"
+    if not myPath.reconlib in os.environ["PATH"]:
+        os.environ["PATH"] = myPath.reconlib + ";" + os.environ["PATH"]
+
+    # load C/C++ lib
+    ll = ctypes.cdll.LoadLibrary
+    if os.name == "nt":
+        libFile = "fdk_equiAngle.dll"
+    else:
+        libFile = "fdk_equiAngle.so"
+    clib = ll(myPath.reconlib + "/" + libFile)
+    
+    return clib
+
+
 def fdk_equiAngle(cfg, prep):
 
     # scanner & recon geometry
@@ -106,7 +127,7 @@ def fdk_equiAngle(cfg, prep):
     
     ############## pre-weighting for ramp-filter
 
-    print('* Pre-weighting the filter...')
+    print("* Pre-weighting the filter...")
     for Yindex in range(YL):
         for zindex in range(ZL):
             Dgy[Yindex, zindex, :] = (DistD / np.sqrt(DistD ** 2 + ((zindex - ZCtr) * DeltaZ) ** 2)) * ProjData[Yindex,
@@ -116,7 +137,7 @@ def fdk_equiAngle(cfg, prep):
 
     ############## filtering
 
-    print('* Applying the filter...')
+    print("* Applying the filter...")
     nn = int(math.pow(2, (math.ceil(math.log2(abs(YL))) + 1)))
     nn2 = nn*2
     FFT_F = createHSP(nn, kernelType)
@@ -141,9 +162,9 @@ def fdk_equiAngle(cfg, prep):
 
     ############## FBP
  
-    print('* Running the reconstruction...')
+    print("* Running the reconstruction...")
     # Load the compiled library
-    recon = ct.CDLL("C:/Users/200003237/Documents/GitHub/CatSim/reconstruction/lib/fdk_equiAngle.dll")
+    recon = load_C_recon_lib()
 
     # Define arguments of the C function
     recon.fbp.argtypes = [ct.POINTER(TestStruct)]
@@ -178,42 +199,42 @@ def fdk_equiAngle(cfg, prep):
     t.YOffSet = centerOffset[1]
     t.ZOffSet = centerOffset[2]
 
-    print('* Reconstruction parameters:')
-    print('* SID: {} mm'.format(t.ScanR))
-    print('* SDD: {} mm'.format(t.DistD))
-    print('* Fan angle: {} degrees'.format(t.DecFanAng))
-    print('* Start view: {}'.format(t.startangle))
-    print('* Number of detector cols: {}'.format(t.YL))
-    print('* Number of detector rows: {}'.format(t.ZL))
-    print('* Detector height: {} mm'.format(t.DecHeight))
-    print('* Detector X offset: {} mm'.format(t.dectorYoffset))
-    print('* Detector Z offset: {} mm'.format(t.dectorZoffset))
-    print('* Scan number of views: {} '.format(t.AngleNumber))
-    print('* Recon FOV: {} mm'.format(2*t.Radius))
-    print('* Recon XY pixel size: {} mm'.format(t.RecSize))
-    print('* Recon Slice thickness: {} mm'.format(t.sliceThickness))
-    print('* Recon XY: {} pixels'.format(t.FOIWidth))
-    print('* Recon Z: {} slices'.format(t.FOIHeight))
-    print('* Recon X center: {} pixels'.format(t.centerX))
-    print('* Recon Y center: {} pixels'.format(t.centerY))
-    print('* Recon Z center: {} slices'.format(t.centerZ))
-    print('* Recon X offset: {} mm'.format(t.XOffSet))
-    print('* Recon Y offset: {} mm'.format(t.YOffSet))
-    print('* Recon Z offset: {} mm'.format(t.ZOffSet))
+    print("* Reconstruction parameters:")
+    print("* SID: {} mm".format(t.ScanR))
+    print("* SDD: {} mm".format(t.DistD))
+    print("* Fan angle: {} degrees".format(t.DecFanAng))
+    print("* Start view: {}".format(t.startangle))
+    print("* Number of detector cols: {}".format(t.YL))
+    print("* Number of detector rows: {}".format(t.ZL))
+    print("* Detector height: {} mm".format(t.DecHeight))
+    print("* Detector X offset: {} mm".format(t.dectorYoffset))
+    print("* Detector Z offset: {} mm".format(t.dectorZoffset))
+    print("* Scan number of views: {} ".format(t.AngleNumber))
+    print("* Recon FOV: {} mm".format(2*t.Radius))
+    print("* Recon XY pixel size: {} mm".format(t.RecSize))
+    print("* Recon Slice thickness: {} mm".format(t.sliceThickness))
+    print("* Recon XY: {} pixels".format(t.FOIWidth))
+    print("* Recon Z: {} slices".format(t.FOIHeight))
+    print("* Recon X center: {} pixels".format(t.centerX))
+    print("* Recon Y center: {} pixels".format(t.centerY))
+    print("* Recon Z center: {} slices".format(t.centerZ))
+    print("* Recon X offset: {} mm".format(t.XOffSet))
+    print("* Recon Y offset: {} mm".format(t.YOffSet))
+    print("* Recon Z offset: {} mm".format(t.ZOffSet))
 
-    print('* Converting projection data from a numpy array to a C array...')
+    print("* Converting projection data from a numpy array to a C array...")
     GF_ptr = float3Darray2pointer(GF)
     t.GF = GF_ptr
 
-    print('* Allocating a C array for the recon results...')
+    print("* Allocating a C array for the recon results...")
     RecIm = np.zeros(shape=(t.FOILength, t.FOIWidth, t.FOIHeight), dtype=np.single)
     RecIm_ptr = float3Darray2pointer(RecIm)
     t.RecIm = RecIm_ptr
 
-    print('* In C...')
+    print("* In C...")
     recon.fbp(ct.byref(t))
 
-    print('* Converting the recon results from a C array to a numpy array...')
+    print("* Converting the recon results from a C array to a numpy array...")
     RecA = float3Dpointer2array(RecIm_ptr, *RecIm.shape)
     RecA = RecA[:,:,::-1]
 

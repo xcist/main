@@ -13,7 +13,7 @@ def createHSP(Length, kernelType):
     nn = Length
     nn2 = nn * 2
 
-    if kernelType == 'R-L':
+    if kernelType == "R-L":
         HS[0] = 0
         HS[Center] = 0.25
         for i in range(1, Center):
@@ -28,7 +28,7 @@ def createHSP(Length, kernelType):
         HS = TempF * complex(0, 1)
         FFT_F = np.fft.fft(HS)
 
-    elif kernelType == 'S-L':
+    elif kernelType == "S-L":
         for i in range(Length):
             HS[i] = -2 / (PI * PI * (4 * (i - Center) * (i - Center) - 1))
         k = int(nn / 2)
@@ -38,7 +38,7 @@ def createHSP(Length, kernelType):
         HS = TempF * complex(0, 1)
         FFT_F = np.fft.fft(HS)
 
-    elif kernelType == 'Soft':
+    elif kernelType == "Soft":
         x = np.array([0, 0.25, 0.5, 0.75, 1])
         y = np.array([1, 0.815, 0.4564, 0.1636, 0])
         # y = np.array([1, 1.0485, 1.17, 1.2202, 0.9201])
@@ -50,7 +50,7 @@ def createHSP(Length, kernelType):
             FFT_F[nn2 - i - 1] = f((i)/nn)* 0.997*(i + 1 + 0.003) / nn2
         FFT_F= FFT_F * complex(0,1)
 
-    elif kernelType == 'Standard':
+    elif kernelType == "Standard":
         x = np.array([0, 0.25, 0.5, 0.75, 1])
         # y = np.array([1, 0.815, 0.4564, 0.1636, 0])
         # y = np.array([1, 1.0485, 1.17, 1.2202, 0.9201])
@@ -62,7 +62,7 @@ def createHSP(Length, kernelType):
             FFT_F[nn2 - i - 1] = f((i) / nn) * 0.997 * (i + 1 + 0.003) / nn2
         FFT_F = FFT_F * complex(0, 1)
 
-    elif kernelType == 'Bone':
+    elif kernelType == "Bone":
         x = np.array([0, 0.25, 0.5, 0.75, 1])
         # y = np.array([1, 0.815, 0.4564, 0.1636, 0])
         y = np.array([1, 1.0485, 1.17, 1.2202, 0.9201])
@@ -75,6 +75,6 @@ def createHSP(Length, kernelType):
         FFT_F = FFT_F * complex(0, 1)
 
     else: 
-        raise Exception('******** Error! An unsupported kernel was specified: {:s}. ********'.format(kernelType))
+        raise Exception("******** Error! An unsupported kernel was specified: {:s}. ********".format(kernelType))
 
     return FFT_F
