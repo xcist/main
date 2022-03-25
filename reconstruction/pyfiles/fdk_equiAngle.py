@@ -37,9 +37,9 @@ class TestStruct(ct.Structure):
                 ("Radius", ct.c_float),        # Radius of the phantom
                 ("RecSize", ct.c_int),          # Reconstructed size
                 ("sliceThickness", ct.c_float),   # Reconstructed thickness
-                ("centerX", ct.c_float),          # Reconstructed center on x axis
-                ("centerY", ct.c_float),          # Reconstructed center on y axis
-                ("centerZ", ct.c_float),          # Reconstructed center on z axis
+#                 ("centerX", ct.c_float),          # Reconstructed center on x axis
+#                 ("centerY", ct.c_float),          # Reconstructed center on y axis
+#                 ("centerZ", ct.c_float),          # Reconstructed center on z axis
                 ("FOILength", ct.c_int),        # Reconstructed length on x axis
                 ("FOIWidth", ct.c_int),         # Reconstructed length on y axis
                 ("FOIHeight", ct.c_int),         # Reconstructed length on z axis
@@ -192,9 +192,9 @@ def fdk_equiAngle(cfg, prep):
     t.FOILength = imageSize
     t.FOIWidth = imageSize
     t.FOIHeight = sliceCount
-    t.centerX = (t.RecSize - 1)*0.5
-    t.centerY = (t.RecSize - 1)*0.5
-    t.centerZ = (t.FOIHeight - 1)*0.5
+#     t.centerX = (t.RecSize - 1)*0.5
+#     t.centerY = (t.RecSize - 1)*0.5
+#     t.centerZ = (t.FOIHeight - 1)*0.5
     t.XOffSet = centerOffset[0]
     t.YOffSet = centerOffset[1]
     t.ZOffSet = centerOffset[2]
