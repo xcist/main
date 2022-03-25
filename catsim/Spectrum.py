@@ -30,6 +30,15 @@ def Spectrum(cfg):
         return cfg
     
     ###------------- polychromatic
+    # Rescale to match CatSim's unit
+    # Spectrum is in unit: photons/sec/<area>/<current> at 1-m distance
+    # CatSim uses mm and mA, but some spectrum files use cm or A
+    if not cfg.protocol.spectrumUnit_mm:
+        specScale *= 1e-2
+    if not cfg.protocol.spectrumUnit_mA:
+        specScale *= 1e-3
+    
+    # Read spectrum file
     if not os.path.isfile(cfg.protocol.spectrumFilename):
         myPath = get_path()
         cfg.protocol.spectrumFilename = myPath.spectrum+'/'+cfg.protocol.spectrumFilename
