@@ -26,16 +26,15 @@ def prep_view(cfg):
         offsetScan = nm.repmat(offsetScan, cfg.protocol.viewCount, 1)
     prep = (phantomScan-offsetScan)/(airscan-offsetScan)
     
-    smallValue = 6.1442124e-06  # exp(-12)
-    prep[prep<smallValue] = smallValue
+    smallValue = 6.1442124e-06  # exp(-12) 
+    prep[prep<smallValue] = smallValue # limits mu values to 12
     prep = -np.log(prep)
     
     ###--------- post-log
-    # a simple low signal correction
+    # a simple low signal correction, further limiting mu values if desired
     if cfg.protocol.maxPrep>0:
         prep[prep>cfg.protocol.maxPrep] = cfg.protocol.maxPrep
-    
-    
+        
     ###--------- save prep
     fname = cfg.resultsName + '.prep'
     rawwrite(fname, prep)

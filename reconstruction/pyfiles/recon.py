@@ -13,7 +13,7 @@ def recon(cfg):
     # The following line doesn't work - need to fix it when new recons are added.
     # imageVolume3D = feval("reconstruction." + cfg.recon.reconType, cfg, prep)
 
-    # A hack until the previos line is fixed.
+    # A hack until the previous line is fixed.
     imageVolume3D = fdk_equiAngle(cfg, prep)
     imageVolume3D = scaleReconData(cfg, imageVolume3D)
 
@@ -103,14 +103,17 @@ def drawImages(drawTo, cfg, imageVolume3D):
 
     sliceIndicesToDraw = range(0, cfg.recon.sliceCount)
 
-    if hasattr(cfg, 'vmin') and hasattr(cfg, 'vmax'):
-        # If vmin and vmax are passed in, use them.
-        vmin = cfg.vmin
-        vmax = cfg.vmax
+    if hasattr(cfg, 'displayWindowMin') and hasattr(cfg, 'displayWindowMax'):
+        # If displayWindowMin and displayWindowMax are passed in, use them.
+        displayWindowMin = cfg.displayWindowMin
+        displayWindowMax = cfg.displayWindowMax
     else:
-        # Otherwise, find vmin and vmax.
-        vmin = np.min(imageVolume3D)
-        vmax = np.max(imageVolume3D)
+        # Otherwise, find displayWindowMin and displayWindowMax.
+        displayWindowMin = np.min(imageVolume3D)
+        displayWindowMax = np.max(imageVolume3D)
+
+    displayWindow = displayWindowMax - displayWindowMin
+    displayLevel = displayWindow/2
       
     for sliceIndexToDraw in sliceIndicesToDraw:
         sliceToDraw = imageVolume3D[:, :, sliceIndexToDraw]
@@ -118,9 +121,15 @@ def drawImages(drawTo, cfg, imageVolume3D):
         sliceNumberString = 'slice' + str(sliceIndexToDraw+1).zfill(3) + 'of' + str(cfg.recon.sliceCount).zfill(3)
         fileName = cfg.resultsName + '_' + sliceNumberString + '.png'
         plt.figure(int(sliceIndexToDraw+1))
-        plt.imshow(sliceToDraw, cmap='gray', vmin=vmin, vmax=vmax)
+        plt.imshow(sliceToDraw, cmap='gray', vmin=displayWindowMin, vmax=displayWindowMax)
         sliceString = "slice " + str(sliceIndexToDraw+1) + " of " + str(cfg.recon.sliceCount) + "\n"
-        string1 = "vmin = {:.3f}; vmax = {:.3f}; cfg.physics.monochromatic = {};".format(vmin, vmax, cfg.physics.monochromatic)
+        if cfg.recon.unit == 'HU':
+            formatString = "W/L = {}/{} {:s}; cfg.physics.monochromatic = {};"
+        if cfg.recon.unit == '/cm':
+            formatString = "W/L = {}/{} {:s}; cfg.physics.monochromatic = {};"
+        if cfg.recon.unit == '/mm':
+            formatString = "W/L = {}/{} {:s}; cfg.physics.monochromatic = {};"
+        string1 = formatString.format(displayWindow, displayLevel, cfg.recon.unit, cfg.physics.monochromatic)
         string2 = "cfg.physics.enableElectronicNoise = {}; cfg.protocol.spectrumScaling = {};".format(cfg.physics.enableElectronicNoise, cfg.protocol.spectrumScaling)
         string3 = "cfg.physics.enableQuantumNoise = {}; cfg.protocol.mA = {}".format(cfg.physics.enableQuantumNoise, cfg.protocol.mA)
         plt.title(string1 + "\n" + string2 + "\n" + string3, fontsize=10)
@@ -139,7 +148,7 @@ def drawImages(drawTo, cfg, imageVolume3D):
             input('********************************************')
         plt.close('all')
 
-    cfg.vmin = vmin
-    cfg.vmax = vmax
+    cfg.displayWindowMin = displayWindowMin
+    cfg.displayWindowMax = displayWindowMax
     
     return cfg
