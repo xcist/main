@@ -124,11 +124,17 @@ def drawImages(drawTo, cfg, imageVolume3D):
         plt.imshow(sliceToDraw, cmap='gray', vmin=displayWindowMin, vmax=displayWindowMax)
         sliceString = "slice " + str(sliceIndexToDraw+1) + " of " + str(cfg.recon.sliceCount) + "\n"
         if cfg.recon.unit == 'HU':
-            formatString = "W/L = {}/{} {:s}; cfg.physics.monochromatic = {};"
+            formatString = "W/L = {:.0f}/{:.0f} {:s}; cfg.physics.monochromatic = {};"
         if cfg.recon.unit == '/cm':
-            formatString = "W/L = {}/{} {:s}; cfg.physics.monochromatic = {};"
+            formatString = "W/L = {:.2f}/{:.2f} {:s}; cfg.physics.monochromatic = {};"
         if cfg.recon.unit == '/mm':
-            formatString = "W/L = {}/{} {:s}; cfg.physics.monochromatic = {};"
+            formatString = "W/L = {:.3f}/{:.3f} {:s}; cfg.physics.monochromatic = {};"
+        # if cfg.recon.unit == 'HU':
+        #     formatString = "W/L = {}/{} {:s}; cfg.physics.monochromatic = {};"
+        # if cfg.recon.unit == '/cm':
+        #     formatString = "W/L = {}/{} {:s}; cfg.physics.monochromatic = {};"
+        # if cfg.recon.unit == '/mm':
+        #     formatString = "W/L = {}/{} {:s}; cfg.physics.monochromatic = {};"
         string1 = formatString.format(displayWindow, displayLevel, cfg.recon.unit, cfg.physics.monochromatic)
         string2 = "cfg.physics.enableElectronicNoise = {}; cfg.protocol.spectrumScaling = {};".format(cfg.physics.enableElectronicNoise, cfg.protocol.spectrumScaling)
         string3 = "cfg.physics.enableQuantumNoise = {}; cfg.protocol.mA = {}".format(cfg.physics.enableQuantumNoise, cfg.protocol.mA)
