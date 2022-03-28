@@ -142,7 +142,7 @@ def fdk_equiAngle(cfg, prep):
     nn2 = nn*2
     FFT_F = createHSP(nn, kernelType)
 
-    GF = Dg/DeltaUW
+    GF = Dg
 
     for ProjIndex in range(0, ProjScale):
         for j in range(ZL):
@@ -153,7 +153,9 @@ def fdk_equiAngle(cfg, prep):
             TempData = np.fft.ifft(FFT_S * FFT_F).imag
             for k in range(YL):
                 GF[k, j, ProjIndex] = -TempData[k]
-
+    
+    GF = GF/DeltaUW
+    
     # special case when ZL is 1
     if ZL == 1:
         GF = np.append(GF, GF, axis=1)
