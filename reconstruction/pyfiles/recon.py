@@ -113,7 +113,7 @@ def drawImages(drawTo, cfg, imageVolume3D):
         displayWindowMax = np.max(imageVolume3D)
 
     displayWindow = displayWindowMax - displayWindowMin
-    displayLevel = displayWindow/2
+    displayLevel = (displayWindowMax + displayWindowMin)/2
       
     for sliceIndexToDraw in sliceIndicesToDraw:
         sliceToDraw = imageVolume3D[:, :, sliceIndexToDraw]
@@ -123,22 +123,41 @@ def drawImages(drawTo, cfg, imageVolume3D):
         plt.figure(int(sliceIndexToDraw+1))
         plt.imshow(sliceToDraw, cmap='gray', vmin=displayWindowMin, vmax=displayWindowMax)
         sliceString = "slice " + str(sliceIndexToDraw+1) + " of " + str(cfg.recon.sliceCount) + "\n"
-        if cfg.recon.unit == 'HU':
-            formatString = "W/L = {:.0f}/{:.0f} {:s}; cfg.physics.monochromatic = {};"
-        if cfg.recon.unit == '/cm':
-            formatString = "W/L = {:.2f}/{:.2f} {:s}; cfg.physics.monochromatic = {};"
-        if cfg.recon.unit == '/mm':
-            formatString = "W/L = {:.3f}/{:.3f} {:s}; cfg.physics.monochromatic = {};"
-        # if cfg.recon.unit == 'HU':
-        #     formatString = "W/L = {}/{} {:s}; cfg.physics.monochromatic = {};"
-        # if cfg.recon.unit == '/cm':
-        #     formatString = "W/L = {}/{} {:s}; cfg.physics.monochromatic = {};"
-        # if cfg.recon.unit == '/mm':
-        #     formatString = "W/L = {}/{} {:s}; cfg.physics.monochromatic = {};"
-        string1 = formatString.format(displayWindow, displayLevel, cfg.recon.unit, cfg.physics.monochromatic)
-        string2 = "cfg.physics.enableElectronicNoise = {}; cfg.protocol.spectrumScaling = {};".format(cfg.physics.enableElectronicNoise, cfg.protocol.spectrumScaling)
-        string3 = "cfg.physics.enableQuantumNoise = {}; cfg.protocol.mA = {}".format(cfg.physics.enableQuantumNoise, cfg.protocol.mA)
-        plt.title(string1 + "\n" + string2 + "\n" + string3, fontsize=10)
+        if cfg.experimentName == "Baseline"                       \
+        or cfg.experimentName == "Physics_eNoiseOn"               \
+        or cfg.experimentName == "Physics_qNoiseOn"               \
+        or cfg.experimentName == "Physics_NoiseOn"                \
+        or cfg.experimentName == "Physics_1ebin"                  \
+        or cfg.experimentName == "Physics_eNoiseOn_1ebin"         \
+        or cfg.experimentName == "Physics_qNoiseOn_1ebin"         \
+        or cfg.experimentName == "Physics_NoiseOn_1ebin"          \
+        or cfg.experimentName == "Physics_Monoenergetic"          \
+        or cfg.experimentName == "Physics_eNoiseOn_Monoenergetic" \
+        or cfg.experimentName == "Physics_qNoiseOn_Monoenergetic" \
+        or cfg.experimentName == "Physics_NoiseOn_Monoenergetic":
+            if cfg.recon.unit == 'HU':
+                formatString = "W/L = {:.0f}/{:.0f} {:s}; cfg.physics.monochromatic = {};"
+            if cfg.recon.unit == '/cm':
+                formatString = "W/L = {:.2f}/{:.2f} {:s}; cfg.physics.monochromatic = {};"
+            if cfg.recon.unit == '/mm':
+                formatString = "W/L = {:.3f}/{:.3f} {:s}; cfg.physics.monochromatic = {};"
+            string1 = formatString.format(displayWindow, displayLevel, cfg.recon.unit, cfg.physics.monochromatic)
+            string2 = "cfg.physics.enableElectronicNoise = {}; cfg.protocol.spectrumScaling = {};".format(cfg.physics.enableElectronicNoise, cfg.protocol.spectrumScaling)
+            string3 = "cfg.physics.enableQuantumNoise = {}; cfg.protocol.mA = {}".format(cfg.physics.enableQuantumNoise, cfg.protocol.mA)
+            plt.title(string1 + "\n" + string2 + "\n" + string3, fontsize=10)
+        if cfg.experimentName == "Physics_NoiseOn_Recon_128mmFOV_R-LKernel"      \
+        or cfg.experimentName == "Physics_NoiseOn_Recon_128mmFOV_S-LKernel"      \
+        or cfg.experimentName == "Physics_NoiseOn_Recon_128mmFOV_SoftKernel"     \
+        or cfg.experimentName == "Physics_NoiseOn_Recon_128mmFOV_StandardKernel" \
+        or cfg.experimentName == "Physics_NoiseOn_Recon_128mmFOV_BoneKernel":
+            if cfg.recon.unit == 'HU':
+                formatString = "W/L = {:.0f}/{:.0f} {:s}; cfg.recon.kernelType = {:s}"
+            if cfg.recon.unit == '/cm':
+                formatString = "W/L = {:.2f}/{:.2f} {:s}; cfg.recon.kernelType = {:s}"
+            if cfg.recon.unit == '/mm':
+                formatString = "W/L = {:.3f}/{:.3f} {:s}; cfg.recon.kernelType = {:s}"
+            string1 = formatString.format(displayWindow, displayLevel, cfg.recon.unit, cfg.recon.kernelType)
+            plt.title(string1, fontsize=10)
 
         if drawTo == 'file':
             plt.savefig(fileName, bbox_inches='tight')
