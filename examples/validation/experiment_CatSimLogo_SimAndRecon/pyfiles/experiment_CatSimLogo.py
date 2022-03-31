@@ -415,15 +415,15 @@ def runSim(cfg):
         # rowIndicesToPlot = range(8, 16)
         rowIndicesToPlot = range(0, rowCount)
     else:
-        if (experimentName == "Phantom_offset0"
-        or experimentName == "Phantom_offset+50mmX"
-        or experimentName == "Phantom_offset+50mmY"):
+        if (cfg.experimentName == "08_01_16slices_Phantom_offset0"
+        or cfg.experimentName == "08_02_16slices_Phantom_offset+50mmX"
+        or cfg.experimentName == "08_03_16slices_Phantom_offset+50mmY"):
             # Plot the first 3 rows, a middle row, and the last 3 rows.
             rowIndicesToPlot = [0, 1, 2, int(rowCount/2), rowCount-3, rowCount-2, rowCount-1]
-        elif experimentName == "Phantom_offset+4mmZ":
+        elif cfg.experimentName == "08_04_16slices_Phantom_offset+4mmZ":
             # Plot the 2 middle rows.
             rowIndicesToPlot = [int(rowCount/2)-1, int(rowCount/2)]
-        elif experimentName == "Phantom_offset+8mmZ":
+        elif cfg.experimentName == "08_05_16slices_Phantom_offset+8mmZ":
             # Plot the last 4 rows.
             rowIndicesToPlot = [rowCount-4, rowCount-3, rowCount-2, rowCount-1]
         else:
@@ -442,24 +442,29 @@ def runSim(cfg):
             plt.savefig(fileName, bbox_inches='tight')
 
     if rowCount == 16:
-        if (experimentName == "Phantom_offset0"
-            or experimentName == "Phantom_offset+50mmX"
-            or experimentName == "Phantom_offset+50mmY"):
+        if (cfg.experimentName == "08_01_16slices_Phantom_offset0"
+            or cfg.experimentName == "08_02_16slices_Phantom_offset+50mmX"
+            or cfg.experimentName == "08_03_16slices_Phantom_offset+50mmY"):
             # Confirm that symmetrical rows are exactly the same.
             rowsToDiff = np.array([[0, rowCount-1], [1, rowCount-2], [2, rowCount-3]])
-        elif experimentName == "Phantom_offset+4mmZ":
+        elif cfg.experimentName == "08_04_16slices_Phantom_offset+4mmZ":
             # Compare the 4 middle rows.
             firstRowToDiff = int(rowCount/2 - 1)
             rowsToDiff = np.array([[firstRowToDiff,   firstRowToDiff+1],
                                 [firstRowToDiff+1, firstRowToDiff+2],
                                 [firstRowToDiff+2, firstRowToDiff+3]])
-        elif experimentName == "Phantom_offset+8mmZ":
+        elif cfg.experimentName == "08_05_16slices_Phantom_offset+8mmZ":
             # Compare the last 5 rows.
             rowsToDiff = np.array([[rowCount-5, rowCount-4],
                                 [rowCount-4, rowCount-3],
                                 [rowCount-3, rowCount-2],
                                 [rowCount-2, rowCount-1]])
 
+        if cfg.experimentName == "08_01_16slices_Phantom_offset0"       \
+        or cfg.experimentName == "08_02_16slices_Phantom_offset+50mmX"  \
+        or cfg.experimentName == "08_03_16slices_Phantom_offset+50mmY"  \
+        or cfg.experimentName == "08_04_16slices_Phantom_offset+4mmZ"   \
+        or cfg.experimentName == "08_05_16slices_Phantom_offset+8mmZ":
             numRowsToDiff = np.shape(rowsToDiff)[0]
             for rowIndex in range(0, numRowsToDiff):
                 diff = np.subtract(projectionData[0, rowsToDiff[rowIndex, 0], :], projectionData[0, rowsToDiff[rowIndex, 1], :])
@@ -588,10 +593,10 @@ experimentNames = [
     # "07_03_Scanner_16slices_Recon_16slices",
 
     "08_01_16slices_Phantom_offset0",
-    "08_02_16slices_Phantom_offset+50mmX",
-    "08_03_16slices_Phantom_offset+50mmY",
-    "08_04_16slices_Phantom_offset+4mmZ",
-    "08_05_16slices_Phantom_offset+8mmZ",
+    # "08_02_16slices_Phantom_offset+50mmX",
+    # "08_03_16slices_Phantom_offset+50mmY",
+    # "08_04_16slices_Phantom_offset+4mmZ",
+    # "08_05_16slices_Phantom_offset+8mmZ",
 
     # "09_01_Recon_128mmFOV_offset0",  # Needs to be done before the next 2 because those use projections from this.
     # "09_02_Recon_128mmFOV_offset+50mmX",
