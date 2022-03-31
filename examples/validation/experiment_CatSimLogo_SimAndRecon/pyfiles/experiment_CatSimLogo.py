@@ -29,12 +29,12 @@
 # 09. Reconstruction offset evaluation (1 simulation and 2 reconstructions + 1 simulation/reconstruction)
 #
 # Each sim/recon is independent except experiments 02 and 09, which use the same sim for multiple recons.
-# Each sim/recon is included in a list of sim/recons to run at lines 543 to 602 in this file.
+# Each sim/recon is included in a list of sim/recons to run at lines 567 to 622 in this file.
 # Each can be run or not by uncommenting or commenting them.
 #
 # The overall process is:
-# a. Define "base" config (lines 509 to 541).
-# b. Define a list of sim/recons to run (lines 543 to 602).
+# a. Define "base" config (lines 530 to 565).
+# b. Define a list of sim/recons to run (lines 567 to 622).
 # c. Loop through all the sim/recons defined in b, and for each sim/recon:
 # d.   Define the specific parameters for the sim/recon - function setExperimentParameters().
 # e.   Get the title for the recon images - function getReconImageTitle().
@@ -49,6 +49,8 @@ import catsim as xc
 import reconstruction.pyfiles.recon as recon
 
 def setExperimentParameters(cfg):
+
+    experimentName = cfg.experimentName
 
     # Some experiments use a 128mm FOV.
     if experimentName == "02_01_Physics_NoiseOn_Recon_128mmFOV_R-LKernel"                    \
@@ -235,6 +237,18 @@ def setExperimentParameters(cfg):
         copyToPathname = cfg.resultsName + ".prep"
         shutil.copy2(copyFromPathname, copyToPathname)
 
+    # For phantom offset tests, don't use oversampling.
+    if experimentName == "08_01_16slices_Phantom_offset0"      \
+    or experimentName == "08_02_16slices_Phantom_offset+50mmX" \
+    or experimentName == "08_03_16slices_Phantom_offset+50mmY" \
+    or experimentName == "08_04_16slices_Phantom_offset+4mmZ"  \
+    or experimentName == "08_05_16slices_Phantom_offset+8mmZ":
+        cfg.physics.srcXSampleCount = 1
+        cfg.physics.srcYSampleCount = 1
+        cfg.physics.rowSampleCount = 1
+        cfg.physics.colSampleCount = 1
+        cfg.physics.viewSampleCount = 1
+        
     # Using a 16-slice sim and recon, vary the phantom offset
     if experimentName == "08_01_16slices_Phantom_offset0":
         cfg.phantom.centerOffset = [0.0, 0.0, 0.0]    
@@ -287,21 +301,23 @@ def WLString(cfg):
 
 def getReconImageTitle(cfg):
 
+    experimentName = cfg.experimentName
+
     # Most experiments have only one image, so don't add that to the title.
     cfg.addSliceInfoToReconImageTitle = False
 
-    if cfg.experimentName == "01_01_Baseline"                       \
-    or cfg.experimentName == "01_02_Physics_eNoiseOn"               \
-    or cfg.experimentName == "01_03_Physics_qNoiseOn"               \
-    or cfg.experimentName == "01_04_Physics_NoiseOn"                \
-    or cfg.experimentName == "01_05_Physics_1ebin"                  \
-    or cfg.experimentName == "01_06_Physics_eNoiseOn_1ebin"         \
-    or cfg.experimentName == "01_07_Physics_qNoiseOn_1ebin"         \
-    or cfg.experimentName == "01_08_Physics_NoiseOn_1ebin"          \
-    or cfg.experimentName == "01_09_Physics_Monoenergetic"          \
-    or cfg.experimentName == "01_10_Physics_eNoiseOn_Monoenergetic" \
-    or cfg.experimentName == "01_11_Physics_qNoiseOn_Monoenergetic" \
-    or cfg.experimentName == "01_12_Physics_NoiseOn_Monoenergetic":
+    if experimentName == "01_01_Baseline"                       \
+    or experimentName == "01_02_Physics_eNoiseOn"               \
+    or experimentName == "01_03_Physics_qNoiseOn"               \
+    or experimentName == "01_04_Physics_NoiseOn"                \
+    or experimentName == "01_05_Physics_1ebin"                  \
+    or experimentName == "01_06_Physics_eNoiseOn_1ebin"         \
+    or experimentName == "01_07_Physics_qNoiseOn_1ebin"         \
+    or experimentName == "01_08_Physics_NoiseOn_1ebin"          \
+    or experimentName == "01_09_Physics_Monoenergetic"          \
+    or experimentName == "01_10_Physics_eNoiseOn_Monoenergetic" \
+    or experimentName == "01_11_Physics_qNoiseOn_Monoenergetic" \
+    or experimentName == "01_12_Physics_NoiseOn_Monoenergetic":
         formatString = WLString(cfg) + "cfg.physics.monochromatic = {}; cfg.physics.energyCount = {};"
         string1 = formatString.format(cfg.physics.monochromatic, cfg.physics.energyCount)
         formatString = "cfg.physics.enableElectronicNoise = {}; cfg.protocol.spectrumScaling = {}"
@@ -310,75 +326,75 @@ def getReconImageTitle(cfg):
         string3 = formatString.format(cfg.physics.enableQuantumNoise, cfg.protocol.mA)
         return string1 + "\n" + string2 + "\n" + string3
 
-    if cfg.experimentName == "02_01_Physics_NoiseOn_Recon_128mmFOV_R-LKernel"      \
-    or cfg.experimentName == "02_02_Physics_NoiseOn_Recon_128mmFOV_S-LKernel"      \
-    or cfg.experimentName == "02_03_Physics_NoiseOn_Recon_128mmFOV_SoftKernel"     \
-    or cfg.experimentName == "02_04_Physics_NoiseOn_Recon_128mmFOV_StandardKernel" \
-    or cfg.experimentName == "02_05_Physics_NoiseOn_Recon_128mmFOV_BoneKernel":
+    if experimentName == "02_01_Physics_NoiseOn_Recon_128mmFOV_R-LKernel"      \
+    or experimentName == "02_02_Physics_NoiseOn_Recon_128mmFOV_S-LKernel"      \
+    or experimentName == "02_03_Physics_NoiseOn_Recon_128mmFOV_SoftKernel"     \
+    or experimentName == "02_04_Physics_NoiseOn_Recon_128mmFOV_StandardKernel" \
+    or experimentName == "02_05_Physics_NoiseOn_Recon_128mmFOV_BoneKernel":
         formatString = WLString(cfg) + "cfg.recon.kernelType = {:s}"
         return formatString.format(cfg.recon.kernelType)
 
-    if cfg.experimentName == "03_01_Physics_NoiseOn_Protocol_0p5rotation"      \
-    or cfg.experimentName == "03_02_Physics_NoiseOn_Protocol_1p0rotation"      \
-    or cfg.experimentName == "03_03_Physics_NoiseOn_Protocol_2p0rotation":
+    if experimentName == "03_01_Physics_NoiseOn_Protocol_0p5rotation"      \
+    or experimentName == "03_02_Physics_NoiseOn_Protocol_1p0rotation"      \
+    or experimentName == "03_03_Physics_NoiseOn_Protocol_2p0rotation":
         formatString = WLString(cfg) + "cfg.protocol.rotationTime = {} s"
         return formatString.format(cfg.protocol.rotationTime)
 
-    if cfg.experimentName == "04_01_Physics_NoiseOn_Protocol_100views"      \
-    or cfg.experimentName == "04_02_Physics_NoiseOn_Protocol_360views"      \
-    or cfg.experimentName == "04_03_Physics_NoiseOn_Protocol_1000views":
+    if experimentName == "04_01_Physics_NoiseOn_Protocol_100views"      \
+    or experimentName == "04_02_Physics_NoiseOn_Protocol_360views"      \
+    or experimentName == "04_03_Physics_NoiseOn_Protocol_1000views":
         formatString = WLString(cfg) + "cfg.protocol.viewsPerRotation = {}"
         return formatString.format(cfg.protocol.viewsPerRotation)
 
-    if cfg.experimentName == "05_01_Physics_SourceSampling1_Recon_128mmFOV"               \
-    or cfg.experimentName == "05_02_Physics_SourceSampling2_Recon_128mmFOV"               \
-    or cfg.experimentName == "05_03_Physics_SourceSampling3_Recon_128mmFOV":
+    if experimentName == "05_01_Physics_SourceSampling1_Recon_128mmFOV"               \
+    or experimentName == "05_02_Physics_SourceSampling2_Recon_128mmFOV"               \
+    or experimentName == "05_03_Physics_SourceSampling3_Recon_128mmFOV":
         formatString = WLString(cfg) +  "cfg.physics.srcXSampleCount = {}"
         return formatString.format(cfg.physics.srcXSampleCount)
 
-    if cfg.experimentName == "05_04_Physics_DetectorSampling1_Recon_128mmFOV"               \
-    or cfg.experimentName == "05_05_Physics_DetectorSampling2_Recon_128mmFOV"               \
-    or cfg.experimentName == "05_06_Physics_DetectorSampling3_Recon_128mmFOV":
+    if experimentName == "05_04_Physics_DetectorSampling1_Recon_128mmFOV"               \
+    or experimentName == "05_05_Physics_DetectorSampling2_Recon_128mmFOV"               \
+    or experimentName == "05_06_Physics_DetectorSampling3_Recon_128mmFOV":
         formatString = WLString(cfg) +  "cfg.physics.rowSampleCount = {}"
         return formatString.format(cfg.physics.rowSampleCount)
 
-    if cfg.experimentName == "05_07_Physics_ViewSampling1_Recon_300mmFOV"               \
-    or cfg.experimentName == "05_08_Physics_ViewSampling2_Recon_300mmFOV"               \
-    or cfg.experimentName == "05_09_Physics_ViewSampling3_Recon_300mmFOV":
+    if experimentName == "05_07_Physics_ViewSampling1_Recon_300mmFOV"               \
+    or experimentName == "05_08_Physics_ViewSampling2_Recon_300mmFOV"               \
+    or experimentName == "05_09_Physics_ViewSampling3_Recon_300mmFOV":
         formatString = WLString(cfg) +  "cfg.physics.viewSampleCount = {}"
         return formatString.format(cfg.physics.viewSampleCount)
 
-    if cfg.experimentName == "06_01_Physics_ScatterScale0p5"      \
-    or cfg.experimentName == "06_02_Physics_ScatterScale1p0"      \
-    or cfg.experimentName == "06_03_Physics_ScatterScale2p0":
+    if experimentName == "06_01_Physics_ScatterScale0p5"      \
+    or experimentName == "06_02_Physics_ScatterScale1p0"      \
+    or experimentName == "06_03_Physics_ScatterScale2p0":
         formatString = WLString(cfg) + "cfg.physics.scatterScaleFactor = {}"
         return formatString.format(cfg.physics.scatterScaleFactor)
 
-    if cfg.experimentName == "07_01_Scanner_16slices_Recon_1slice"      \
-    or cfg.experimentName == "07_02_Scanner_16slices_Recon_2slices"     \
-    or cfg.experimentName == "07_03_Scanner_16slices_Recon_16slices":
+    if experimentName == "07_01_Scanner_16slices_Recon_1slice"      \
+    or experimentName == "07_02_Scanner_16slices_Recon_2slices"     \
+    or experimentName == "07_03_Scanner_16slices_Recon_16slices":
         # For multi-slice scans, add slice info to the title.
         cfg.addSliceInfoToReconImageTitle = True
         formatString = "cfg.scanner.detectorRowCount = {}; cfg.recon.sliceCount = {}"
         return formatString.format(cfg.scanner.detectorRowCount, cfg.recon.sliceCount)
 
-    if cfg.experimentName == "08_01_16slices_Phantom_offset0"      \
-    or cfg.experimentName == "08_02_16slices_Phantom_offset+50mmX" \
-    or cfg.experimentName == "08_03_16slices_Phantom_offset+50mmY" \
-    or cfg.experimentName == "08_04_16slices_Phantom_offset+4mmZ"  \
-    or cfg.experimentName == "08_05_16slices_Phantom_offset+8mmZ":
+    if experimentName == "08_01_16slices_Phantom_offset0"      \
+    or experimentName == "08_02_16slices_Phantom_offset+50mmX" \
+    or experimentName == "08_03_16slices_Phantom_offset+50mmY" \
+    or experimentName == "08_04_16slices_Phantom_offset+4mmZ"  \
+    or experimentName == "08_05_16slices_Phantom_offset+8mmZ":
         # For multi-slice scans, add slice info to the title.
         cfg.addSliceInfoToReconImageTitle = True
         formatString = "cfg.phantom.centerOffset[X, Y, Z] = [{}, {}, {}]"
         return formatString.format(cfg.phantom.centerOffset[0], cfg.phantom.centerOffset[1], cfg.phantom.centerOffset[2])
 
-    if cfg.experimentName == "09_01_Recon_128mmFOV_offset0"      \
-    or cfg.experimentName == "09_02_Recon_128mmFOV_offset+50mmX" \
-    or cfg.experimentName == "09_03_Recon_128mmFOV_offset+50mmY":
+    if experimentName == "09_01_Recon_128mmFOV_offset0"      \
+    or experimentName == "09_02_Recon_128mmFOV_offset+50mmX" \
+    or experimentName == "09_03_Recon_128mmFOV_offset+50mmY":
         formatString = "cfg.recon.centerOffset[X, Y, Z] = [{}, {}, {}]"
         return formatString.format(cfg.recon.centerOffset[0], cfg.recon.centerOffset[1], cfg.recon.centerOffset[2])
 
-    if cfg.experimentName == "09_04_16slices_Recon_offset+1mmZ":
+    if experimentName == "09_04_16slices_Recon_offset+1mmZ":
         cfg.addSliceInfoToReconImageTitle = True
         formatString = "cfg.recon.centerOffset[X, Y, Z] = [{}, {}, {}]"
         return formatString.format(cfg.recon.centerOffset[0], cfg.recon.centerOffset[1], cfg.recon.centerOffset[2])
@@ -388,6 +404,8 @@ def runSim(cfg):
 
     import numpy as np
     import matplotlib.pyplot as plt
+
+    experimentName = cfg.experimentName
 
     if cfg.do_Sim == True:
         print("**************************")
@@ -415,15 +433,15 @@ def runSim(cfg):
         # rowIndicesToPlot = range(8, 16)
         rowIndicesToPlot = range(0, rowCount)
     else:
-        if (cfg.experimentName == "08_01_16slices_Phantom_offset0"
-        or cfg.experimentName == "08_02_16slices_Phantom_offset+50mmX"
-        or cfg.experimentName == "08_03_16slices_Phantom_offset+50mmY"):
+        if experimentName == "08_01_16slices_Phantom_offset0"       \
+        or experimentName == "08_02_16slices_Phantom_offset+50mmX"  \
+        or experimentName == "08_03_16slices_Phantom_offset+50mmY":
             # Plot the first 3 rows, a middle row, and the last 3 rows.
             rowIndicesToPlot = [0, 1, 2, int(rowCount/2), rowCount-3, rowCount-2, rowCount-1]
-        elif cfg.experimentName == "08_04_16slices_Phantom_offset+4mmZ":
+        elif experimentName == "08_04_16slices_Phantom_offset+4mmZ":
             # Plot the 2 middle rows.
             rowIndicesToPlot = [int(rowCount/2)-1, int(rowCount/2)]
-        elif cfg.experimentName == "08_05_16slices_Phantom_offset+8mmZ":
+        elif experimentName == "08_05_16slices_Phantom_offset+8mmZ":
             # Plot the last 4 rows.
             rowIndicesToPlot = [rowCount-4, rowCount-3, rowCount-2, rowCount-1]
         else:
@@ -442,29 +460,29 @@ def runSim(cfg):
             plt.savefig(fileName, bbox_inches='tight')
 
     if rowCount == 16:
-        if (cfg.experimentName == "08_01_16slices_Phantom_offset0"
-            or cfg.experimentName == "08_02_16slices_Phantom_offset+50mmX"
-            or cfg.experimentName == "08_03_16slices_Phantom_offset+50mmY"):
+        if experimentName == "08_01_16slices_Phantom_offset0"       \
+        or experimentName == "08_02_16slices_Phantom_offset+50mmX"  \
+        or experimentName == "08_03_16slices_Phantom_offset+50mmY":
             # Confirm that symmetrical rows are exactly the same.
             rowsToDiff = np.array([[0, rowCount-1], [1, rowCount-2], [2, rowCount-3]])
-        elif cfg.experimentName == "08_04_16slices_Phantom_offset+4mmZ":
+        elif experimentName == "08_04_16slices_Phantom_offset+4mmZ":
             # Compare the 4 middle rows.
             firstRowToDiff = int(rowCount/2 - 1)
             rowsToDiff = np.array([[firstRowToDiff,   firstRowToDiff+1],
                                 [firstRowToDiff+1, firstRowToDiff+2],
                                 [firstRowToDiff+2, firstRowToDiff+3]])
-        elif cfg.experimentName == "08_05_16slices_Phantom_offset+8mmZ":
+        elif experimentName == "08_05_16slices_Phantom_offset+8mmZ":
             # Compare the last 5 rows.
             rowsToDiff = np.array([[rowCount-5, rowCount-4],
                                 [rowCount-4, rowCount-3],
                                 [rowCount-3, rowCount-2],
                                 [rowCount-2, rowCount-1]])
 
-        if cfg.experimentName == "08_01_16slices_Phantom_offset0"       \
-        or cfg.experimentName == "08_02_16slices_Phantom_offset+50mmX"  \
-        or cfg.experimentName == "08_03_16slices_Phantom_offset+50mmY"  \
-        or cfg.experimentName == "08_04_16slices_Phantom_offset+4mmZ"   \
-        or cfg.experimentName == "08_05_16slices_Phantom_offset+8mmZ":
+        if experimentName == "08_01_16slices_Phantom_offset0"       \
+        or experimentName == "08_02_16slices_Phantom_offset+50mmX"  \
+        or experimentName == "08_03_16slices_Phantom_offset+50mmY"  \
+        or experimentName == "08_04_16slices_Phantom_offset+4mmZ"   \
+        or experimentName == "08_05_16slices_Phantom_offset+8mmZ":
             numRowsToDiff = np.shape(rowsToDiff)[0]
             for rowIndex in range(0, numRowsToDiff):
                 diff = np.subtract(projectionData[0, rowsToDiff[rowIndex, 0], :], projectionData[0, rowsToDiff[rowIndex, 1], :])
@@ -593,10 +611,10 @@ experimentNames = [
     # "07_03_Scanner_16slices_Recon_16slices",
 
     "08_01_16slices_Phantom_offset0",
-    # "08_02_16slices_Phantom_offset+50mmX",
-    # "08_03_16slices_Phantom_offset+50mmY",
-    # "08_04_16slices_Phantom_offset+4mmZ",
-    # "08_05_16slices_Phantom_offset+8mmZ",
+    "08_02_16slices_Phantom_offset+50mmX",
+    "08_03_16slices_Phantom_offset+50mmY",
+    "08_04_16slices_Phantom_offset+4mmZ",
+    "08_05_16slices_Phantom_offset+8mmZ",
 
     # "09_01_Recon_128mmFOV_offset0",  # Needs to be done before the next 2 because those use projections from this.
     # "09_02_Recon_128mmFOV_offset+50mmX",
