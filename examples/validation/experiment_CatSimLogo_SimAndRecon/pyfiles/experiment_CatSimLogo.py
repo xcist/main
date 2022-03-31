@@ -14,7 +14,8 @@
 #
 # This "experiment file" performs several experiments, and each experiment requires several simulations and
 # reconstructions. Results are written to the folder defined by the system environment variable XCIST_UserPath.
-# Sub-folders are for each sim/recon.
+# Sub-folders are for each sim/recon. DON'T make this path point to a location within your local copy of the CatSim
+# repository, or the output files (which are numerous and large) might end up in the repository!
 #
 # The experiments performed include:
 # 01. Noise simulation evaluation (12 simulations/reconstructions)
@@ -28,12 +29,12 @@
 # 09. Reconstruction offset evaluation (1 simulation and 2 reconstructions + 1 simulation/reconstruction)
 #
 # Each sim/recon is independent except experiments 02 and 09, which use the same sim for multiple recons.
-# Each sim/recon is included in a list of sim/recons to run at lines 542 to 601 in this file.
+# Each sim/recon is included in a list of sim/recons to run at lines 543 to 602 in this file.
 # Each can be run or not by uncommenting or commenting them.
 #
 # The overall process is:
-# a. Define "base" config (lines 508 to 540).
-# b. Define a list of sim/recons to run (lines 542 to 601).
+# a. Define "base" config (lines 509 to 541).
+# b. Define a list of sim/recons to run (lines 543 to 602).
 # c. Loop through all the sim/recons defined in b, and for each sim/recon:
 # d.   Define the specific parameters for the sim/recon - function setExperimentParameters().
 # e.   Get the title for the recon images - function getReconImageTitle().
@@ -586,11 +587,11 @@ experimentNames = [
     # "07_02_Scanner_16slices_Recon_2slices",
     # "07_03_Scanner_16slices_Recon_16slices",
 
-    # "08_01_16slices_Phantom_offset0",
-    # "08_02_16slices_Phantom_offset+50mmX",
-    # "08_03_16slices_Phantom_offset+50mmY",
-    # "08_04_16slices_Phantom_offset+4mmZ",
-    # "08_05_16slices_Phantom_offset+8mmZ",
+    "08_01_16slices_Phantom_offset0",
+    "08_02_16slices_Phantom_offset+50mmX",
+    "08_03_16slices_Phantom_offset+50mmY",
+    "08_04_16slices_Phantom_offset+4mmZ",
+    "08_05_16slices_Phantom_offset+8mmZ",
 
     # "09_01_Recon_128mmFOV_offset0",  # Needs to be done before the next 2 because those use projections from this.
     # "09_02_Recon_128mmFOV_offset+50mmX",
