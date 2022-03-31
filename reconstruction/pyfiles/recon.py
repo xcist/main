@@ -99,65 +99,40 @@ def saveImagePictureFiles(cfg, imageVolume3D):
     
     return cfg
 
+
 def drawImages(drawTo, cfg, imageVolume3D):
 
+    # Draw all images.
+    # Future improvement: allow caller to specifiy a list of images to draw.
     sliceIndicesToDraw = range(0, cfg.recon.sliceCount)
 
-    if hasattr(cfg, 'displayWindowMin') and hasattr(cfg, 'displayWindowMax'):
-        # If displayWindowMin and displayWindowMax are passed in, use them.
-        displayWindowMin = cfg.displayWindowMin
-        displayWindowMax = cfg.displayWindowMax
-    else:
-        # Otherwise, find displayWindowMin and displayWindowMax.
-        displayWindowMin = np.min(imageVolume3D)
-        displayWindowMax = np.max(imageVolume3D)
+    # If displayWindowMin and displayWindowMax were not passed in,
+    # get them from the image data, so all images are displayed using the same W/L.
+    if not hasattr(cfg, 'displayWindowMin'):
+        cfg.displayWindowMin = np.min(imageVolume3D)
+    if not hasattr(cfg, 'displayWindowMax'):
+        cfg.displayWindowMax = np.max(imageVolume3D)
 
-    displayWindow = displayWindowMax - displayWindowMin
-    displayLevel = (displayWindowMax + displayWindowMin)/2
-      
     for sliceIndexToDraw in sliceIndicesToDraw:
         sliceToDraw = imageVolume3D[:, :, sliceIndexToDraw]
         sliceToDraw = sliceToDraw.copy(order='C')
         sliceNumberString = 'slice' + str(sliceIndexToDraw+1).zfill(3) + 'of' + str(cfg.recon.sliceCount).zfill(3)
         fileName = cfg.resultsName + '_' + sliceNumberString + '.png'
         plt.figure(int(sliceIndexToDraw+1))
-        plt.imshow(sliceToDraw, cmap='gray', vmin=displayWindowMin, vmax=displayWindowMax)
-        sliceString = "slice " + str(sliceIndexToDraw+1) + " of " + str(cfg.recon.sliceCount) + "\n"
-        if cfg.experimentName == "Baseline"                       \
-        or cfg.experimentName == "Physics_eNoiseOn"               \
-        or cfg.experimentName == "Physics_qNoiseOn"               \
-        or cfg.experimentName == "Physics_NoiseOn"                \
-        or cfg.experimentName == "Physics_1ebin"                  \
-        or cfg.experimentName == "Physics_eNoiseOn_1ebin"         \
-        or cfg.experimentName == "Physics_qNoiseOn_1ebin"         \
-        or cfg.experimentName == "Physics_NoiseOn_1ebin"          \
-        or cfg.experimentName == "Physics_Monoenergetic"          \
-        or cfg.experimentName == "Physics_eNoiseOn_Monoenergetic" \
-        or cfg.experimentName == "Physics_qNoiseOn_Monoenergetic" \
-        or cfg.experimentName == "Physics_NoiseOn_Monoenergetic":
-            if cfg.recon.unit == 'HU':
-                formatString = "W/L = {:.0f}/{:.0f} {:s}; cfg.physics.monochromatic = {};"
-            if cfg.recon.unit == '/cm':
-                formatString = "W/L = {:.2f}/{:.2f} {:s}; cfg.physics.monochromatic = {};"
-            if cfg.recon.unit == '/mm':
-                formatString = "W/L = {:.3f}/{:.3f} {:s}; cfg.physics.monochromatic = {};"
-            string1 = formatString.format(displayWindow, displayLevel, cfg.recon.unit, cfg.physics.monochromatic)
-            string2 = "cfg.physics.enableElectronicNoise = {}; cfg.protocol.spectrumScaling = {};".format(cfg.physics.enableElectronicNoise, cfg.protocol.spectrumScaling)
-            string3 = "cfg.physics.enableQuantumNoise = {}; cfg.protocol.mA = {}".format(cfg.physics.enableQuantumNoise, cfg.protocol.mA)
-            plt.title(string1 + "\n" + string2 + "\n" + string3, fontsize=10)
-        if cfg.experimentName == "Physics_NoiseOn_Recon_128mmFOV_R-LKernel"      \
-        or cfg.experimentName == "Physics_NoiseOn_Recon_128mmFOV_S-LKernel"      \
-        or cfg.experimentName == "Physics_NoiseOn_Recon_128mmFOV_SoftKernel"     \
-        or cfg.experimentName == "Physics_NoiseOn_Recon_128mmFOV_StandardKernel" \
-        or cfg.experimentName == "Physics_NoiseOn_Recon_128mmFOV_BoneKernel":
-            if cfg.recon.unit == 'HU':
-                formatString = "W/L = {:.0f}/{:.0f} {:s}; cfg.recon.kernelType = {:s}"
-            if cfg.recon.unit == '/cm':
-                formatString = "W/L = {:.2f}/{:.2f} {:s}; cfg.recon.kernelType = {:s}"
-            if cfg.recon.unit == '/mm':
-                formatString = "W/L = {:.3f}/{:.3f} {:s}; cfg.recon.kernelType = {:s}"
-            string1 = formatString.format(displayWindow, displayLevel, cfg.recon.unit, cfg.recon.kernelType)
-            plt.title(string1, fontsize=10)
+        plt.imshow(sliceToDraw, cmap='gray', vmin=cfg.displayWindowMin, vmax=cfg.displayWindowMax)
+
+        sliceString = "slice " + str(sliceIndexToDraw+1) + " of " + str(cfg.recon.sliceCount)
+        if hasattr(cfg, 'reconImageTitle'):
+            # If a plot title is specified, use it, and add the slice info if specified.
+            if hasattr(cfg, 'addSliceInfoToReconImageTitle') \
+            and cfg.addSliceInfoToReconImageTitle:
+                titleString = cfg.reconImageTitle + "\n" + sliceString
+            else:
+                titleString = cfg.reconImageTitle
+        else:
+            # Otherwise, title the plot with the slice info.
+            titleString = sliceString
+        plt.title(titleString, fontsize=10)
 
         if drawTo == 'file':
             plt.savefig(fileName, bbox_inches='tight')
@@ -173,7 +148,4 @@ def drawImages(drawTo, cfg, imageVolume3D):
             input('********************************************')
         plt.close('all')
 
-    cfg.displayWindowMin = displayWindowMin
-    cfg.displayWindowMax = displayWindowMax
-    
     return cfg
