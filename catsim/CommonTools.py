@@ -1,7 +1,6 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
 import numpy as np
-import numpy.matlib as nm
 import ctypes, struct
 import os
 
@@ -29,26 +28,11 @@ def feval(funcName, *args):
         md = __import__("catsim."+funcName, fromlist=[funcName])  # equal to: from catsim.foo import foo
     return eval("md."+funcName)(*args)
 
-def get_path():
-    # Locate paths of lib and data.
-    myPath = emptyCFG()
-    myPath.main = os.path.dirname(os.path.abspath(__file__))
-    myPath.cfg = myPath.main+'/cfg'
-    myPath.lib = myPath.main+'/lib'
-    myPath.data = myPath.main+'/data'
-    myPath.bowtie = myPath.main+'/data/bowtie'
-    myPath.material = myPath.main+'/data/material'
-    myPath.phantom = myPath.main+'/data/phantom'
-    myPath.scatter = myPath.main+'/data/scatter'
-    myPath.spectrum = myPath.main+'/data/spectrum'
-    return myPath
+
 
 def load_C_lib():
-    myPath = get_path()
-
-    # add lib path to environment value "PATH" for depending DLLs
-    if not myPath.lib in os.environ["PATH"]:
-        os.environ["PATH"] = myPath.lib+';'+os.environ["PATH"]
+    lib_path = my_path.paths["lib"]
+    my_path.add_dir_to_path(lib_path)
 
     # load C/C++ lib
     ll = ctypes.cdll.LoadLibrary
@@ -56,13 +40,96 @@ def load_C_lib():
         libFile = "libcatsim64.dll"
     else:
         libFile = "libcatsim.so"
-    clib = ll(myPath.lib + "/" + libFile)
+    clib = ll(os.path.join(lib_path, libFile))
     
     return clib
 
+
 class emptyCFG:
     pass
-    
+
+
+class PathHelper:
+    def __init__(self):
+        self._base_dir = os.getcwd()
+        # Locate paths of lib and data.
+        self.paths = {}
+        self.paths["main"] = os.path.dirname(os.path.abspath(__file__))
+        self.paths["top"] = os.path.split(self.paths["main"])[0]
+        self.paths["cfg"] = os.path.join(self.paths["main"],'cfg')
+        self.paths["lib"] = os.path.join(self.paths["main"], 'lib')
+        self.paths["data"] = os.path.join(self.paths["main"], 'data')
+
+        # data paths
+        self.paths["bowtie"] = os.path.join(self.paths["data"], 'bowtie')
+        self.paths["material"] = os.path.join(self.paths["data"], 'material')
+        self.paths["phantom"] = os.path.join(self.paths["data"], 'phantom')
+        self.paths["scatter"] = os.path.join(self.paths["data"], 'scatter')
+        self.paths["spectrum"] = os.path.join(self.paths["data"], 'spectrum')
+        self.extra_search_paths = []
+
+
+    def base(self, *args):
+        return os.path.join(self._base_dir, *args)
+
+
+    def find(self, key, filename, extension):
+        path = my_path.paths[key]
+
+        # check fully-qualified path and/or current directory first
+        if os.path.isfile(filename):
+            return filename
+
+        if os.path.isfile(f"{filename}{extension}"):
+            return f"{filename}{extension}"
+
+        # check user-defined search paths BEFORE default paths
+        for p in my_path.extra_search_paths:
+            if os.path.isfile(os.path.join(p, filename)):
+                return os.path.join(p, filename)
+            elif os.path.isfile(os.path.join(p, f"{filename}{extension}")):
+                return os.path.join(p, f"{filename}{extension}")
+            elif os.path.isfile(os.path.join(p, key, filename)):
+                return os.path.join(p, key, filename)
+            elif os.path.isfile(os.path.join(p, key, f"{filename}{extension}")):
+                return os.path.join(p, key, f"{filename}{extension}")
+
+        if os.path.isfile(os.path.join(path, filename)):
+            return os.path.join(path, filename)
+        if os.path.isfile(os.path.join(path, f"{filename}{extension}")):
+            return os.path.join(path, f"{filename}{extension}")
+
+        # exhausted all the paths to search and could not find the file
+        raise Exception("Cannot find %s or %s%s" %(filename, filename, extension))
+
+
+    def find_dir(self, key, dirname):
+        path = my_path.paths[key]
+
+        # check fully-qualified path and/or current directory first
+        if os.path.isdir(dirname):
+            return dirname
+
+        # check user-defined search paths BEFORE default paths
+        for p in my_path.extra_search_paths:
+            if os.path.isdir(os.path.join(p, dirname)):
+                return os.path.join(p, dirname)
+            elif os.path.isdir(os.path.join(p, key, dirname)):
+                return os.path.join(p, key, dirname)
+
+        if os.path.isdir(os.path.join(path, dirname)):
+            return os.path.join(path, dirname)
+        # exhausted all the paths to search and could not find the file
+        raise Exception("Cannot find directory %s" %(dirname))
+
+
+    def add_dir_to_path(self, dirname):
+        if dirname not in os.environ["PATH"]:
+            os.environ["PATH"] = f'{dirname};{os.environ["PATH"]}'
+
+    def linux_style_path(self, filename):
+        return filename.replace("\\", "/")
+
 class CFG:
     def __init__(self, *para):
         # initialize cfg: defaults, paths, and C lib
@@ -73,7 +140,6 @@ class CFG:
         cfg = source_cfg("Recon_Default", cfg)
         cfg.resultsName = "simulation_test"
 
-        cfg.path = get_path()
         if not hasattr(cfg, 'clib'):
             cfg.clib = load_C_lib()
         
@@ -101,22 +167,12 @@ def source_cfg(*para):
     '''
     First para must be cfg filename.
     Second para is optional, if defined and is cfg, attr will be added to cfg.
-    Calling source_cfg(cfgFile, cfg) will add or override attributes to cfg.
+    Calling source_cfg(cfg_file, cfg) will add or override attributes to cfg.
     '''
     # find cfg file
-    cfgFile = para[0]
-    if not os.path.isfile(cfgFile):
-        cfgPath = get_path().cfg + "/"
-        if os.path.isfile(cfgFile + ".cfg"):
-            cfgFile += ".cfg"
-        elif os.path.isfile(cfgPath + cfgFile):
-            cfgFile = cfgPath + cfgFile
-        elif os.path.isfile(cfgPath + cfgFile + ".cfg"):
-            cfgFile = cfgPath + cfgFile + ".cfg"
-        else:
-            raise Exception("Cannot find %s or %s.cfg" %(cfgFile, cfgFile))
-    
-    # cfg is initialized before sourcing cfgFile
+    cfg_file = my_path.find("cfg", para[0], ".cfg")
+
+    # cfg is initialized before sourcing cfg_file
     if len(para)<2:
         cfg = emptyCFG()
     else:
@@ -131,7 +187,7 @@ def source_cfg(*para):
             exec("%s = emptyCFG()" % attr)
         
     # execute scripts in cfg file
-    exec(open(cfgFile).read())
+    exec(open(cfg_file).read())
     
     # add or override the attributes in the original cfg
     for attr in attrList:
@@ -262,4 +318,6 @@ def conv2(img, h, mode='same'):
             img_conv = img_conv[:,1:]
     
     return img_conv
-    
+
+
+my_path = PathHelper()

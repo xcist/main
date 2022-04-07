@@ -39,9 +39,7 @@ def Spectrum(cfg):
         specScale *= 1e-3
     
     # Read spectrum file
-    if not os.path.isfile(cfg.protocol.spectrumFilename):
-        myPath = get_path()
-        cfg.protocol.spectrumFilename = myPath.spectrum+'/'+cfg.protocol.spectrumFilename
+    cfg.protocol.spectrumFilename = my_path.find("spectrum", cfg.protocol.spectrumFilename, "")
     Evec0, Ivec0, takeOffAngle = spectrum_read(cfg.protocol.spectrumFilename)
     Ivec0 *= specScale
     

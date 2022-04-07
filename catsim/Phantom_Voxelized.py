@@ -11,9 +11,7 @@ from catsim.CommonTools import *
 def Phantom_Voxelized(cfg):
     
     ###----------- phantom file (vp file is json format)
-    if not os.path.isfile(cfg.phantom.filename):
-        myPath = get_path()
-        cfg.phantom.filename = myPath.phantom+'/'+cfg.phantom.filename
+    cfg.phantom.filename = my_path.find('phantom', cfg.phantom.filename, '')
     filepath, vpFilename = os.path.split(cfg.phantom.filename)
     with open(cfg.phantom.filename) as fin:
         vp = json.load(fin)

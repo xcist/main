@@ -4,7 +4,11 @@
 import catsim as xc
 
 
-##--------- Initialize 
+##--------- Initialize
+#my_path = xc.CommonTools.my_path
+# add any additional search directories
+#my_path.extra_search_paths.append("my-experiments")
+
 ct = xc.CatSim("Phantom_Sample", "Scanner_Sample_generic", "Protocol_Sample_axial")  # initialization
 
 ##--------- Make changes to parameters (optional)
