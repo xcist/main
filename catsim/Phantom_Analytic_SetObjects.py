@@ -28,7 +28,6 @@ log:
 input: objs, 
 output: diction phantObject
 '''
-#NOTE: verified to work
 import numpy as np
 from catsim.Phantom_Polygonal_ReadPolygon import Phantom_Polygonal_ReadPolygon
 from catsim.CommonTools import *
@@ -76,14 +75,17 @@ def Phantom_Analytic_SetObjects(objs=None, debug=False):
                     phantObject[i]['eta'] = np.vstack((R[2], -R[2])).T
                 else:
 				    #matlab code phantObject{i}.eta=[phantObject{i}.eta R(3,:)' -R(3,:)'];
-                    printf("ERROR! see comment in source code")
+                    #breakpoint()
+                    phantObject[i]['eta'] = np.hstack((phantObject[i]['eta'], R[2][:,None], -R[2][:,None])) 
+                    #print("ERROR! see comment in source code")
                 if phantObject[i]['s'] is None:
 				    #phantObject{i}.s=[phantObject{i}.s pars(15)+pars(1:3)*R(3,:)' -pars(14)-pars(1:3)*R(3,:)'];
                     phantObject[i]['s'] = np.vstack((pars[5] + pars[:3]@R[2].T, pars[5] - pars[:3]@R[2].T))
                 else:
-                    print("ERROR! see comment in source code")
-                    breakpoint()
-            else: print("new caterogies")
+                    phantObject[i]['s'] = np.hstack((phantObject[i]['s'], pars[5] + pars[:3]@R[2].T, pars[5] - pars[:3]@R[2].T))
+                    #print("ERROR! see comment in source code")
+                    #breakpoint()
+            else: print("new caterogies", pars[10])
             #elif pars(11) == 4:
             #    phantObject[i].k = copy(0)
             #    d=concat([pars(arange(4,5)) ** 2,- pars(6) ** 2])

@@ -1,3 +1,6 @@
+import re
+import numpy as np
+
 def parse_analytical_ppm(ppmPhantomFilename):
     #TODO: consider change obj to a class
     obj = dict.fromkeys(['materialList', 'center', 'half_axes', 'euler_angs', 'density', 'type', 'material', 'axial_lims', 'shape', 'clip'])
@@ -29,21 +32,48 @@ def parse_analytical_ppm(ppmPhantomFilename):
             key_word = str(key_word)
             #key_idx = int(''.joint([x for x in key_str.split('.')[-1] if x.isdigit()]))
             key_idx = int(''.join(filter(str.isdigit, key_str)))
-            value_str = value_str.strip().rstrip(';').rstrip(']').lstrip('[').split(' ')
+
+            if '[' in value_str:
+                # extract substring in []
+                value_str = re.findall(r'\[([^]]*)\]', value_str)[0]
+                split_valstr = value_str.rstrip(';').split(';')
+                if len(split_valstr) == 1:
+                    this_str = split_valstr[0].strip().rstrip(";").split(' ')
+                    if len(this_str)==1 and this_str[0] == '':
+                        value = []
+                    else:
+                        value = [eval(x) for x in this_str]
+                else:
+                    value = []
+                    for this_splvalstr in split_valstr:
+                        _tmp = this_splvalstr.split(' ')
+                        #breakpoint()
+                        this_value = [eval(x) for x in _tmp]
+                        value.append(this_value)
+            else:
+                this_str = value_str.strip().rstrip(";")
+                value = eval(this_str)
+            #value_str = value_str.strip().rstrip(';').rstrip(']').lstrip('[').split(' ')
+            #value_str = value_str.strip().rstrip(';').rstrip(']').lstrip('[').split(' ')
+            #breakpoint()
+            #value_str = re.split(' |;', value_str.strip().rstrip(';').rstrip(']').lstrip('['))
+            # if there is only 1d in clip, make it 2d
+            if 'clip' in key_word and len(value)>0 and len(np.array(value).shape)==1: value=[value]
             #if len(value_str)==1:
             #    try:
             #        value = eval(value_str)
             #    except: breakpoint()
             #else:
             # TODO: currently all values will be saved as list, even for scalars. try a better way
-            try: value = [eval(x) for x in value_str]
-            except: value = []
+            #try: value = [eval(x) for x in value_str]
+            #except: value = []
 
             obj[key_word][key_idx-1] = value
 
+    #breakpoint()
     return obj
 
 if __name__=="__main__":
-    filename = "../phantom/FB_head.ppm"
+    filename = "/projects/catsim/XCIST/Analytical_projector/phantom/FB_hip.ppm"
     phobj = parse_analytical_ppm(filename)
     breakpoint()
