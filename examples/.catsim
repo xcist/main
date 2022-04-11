@@ -1,0 +1,11 @@
+{
+    "help" : [
+        "Use this file to specify CatSim initialization, especially extra search paths",
+        "For Windows path, use \\ for path separators in the strings.",
+        "JSON does not define comments, so using this array as the comments for this file",
+        "any path that does not exist will print a warning statement"
+    ],
+    "search_paths" : [
+        "d:\\catSim\\cathy-samplessss"
+    ]
+}

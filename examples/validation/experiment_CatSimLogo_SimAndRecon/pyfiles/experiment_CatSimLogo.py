@@ -526,7 +526,7 @@ def getUserPath():
     if not os.path.exists(userPath):
         raise Exception("******** Error! Environment variable 'XCIST_UserPath' not found.".format(userPath))
 
-    xc.CommonTools.my_path.extra_search_paths.append(userPath)
+    xc.CommonTools.my_path.add_search_path(userPath)
     return userPath
 
 

@@ -1,14 +1,16 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+import ctypes
+import json
+import os
+import struct
 
 import numpy as np
-import ctypes, struct
-import os
 
 '''
 Common tool functions.
 Mingye Wu, GE Research
-
 '''
+
 
 def check_value(a):
     #return
@@ -16,18 +18,19 @@ def check_value(a):
     if type(a) is np.ndarray:
         print(a.shape, a.dtype)
     print(a,'\n')
-    
+
+
 def make_col(a):
     a = a.reshape(a.size, 1)
     return a
-        
+
+
 def feval(funcName, *args):
     try:
         md = __import__(funcName)
     except:
         md = __import__("catsim."+funcName, fromlist=[funcName])  # equal to: from catsim.foo import foo
     return eval("md."+funcName)(*args)
-
 
 
 def load_C_lib():
@@ -67,14 +70,19 @@ class PathHelper:
         self.paths["scatter"] = os.path.join(self.paths["data"], 'scatter')
         self.paths["spectrum"] = os.path.join(self.paths["data"], 'spectrum')
         self.extra_search_paths = []
-
+        self.read_catsim_init()
 
     def base(self, *args):
         return os.path.join(self._base_dir, *args)
 
+    def add_search_path(self, path):
+        if not os.path.isdir(path):
+            print(f"***WARNING: {path} does not exist.")
+        if path not in self.extra_search_paths:
+            self.extra_search_paths.append(path)
 
     def find(self, key, filename, extension):
-        path = my_path.paths[key]
+        path = self.paths[key]
 
         # check fully-qualified path and/or current directory first
         if os.path.isfile(filename):
@@ -84,7 +92,7 @@ class PathHelper:
             return f"{filename}{extension}"
 
         # check user-defined search paths BEFORE default paths
-        for p in my_path.extra_search_paths:
+        for p in self.extra_search_paths:
             if os.path.isfile(os.path.join(p, filename)):
                 return os.path.join(p, filename)
             elif os.path.isfile(os.path.join(p, f"{filename}{extension}")):
@@ -102,33 +110,72 @@ class PathHelper:
         # exhausted all the paths to search and could not find the file
         raise Exception("Cannot find %s or %s%s" %(filename, filename, extension))
 
-
-    def find_dir(self, key, dirname):
-        path = my_path.paths[key]
+    def find_dir(self, key, dir_name):
+        path = self.paths[key]
 
         # check fully-qualified path and/or current directory first
-        if os.path.isdir(dirname):
-            return dirname
+        if os.path.isdir(dir_name):
+            return dir_name
 
         # check user-defined search paths BEFORE default paths
-        for p in my_path.extra_search_paths:
-            if os.path.isdir(os.path.join(p, dirname)):
-                return os.path.join(p, dirname)
-            elif os.path.isdir(os.path.join(p, key, dirname)):
-                return os.path.join(p, key, dirname)
+        for p in self.extra_search_paths:
+            if os.path.isdir(os.path.join(p, dir_name)):
+                return os.path.join(p, dir_name)
+            elif os.path.isdir(os.path.join(p, key, dir_name)):
+                return os.path.join(p, key, dir_name)
 
-        if os.path.isdir(os.path.join(path, dirname)):
-            return os.path.join(path, dirname)
+        if os.path.isdir(os.path.join(path, dir_name)):
+            return os.path.join(path, dir_name)
         # exhausted all the paths to search and could not find the file
-        raise Exception("Cannot find directory %s" %(dirname))
+        raise Exception("Cannot find directory %s" % (dir_name))
 
+    def read_catsim_init(self):
+        cwd_init_file = os.path.join(self._base_dir, ".catsim")
+        self.read_catsim_file(cwd_init_file)
 
-    def add_dir_to_path(self, dirname):
-        if dirname not in os.environ["PATH"]:
-            os.environ["PATH"] = f'{dirname};{os.environ["PATH"]}'
+        if os.name == "nt":
+            # on my PC with a C: and D: drive
+            # HOMEDIR=D:\Users\USERNAME
+            # USERPROFILE=c:\Users\USERNAME
+            if "HOMEDIR" in os.environ:
+                user_home = os.environ.get("HOMEDIR")
+                root_init_file = os.path.join(user_home, ".catsim")
+                self.read_catsim_file(root_init_file)
 
-    def linux_style_path(self, filename):
+            if "USERPROFILE" in os.environ:
+                user_home = os.environ.get("USERPROFILE")
+                root_init_file = os.path.join(user_home, ".catsim")
+                self.read_catsim_file(root_init_file)
+        else:
+            # on Linux & Mac, HOME is home directory of the user
+            if "HOME" in os.environ:
+                user_home = os.environ.get("HOME")
+                root_init_file = os.path.join(user_home, ".catsim")
+                self.read_catsim_file(root_init_file)
+
+    def read_catsim_file(self, filename):
+        if os.path.isfile(filename):
+            try:
+                with open(filename, "r") as f:
+                    init = json.load(f)
+            except BaseException as err:
+                print(f"***WARNING: Unable to read file: {filename} as json: {err=}, {type(err)=}")
+            else:
+                if "search_paths" in init:
+                    for p in init["search_paths"]:
+                        self.add_search_path(p)
+                else:
+                    print(f"***WARNING: search_paths entry not found in {filename}")
+
+    @staticmethod
+    def add_dir_to_path(dir_name):
+        if dir_name not in os.environ["PATH"]:
+            os.environ["PATH"] = f'{dir_name};{os.environ["PATH"]}'
+
+    @staticmethod
+    def linux_style_path(filename):
         return filename.replace("\\", "/")
+
 
 class CFG:
     def __init__(self, *para):
@@ -162,7 +209,8 @@ class CFG:
     def load(self, cfgFile):
         cfg = source_cfg(cfgFile)
         self.pass_cfg_to_self(cfg)
-    
+
+
 def source_cfg(*para):
     '''
     First para must be cfg filename.
@@ -204,7 +252,8 @@ def vectornorm(xyz):
         norms = np.sqrt(np.square(xyz).sum(axis=0))
         norms = make_col(norms)
         return norms
-        
+
+
 def overlap(x0, y0, x1):
     # length
     n0 = len(x0)
@@ -247,6 +296,7 @@ def overlap(x0, y0, x1):
     
     return y1
 
+
 def get_vector_boundaries(x):
     # x can be scalar, vector, or [n, 1] array
     
@@ -256,6 +306,7 @@ def get_vector_boundaries(x):
         b = (x[0:-1]+x[1:])/2
         b = np.concatenate(([x[0]-0.5*(x[1]-x[0])], b, [x[-1]+0.5*(x[-1]-x[-2])]))
     return b
+
 
 def rawread(fname, dataShape, dataType):
     # dataType is for numpy, ONLY allows: 'float'/'single', 'double', 'int'/'int32', 'uint'/'uint32', 'int8', 'int16' 
@@ -285,6 +336,7 @@ def rawread(fname, dataShape, dataType):
 def rawwrite(fname, data):
     with open(fname, 'wb') as fout:
         fout.write(data)
+
 
 def conv2(img, h, mode='same'):
     h = np.rot90(h, 2) # rotate 180 degree
