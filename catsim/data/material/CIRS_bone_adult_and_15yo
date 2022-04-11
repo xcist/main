@@ -1,0 +1,23 @@
+# Copyright 2022, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.0.
+# Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
+# Density source: CIRS, as used for GE CRC's phantoms, Rev: August 17, 2012
+# Material composition source: same as density
+
+# Material name:
+# CIRS_bone_adult_and_15yo
+
+# Number of elements:
+7
+
+# Density:
+1.600000
+
+# Atomic number(s) and corresponding mass fraction(s):
+1    0.048314    # hydrogen
+6    0.370411    # carbon
+7    0.009703    # nitrogen
+8    0.356707    # oxygen
+12    0.061919    # magnesium
+17    0.000500    # chlorine
+20    0.152446    # calcium

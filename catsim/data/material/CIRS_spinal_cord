@@ -1,0 +1,22 @@
+# Copyright 2022, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.0.
+# Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
+# Density source: CIRS, as used for GE CRC's phantoms, Rev: August 17, 2012
+# Material composition source: same as density
+
+# Material name:
+# CIRS_sponal_cord
+
+# Number of elements:
+6
+
+# Density:
+1.070000
+
+# Atomic number(s) and corresponding mass fraction(s):
+1    0.073615    # hydrogen
+6    0.542809    # carbon
+7    0.021704    # nitrogen
+8    0.265953    # oxygen
+12    0.093719    # magnesium
+17    0.002200    # chlorine

@@ -1,0 +1,22 @@
+# Copyright 2022, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.0.
+# Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
+# Density source: CIRS, as used for GE CRC's phantoms, Rev: August 17, 2012
+# Material composition source: same as density
+
+# Material name:
+# CIRS_lung_inhale
+
+# Number of elements:
+6
+
+# Density:
+0.205000
+
+# Atomic number(s) and corresponding mass fraction(s):
+1    0.085909    # hydrogen
+6    0.658966    # carbon
+7    0.035204    # nitrogen
+8    0.192919    # oxygen
+17    0.016902    # chlorine
+20    0.010101    # calcium
