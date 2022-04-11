@@ -565,18 +565,18 @@ cfg.recon.saveSingleImages = True
 # Uncomment the ones you want to run.
 
 experimentNames = [
-    # "01_01_Baseline",
-    # "01_02_Physics_eNoiseOn",
-    # "01_03_Physics_qNoiseOn",
-    # "01_04_Physics_NoiseOn",
-    # "01_05_Physics_1ebin",
-    # "01_06_Physics_eNoiseOn_1ebin",
-    # "01_07_Physics_qNoiseOn_1ebin",
-    # "01_08_Physics_NoiseOn_1ebin",
-    # "01_09_Physics_Monoenergetic",
-    # "01_10_Physics_eNoiseOn_Monoenergetic",
-    # "01_11_Physics_qNoiseOn_Monoenergetic",
-    # "01_12_Physics_NoiseOn_Monoenergetic",
+    "01_01_Baseline",
+    "01_02_Physics_eNoiseOn",
+    "01_03_Physics_qNoiseOn",
+    "01_04_Physics_NoiseOn",
+    "01_05_Physics_1ebin",
+    "01_06_Physics_eNoiseOn_1ebin",
+    "01_07_Physics_qNoiseOn_1ebin",
+    "01_08_Physics_NoiseOn_1ebin",
+    "01_09_Physics_Monoenergetic",
+    "01_10_Physics_eNoiseOn_Monoenergetic",
+    "01_11_Physics_qNoiseOn_Monoenergetic",
+    "01_12_Physics_NoiseOn_Monoenergetic",
 
     # "02_01_Physics_NoiseOn_Recon_128mmFOV_R-LKernel", # Needs to be done before the next 4 because those use projections from this.
     # "02_02_Physics_NoiseOn_Recon_128mmFOV_S-LKernel",
@@ -610,11 +610,11 @@ experimentNames = [
     # "07_02_Scanner_16slices_Recon_2slices",
     # "07_03_Scanner_16slices_Recon_16slices",
 
-    "08_01_16slices_Phantom_offset0",
-    "08_02_16slices_Phantom_offset+50mmX",
-    "08_03_16slices_Phantom_offset+50mmY",
-    "08_04_16slices_Phantom_offset+4mmZ",
-    "08_05_16slices_Phantom_offset+8mmZ",
+    # "08_01_16slices_Phantom_offset0",
+    # "08_02_16slices_Phantom_offset+50mmX",
+    # "08_03_16slices_Phantom_offset+50mmY",
+    # "08_04_16slices_Phantom_offset+4mmZ",
+    # "08_05_16slices_Phantom_offset+8mmZ",
 
     # "09_01_Recon_128mmFOV_offset0",  # Needs to be done before the next 2 because those use projections from this.
     # "09_02_Recon_128mmFOV_offset+50mmX",
