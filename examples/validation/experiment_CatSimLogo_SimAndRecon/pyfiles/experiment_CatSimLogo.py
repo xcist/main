@@ -514,6 +514,8 @@ def getUserPath():
     # Get the user-specified environment variable.
     userPath = os.environ.get('XCIST_UserPath')
 
+    if userPath is None:
+        raise Exception("******** Error! Please set the environment variable 'XCIST_UserPath'")
     # Convert to a list to see if more than one path was specified.
     userPath = userPath.split(";")
     if len(userPath) > 1:
@@ -524,6 +526,7 @@ def getUserPath():
     if not os.path.exists(userPath):
         raise Exception("******** Error! Environment variable 'XCIST_UserPath' not found.".format(userPath))
 
+    xc.CommonTools.my_path.add_search_path(userPath)
     return userPath
 
 
@@ -535,8 +538,8 @@ experimentDirectory = os.path.join(userPath, "my_experiments", "experiment_CatSi
 # Use the default cfg parameters found in Scanner_Default.cfg, Physics_Default.cfg, Protocol_Default.cfg.
 # Use experiment-specific config files Phantom_CatSimLogo.cfg and Recon_CatSimLogo.cfg.
 
-cfg = xc.CatSim(os.path.join(experimentDirectory, "cfg", "Phantom_CatSimLogo.cfg"),
-                os.path.join(experimentDirectory, "cfg", "Recon_CatSimLogo.cfg"))
+cfg = xc.CatSim(xc.CommonTools.my_path.find("cfg", "Phantom_CatSimLogo.cfg", ""),
+                xc.CommonTools.my_path.find("cfg", "Recon_CatSimLogo.cfg", ""))
 
 # These are changes to the defaults config parameters to be used for the "base" experiment,
 # but some of these and some other defaults are overridden for certain experiments.
