@@ -1,5 +1,6 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 import ctypes
+
 import json
 import os
 import struct
@@ -30,7 +31,9 @@ def feval(funcName, *args):
         md = __import__(funcName)
     except:
         md = __import__("catsim."+funcName, fromlist=[funcName])  # equal to: from catsim.foo import foo
-    return eval("md."+funcName)(*args)
+    strip_leading_module = '.'.join(funcName.split('.')[1:])
+    func_name_only = funcName.split('.')[-1]
+    return eval("md." + strip_leading_module + "." + func_name_only)(*args)
 
 
 def load_C_lib():
