@@ -32,6 +32,9 @@ class TestStruct(ct.Structure):
                 ("XOffSet", ct.c_float),       # recon offset along the x axis
                 ("YOffSet", ct.c_float),       # recon offset along the y axis
                 ("ZOffSet", ct.c_float),       # recon offset along the z axis
+                ("phantomXOffSet", ct.c_float),  # phantom offset along the x axis
+                ("phantomYOffSet", ct.c_float),  # phantom offset along the y axis
+                ("phantomZOffSet", ct.c_float),  # phantom offset along the z axis
                 ("AngleNumber", ct.c_int),      # Number of view samples on the scanning trajectory
                 ("DistD", ct.c_float),         # Distance between the x-ray source and the detector
                 ("Radius", ct.c_float),        # Radius of the phantom
@@ -98,7 +101,7 @@ def fdk_equiAngle(cfg, prep):
 
     # scanner & recon geometry
     sid, sdd, nMod, rowSize, modWidth, dectorYoffset, dectorZoffset, \
-    fov, imageSize, sliceCount, sliceThickness, centerOffset, startView, kernelType      \
+    fov, imageSize, sliceCount, sliceThickness, centerOffset, phantomOffset, startView, kernelType      \
         = mapConfigVariablesToFDK(cfg)
 
     # initialize parameters
@@ -196,7 +199,10 @@ def fdk_equiAngle(cfg, prep):
     t.XOffSet = centerOffset[0]
     t.YOffSet = centerOffset[1]
     t.ZOffSet = centerOffset[2]
-
+    t.phantomXOffSet = phantomOffset[0]
+    t.phantomYOffSet = phantomOffset[1]
+    t.phantomZOffSet = phantomOffset[2]
+    
     if cfg.recon.printReconParameters:
         print("* Reconstruction parameters:")
         print("* SID: {} mm".format(t.ScanR))
