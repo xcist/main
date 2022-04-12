@@ -1,10 +1,7 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
-import numpy as np
-import numpy.matlib as nm
 from ctypes import *
 from numpy.ctypeslib import ndpointer
-import os, json
 from catsim.GetMu import GetMu
 from catsim.CommonTools import *
 
@@ -22,40 +19,41 @@ def Phantom_NCAT(cfg):
 
 
 def set_material(cfg):
-    materialList = ['ncat_water', \
-        'ncat_muscle', \
-        'ncat_lung', \
-        'ncat_dry_spine', \
-        'ncat_dry_rib', \
-        'ncat_adipose', \
-        'ncat_blood', \
-        'ncat_heart', \
-        'ncat_kidney', \
-        'ncat_liver', \
-        'ncat_lymph', \
-        'ncat_pancreas', \
-        'ncat_intestine', \
-        'ncat_skull', \
-        'ncat_cartilage', \
-        'ncat_brain', \
-        'ncat_spleen', \
-        'ncat_iodine_blood', \
-        'ncat_iron', \
-        'ncat_pmma', \
-        'ncat_aluminum', \
-        'ncat_titanium', \
-        'ncat_air', \
-        'ncat_graphite', \
-        'ncat_lead', \
-        'ncat_breast_mammary', \
-        'ncat_skin', \
-        'ncat_iodine', \
-        'ncat_eye_lens', \
-        'ncat_ovary', \
-        'ncat_red_marrow', \
-        'ncat_yellow_marrow', \
-        'ncat_testis', \
-        'ncat_thyroid', \
+    materialList = [
+        'ncat_water',
+        'ncat_muscle',
+        'ncat_lung',
+        'ncat_dry_spine',
+        'ncat_dry_rib',
+        'ncat_adipose',
+        'ncat_blood',
+        'ncat_heart',
+        'ncat_kidney',
+        'ncat_liver',
+        'ncat_lymph',
+        'ncat_pancreas',
+        'ncat_intestine',
+        'ncat_skull',
+        'ncat_cartilage',
+        'ncat_brain',
+        'ncat_spleen',
+        'ncat_iodine_blood',
+        'ncat_iron',
+        'ncat_pmma',
+        'ncat_aluminum',
+        'ncat_titanium',
+        'ncat_air',
+        'ncat_graphite',
+        'ncat_lead',
+        'ncat_breast_mammary',
+        'ncat_skin',
+        'ncat_iodine',
+        'ncat_eye_lens',
+        'ncat_ovary',
+        'ncat_red_marrow',
+        'ncat_yellow_marrow',
+        'ncat_testis',
+        'ncat_thyroid',
         'ncat_bladder']
     
     Evec = cfg.spec.Evec
@@ -87,12 +85,8 @@ def set_volume(cfg, nMat):
     
     ###----------- set volume
     # phantom file (*.nrb)
-    if not os.path.isfile(cfg.phantom.filename):
-        myPath = get_path()
-        cfg.phantom.filename = myPath.phantom+'/'+cfg.phantom.filename
-    if not os.path.isfile(cfg.phantom.filename):
-        raise Exception('Cannot find phantom file')
-        
+    cfg.phantom.filename = my_path.find("phantom", cfg.phantom.filename, '')
+
     # in nCAT_main.c: void Parse_Phantom(char *filename, int *materials, float *coord_origin_offset, float scale)
     fun = cfg.clib.Parse_Phantom
     fun.argtypes = [POINTER(c_char), ndpointer(c_int), POINTER(c_float), c_float]

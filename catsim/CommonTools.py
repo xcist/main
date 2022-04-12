@@ -1,15 +1,16 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+import ctypes
+import json
+import os
+import struct
 
 import numpy as np
-import numpy.matlib as nm
-import ctypes, struct
-import os
 
 '''
 Common tool functions.
 Mingye Wu, GE Research
-
 '''
+
 
 def check_value(a):
     #return
@@ -17,11 +18,13 @@ def check_value(a):
     if type(a) is np.ndarray:
         print(a.shape, a.dtype)
     print(a,'\n')
-    
+
+
 def make_col(a):
     a = a.reshape(a.size, 1)
     return a
-        
+
+
 def feval(funcName, *args):
     try:
         md = __import__(funcName)
@@ -29,26 +32,10 @@ def feval(funcName, *args):
         md = __import__("catsim."+funcName, fromlist=[funcName])  # equal to: from catsim.foo import foo
     return eval("md."+funcName)(*args)
 
-def get_path():
-    # Locate paths of lib and data.
-    myPath = emptyCFG()
-    myPath.main = os.path.dirname(os.path.abspath(__file__))
-    myPath.cfg = myPath.main+'/cfg'
-    myPath.lib = myPath.main+'/lib'
-    myPath.data = myPath.main+'/data'
-    myPath.bowtie = myPath.main+'/data/bowtie'
-    myPath.material = myPath.main+'/data/material'
-    myPath.phantom = myPath.main+'/data/phantom'
-    myPath.scatter = myPath.main+'/data/scatter'
-    myPath.spectrum = myPath.main+'/data/spectrum'
-    return myPath
 
 def load_C_lib():
-    myPath = get_path()
-
-    # add lib path to environment value "PATH" for depending DLLs
-    if not myPath.lib in os.environ["PATH"]:
-        os.environ["PATH"] = myPath.lib+';'+os.environ["PATH"]
+    lib_path = my_path.paths["lib"]
+    my_path.add_dir_to_path(lib_path)
 
     # load C/C++ lib
     ll = ctypes.cdll.LoadLibrary
@@ -56,13 +43,140 @@ def load_C_lib():
         libFile = "libcatsim64.dll"
     else:
         libFile = "libcatsim.so"
-    clib = ll(myPath.lib + "/" + libFile)
+    clib = ll(os.path.join(lib_path, libFile))
     
     return clib
 
+
 class emptyCFG:
     pass
-    
+
+
+class PathHelper:
+    def __init__(self):
+        self._base_dir = os.getcwd()
+        # Locate paths of lib and data.
+        self.paths = {}
+        self.paths["main"] = os.path.dirname(os.path.abspath(__file__))
+        self.paths["top"] = os.path.split(self.paths["main"])[0]
+        self.paths["cfg"] = os.path.join(self.paths["main"],'cfg')
+        self.paths["lib"] = os.path.join(self.paths["main"], 'lib')
+        self.paths["data"] = os.path.join(self.paths["main"], 'data')
+
+        # data paths
+        self.paths["bowtie"] = os.path.join(self.paths["data"], 'bowtie')
+        self.paths["material"] = os.path.join(self.paths["data"], 'material')
+        self.paths["phantom"] = os.path.join(self.paths["data"], 'phantom')
+        self.paths["scatter"] = os.path.join(self.paths["data"], 'scatter')
+        self.paths["spectrum"] = os.path.join(self.paths["data"], 'spectrum')
+        self.extra_search_paths = []
+        self.read_catsim_init()
+
+    def base(self, *args):
+        return os.path.join(self._base_dir, *args)
+
+    def add_search_path(self, path):
+        if not os.path.isdir(path):
+            print(f"***WARNING: {path} does not exist.")
+        if path not in self.extra_search_paths:
+            self.extra_search_paths.append(path)
+
+    def find(self, key, filename, extension):
+        path = self.paths[key]
+
+        # check fully-qualified path and/or current directory first
+        if os.path.isfile(filename):
+            return filename
+
+        if os.path.isfile(f"{filename}{extension}"):
+            return f"{filename}{extension}"
+
+        # check user-defined search paths BEFORE default paths
+        for p in self.extra_search_paths:
+            if os.path.isfile(os.path.join(p, filename)):
+                return os.path.join(p, filename)
+            elif os.path.isfile(os.path.join(p, f"{filename}{extension}")):
+                return os.path.join(p, f"{filename}{extension}")
+            elif os.path.isfile(os.path.join(p, key, filename)):
+                return os.path.join(p, key, filename)
+            elif os.path.isfile(os.path.join(p, key, f"{filename}{extension}")):
+                return os.path.join(p, key, f"{filename}{extension}")
+
+        if os.path.isfile(os.path.join(path, filename)):
+            return os.path.join(path, filename)
+        if os.path.isfile(os.path.join(path, f"{filename}{extension}")):
+            return os.path.join(path, f"{filename}{extension}")
+
+        # exhausted all the paths to search and could not find the file
+        raise Exception("Cannot find %s or %s%s" %(filename, filename, extension))
+
+    def find_dir(self, key, dir_name):
+        path = self.paths[key]
+
+        # check fully-qualified path and/or current directory first
+        if os.path.isdir(dir_name):
+            return dir_name
+
+        # check user-defined search paths BEFORE default paths
+        for p in self.extra_search_paths:
+            if os.path.isdir(os.path.join(p, dir_name)):
+                return os.path.join(p, dir_name)
+            elif os.path.isdir(os.path.join(p, key, dir_name)):
+                return os.path.join(p, key, dir_name)
+
+        if os.path.isdir(os.path.join(path, dir_name)):
+            return os.path.join(path, dir_name)
+        # exhausted all the paths to search and could not find the file
+        raise Exception("Cannot find directory %s" % (dir_name))
+
+    def read_catsim_init(self):
+        cwd_init_file = os.path.join(self._base_dir, ".catsim")
+        self.read_catsim_file(cwd_init_file)
+
+        if os.name == "nt":
+            # on my PC with a C: and D: drive
+            # HOMEDIR=D:\Users\USERNAME
+            # USERPROFILE=c:\Users\USERNAME
+            if "HOMEDIR" in os.environ:
+                user_home = os.environ.get("HOMEDIR")
+                root_init_file = os.path.join(user_home, ".catsim")
+                self.read_catsim_file(root_init_file)
+
+            if "USERPROFILE" in os.environ:
+                user_home = os.environ.get("USERPROFILE")
+                root_init_file = os.path.join(user_home, ".catsim")
+                self.read_catsim_file(root_init_file)
+        else:
+            # on Linux & Mac, HOME is home directory of the user
+            if "HOME" in os.environ:
+                user_home = os.environ.get("HOME")
+                root_init_file = os.path.join(user_home, ".catsim")
+                self.read_catsim_file(root_init_file)
+
+    def read_catsim_file(self, filename):
+        if os.path.isfile(filename):
+            try:
+                with open(filename, "r") as f:
+                    init = json.load(f)
+            except BaseException as err:
+                print(f"***WARNING: Unable to read file: {filename} as json: {err=}, {type(err)=}")
+            else:
+                if "search_paths" in init:
+                    for p in init["search_paths"]:
+                        self.add_search_path(p)
+                else:
+                    print(f"***WARNING: search_paths entry not found in {filename}")
+
+    @staticmethod
+    def add_dir_to_path(dir_name):
+        if dir_name not in os.environ["PATH"]:
+            os.environ["PATH"] = f'{dir_name};{os.environ["PATH"]}'
+
+    @staticmethod
+    def linux_style_path(filename):
+        return filename.replace("\\", "/")
+
+
 class CFG:
     def __init__(self, *para):
         # initialize cfg: defaults, paths, and C lib
@@ -73,7 +187,6 @@ class CFG:
         cfg = source_cfg("Recon_Default", cfg)
         cfg.resultsName = "simulation_test"
 
-        cfg.path = get_path()
         if not hasattr(cfg, 'clib'):
             cfg.clib = load_C_lib()
         
@@ -96,27 +209,18 @@ class CFG:
     def load(self, cfgFile):
         cfg = source_cfg(cfgFile)
         self.pass_cfg_to_self(cfg)
-    
+
+
 def source_cfg(*para):
     '''
     First para must be cfg filename.
     Second para is optional, if defined and is cfg, attr will be added to cfg.
-    Calling source_cfg(cfgFile, cfg) will add or override attributes to cfg.
+    Calling source_cfg(cfg_file, cfg) will add or override attributes to cfg.
     '''
     # find cfg file
-    cfgFile = para[0]
-    if not os.path.isfile(cfgFile):
-        cfgPath = get_path().cfg + "/"
-        if os.path.isfile(cfgFile + ".cfg"):
-            cfgFile += ".cfg"
-        elif os.path.isfile(cfgPath + cfgFile):
-            cfgFile = cfgPath + cfgFile
-        elif os.path.isfile(cfgPath + cfgFile + ".cfg"):
-            cfgFile = cfgPath + cfgFile + ".cfg"
-        else:
-            raise Exception("Cannot find %s or %s.cfg" %(cfgFile, cfgFile))
-    
-    # cfg is initialized before sourcing cfgFile
+    cfg_file = my_path.find("cfg", para[0], ".cfg")
+
+    # cfg is initialized before sourcing cfg_file
     if len(para)<2:
         cfg = emptyCFG()
     else:
@@ -131,7 +235,7 @@ def source_cfg(*para):
             exec("%s = emptyCFG()" % attr)
         
     # execute scripts in cfg file
-    exec(open(cfgFile).read())
+    exec(open(cfg_file).read())
     
     # add or override the attributes in the original cfg
     for attr in attrList:
@@ -148,7 +252,8 @@ def vectornorm(xyz):
         norms = np.sqrt(np.square(xyz).sum(axis=0))
         norms = make_col(norms)
         return norms
-        
+
+
 def overlap(x0, y0, x1):
     # length
     n0 = len(x0)
@@ -191,6 +296,7 @@ def overlap(x0, y0, x1):
     
     return y1
 
+
 def get_vector_boundaries(x):
     # x can be scalar, vector, or [n, 1] array
     
@@ -200,6 +306,7 @@ def get_vector_boundaries(x):
         b = (x[0:-1]+x[1:])/2
         b = np.concatenate(([x[0]-0.5*(x[1]-x[0])], b, [x[-1]+0.5*(x[-1]-x[-2])]))
     return b
+
 
 def rawread(fname, dataShape, dataType):
     # dataType is for numpy, ONLY allows: 'float'/'single', 'double', 'int'/'int32', 'uint'/'uint32', 'int8', 'int16' 
@@ -229,6 +336,7 @@ def rawread(fname, dataShape, dataType):
 def rawwrite(fname, data):
     with open(fname, 'wb') as fout:
         fout.write(data)
+
 
 def conv2(img, h, mode='same'):
     h = np.rot90(h, 2) # rotate 180 degree
@@ -262,4 +370,6 @@ def conv2(img, h, mode='same'):
             img_conv = img_conv[:,1:]
     
     return img_conv
-    
+
+
+my_path = PathHelper()

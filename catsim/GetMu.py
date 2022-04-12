@@ -10,10 +10,12 @@ def GetMu(materialFile, Evec):
 
     #----------------- load dll lib and material data path
     clib = load_C_lib()
-    myPath = get_path()
 
     #----------------- initialize cross-section data
-    MaterialDirectory = myPath.material+'/'
+    # the format of this path is finicky and using os.path.join, os.pathsep or changing all \\ to /
+    # does not seem to work on the C code side
+    MaterialDirectory = my_path.paths["material"] + "/"
+
     c_MaterialDirectory = c_char_p(bytes(MaterialDirectory, 'utf-8'))
     # b_MaterialDirectory = b"./data/materials/" # bytes, python3
 
@@ -25,8 +27,7 @@ def GetMu(materialFile, Evec):
     # clib.InitializeCrossSectionDB(b_MaterialDirectory, 0) # works
 
     #----------------- read material file
-    if not os.path.isfile(materialFile):
-        materialFile = MaterialDirectory+materialFile
+    materialFile = my_path.find("material", materialFile, '')
     (numberOfElements, density, atomicNumbers, massFractions) = ReadMaterialFile(materialFile)
     atomicNumbers = (c_int*numberOfElements)(*atomicNumbers)
     massFractions = (c_float*numberOfElements)(*massFractions)

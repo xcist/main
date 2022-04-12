@@ -1,9 +1,7 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
-import numpy as np
-import os
 from catsim.CommonTools import *
-import matplotlib.pyplot as plt
+
 
 # This is a simplified kernel based scatter model, will have roughly 15% SPR for 35-cm water phantom, 120 kVp, 40-mm beam width.
 def Scatter_ConvolutionModel(cfg, viewId, subViewId):
@@ -36,9 +34,7 @@ def Scatter_ConvolutionModel(cfg, viewId, subViewId):
     return cfg
 
 def get_scatter_kernel():
-    scatterDataFile = "scatter_kernel.dat"
-    if not os.path.isfile(scatterDataFile):
-        scatterDataFile = get_path().scatter + '/scatter_kernel.dat'
+    scatterDataFile = my_path.find("scatter", "scatter_kernel.dat", "")
     h = rawread(scatterDataFile, [49,65], 'float');
     h = h/np.sum(h)    
     return h

@@ -78,22 +78,18 @@ def float3Dpointer2array(ptr, n, m, o):
 
 
 def load_C_recon_lib():
-    
-    myPath = get_path()
 
     # add recon lib path to environment value "PATH" for depending DLLs
-    pathParts = os.path.split(myPath.main)
-    myPath.reconlib = pathParts[0] + "/reconstruction/lib"
-    if not myPath.reconlib in os.environ["PATH"]:
-        os.environ["PATH"] = myPath.reconlib + ";" + os.environ["PATH"]
+    recon_lib = my_path.find_dir("top", os.path.join("reconstruction", "lib"))
+    my_path.add_dir_to_path(recon_lib)
 
     # load C/C++ lib
     ll = ctypes.cdll.LoadLibrary
     if os.name == "nt":
-        libFile = "fdk_equiAngle.dll"
+        lib_file = "fdk_equiAngle.dll"
     else:
-        libFile = "fdk_equiAngle.so"
-    clib = ll(myPath.reconlib + "/" + libFile)
+        lib_file = "fdk_equiAngle.so"
+    clib = ll(os.path.join(recon_lib, lib_file))
     
     return clib
 
