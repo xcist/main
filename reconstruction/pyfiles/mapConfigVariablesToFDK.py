@@ -15,6 +15,7 @@ def mapConfigVariablesToFDK(cfg):
     sliceCount = cfg.recon.sliceCount
     sliceThickness = cfg.recon.sliceThickness
     centerOffset = cfg.recon.centerOffset
+    phantomOffset = cfg.phantom.centerOffset
 
     # The FDK recon seems to be using a "start view" rather than a "start angele".
     # This is a hack until that gets fixed.
@@ -29,4 +30,4 @@ def mapConfigVariablesToFDK(cfg):
     kernelType = cfg.recon.kernelType
 
     return sid, sdd, nMod, rowSize, modWidth, dectorYoffset, dectorZoffset, \
-           fov, imageSize, sliceCount, sliceThickness, centerOffset, startView, kernelType
+           fov, imageSize, sliceCount, sliceThickness, centerOffset, phantomOffset, startView, kernelType
