@@ -46,19 +46,17 @@ def scaleReconData(cfg, imageVolume3D):
 
     print('* Scaling recon data...')
     if cfg.recon.unit =='HU':
-        imageVolume3D = imageVolume3D*(1000/(cfg.recon.mu))
-        imageVolume3D = imageVolume3D + cfg.recon.huOffset
+        imageVolume3D = imageVolume3D*(1000/(cfg.recon.mu)) + cfg.recon.huOffset
     elif cfg.recon.unit == '/mm':
-        imageVolume3D = imageVolume3D
+        pass
     elif cfg.recon.unit == '/cm':
         imageVolume3D = imageVolume3D*10
     else:
         raise Exception('******** Error! An unsupported recon unit was specified: {:s}. ********'.format(cfg.recon.unit))
 
-
     return imageVolume3D
 
-    
+
 def saveImageVolume(cfg, imageVolume3D):
 
     print('* Writing the recon results to one big file...')

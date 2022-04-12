@@ -24,7 +24,7 @@ def mapConfigVariablesToFDK(cfg):
     elif cfg.recon.startAngle > 180:
         startView = startView_at_view_angle_equals_0 - int(cfg.protocol.viewCount*cfg.recon.startAngle/360)
     else:
-        raise Exception("******** Error! Invalid start angle = {} specified: {:s}. ********".format(cfg.recon.startAngle))
+        raise Exception("******** Error! Invalid start angle = {} specified. ********".format(cfg.recon.startAngle))
 
     kernelType = cfg.recon.kernelType
 

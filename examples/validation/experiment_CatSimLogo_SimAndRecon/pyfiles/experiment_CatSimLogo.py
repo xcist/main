@@ -29,12 +29,12 @@
 # 09. Reconstruction offset evaluation (1 simulation and 2 reconstructions + 1 simulation/reconstruction)
 #
 # Each sim/recon is independent except experiments 02 and 09, which use the same sim for multiple recons.
-# Each sim/recon is included in a list of sim/recons to run at lines 567 to 622 in this file.
+# Each sim/recon is included in a list of sim/recons to run - see "##--------- Define experiment names".
 # Each can be run or not by uncommenting or commenting them.
 #
 # The overall process is:
-# a. Define "base" config (lines 530 to 565).
-# b. Define a list of sim/recons to run (lines 567 to 622).
+# a. Define "base" config (see "##--------- Initialize").
+# b. Define a list of sim/recons to run (see "##--------- Define experiment names").
 # c. Loop through all the sim/recons defined in b, and for each sim/recon:
 # d.   Define the specific parameters for the sim/recon - function setExperimentParameters().
 # e.   Get the title for the recon images - function getReconImageTitle().
@@ -561,6 +561,14 @@ cfg.recon.saveImagePictureFiles = True
 cfg.recon.saveImageVolume = True
 cfg.recon.saveSingleImages = True
 
+# Top-level cfg parameters related to control of this experiment.
+cfg.waitForKeypress = False             # Wait for keypress after plot display?
+cfg.do_Sim = False                       # The simulation is usually run except when only varying recon parameters.
+cfg.displayWindowMin = -200             # In HU.
+cfg.displayWindowMax = 200              # In HU.
+
+##--------- Define experiment names
+
 # The following variable sets up all relevant parameters for experiments designed to evaluate XCIST using the CatSim logo phantom.
 # Uncomment the ones you want to run.
 
@@ -621,11 +629,6 @@ experimentNames = [
     # "09_03_Recon_128mmFOV_offset+50mmY",
     # "09_04_16slices_Recon_offset+1mmZ", # Independent of above.
 ]
-# Top-level cfg parameters related to control of this experiment.
-cfg.waitForKeypress = False             # Wait for keypress after plot display?
-cfg.do_Sim = True                       # The simulation is usually run except when only varying recon parameters.
-cfg.displayWindowMin = -100             # In HU.
-cfg.displayWindowMax = 500              # In HU.
 
 # The current config is the base config, and will be used as the basis each time through the loop.
 base = copy.deepcopy(cfg) 
