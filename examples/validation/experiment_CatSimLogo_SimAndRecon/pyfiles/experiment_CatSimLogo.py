@@ -52,6 +52,22 @@ def setExperimentParameters(cfg):
 
     experimentName = cfg.experimentName
 
+    # Some experiments use 1000 views and low mA.
+    if experimentName == "01_01_Baseline"                        \
+    or experimentName == "01_02_Physics_eNoiseOn"                \
+    or experimentName == "01_03_Physics_qNoiseOn"                \
+    or experimentName == "01_04_Physics_NoiseOn"                 \
+    or experimentName == "01_05_Physics_1ebin"                   \
+    or experimentName == "01_06_Physics_eNoiseOn_1ebin"          \
+    or experimentName == "01_07_Physics_qNoiseOn_1ebin"          \
+    or experimentName == "01_08_Physics_NoiseOn_1ebin"           \
+    or experimentName == "01_09_Physics_Monoenergetic"           \
+    or experimentName == "01_10_Physics_eNoiseOn_Monoenergetic"  \
+    or experimentName == "01_11_Physics_qNoiseOn_Monoenergetic"  \
+    or experimentName == "01_12_Physics_NoiseOn_Monoenergetic":
+        cfg.protocol.viewsPerRotation = 1000
+        cfg.protocol.mA = 100
+    
     # Some experiments use a 128mm FOV.
     if experimentName == "02_01_Physics_NoiseOn_Recon_128mmFOV_R-LKernel"                    \
     or experimentName == "02_02_Physics_NoiseOn_Recon_128mmFOV_S-LKernel"                    \
@@ -116,20 +132,32 @@ def setExperimentParameters(cfg):
             copyToPathname = cfg.resultsName + ".prep"
             shutil.copy2(copyFromPathname, copyToPathname)
 
+    # Most experiments use the baseline polyenergetic spectrum and number of energy bins,
+    # but a few use different spectra.
+    # We need to adjust the recon mu values for each spectrum to make water = 0 HU.
+    # The adjusted mu values were determined experimentally by first reconstructing with cgf.recon.mu = 0.02,
+    # measuring water HU in a cental ROI (40 pixels wide, 80 pixels high),
+    # and calculating the mu required to make water = 0 HU using this formula:
+    # cfg.recon.mu = 0.02 + HU(water, measured)*0.02/1000
+
+    # Baseline:
+    cfg.recon.mu = 0.019672
+
     # Some experiments use a polyenergetic spectrum but only one energy bin.
     if experimentName == "01_05_Physics_1ebin"                                       \
     or experimentName == "01_06_Physics_eNoiseOn_1ebin"                              \
     or experimentName == "01_07_Physics_qNoiseOn_1ebin"                              \
     or experimentName == "01_08_Physics_NoiseOn_1ebin":
         cfg.physics.energyCount = 1
+        cfg.recon.mu = 0.02061
 
     # Some experiments use a monoenergetic spectrum.
-    if experimentName == "01_09_Physics_Monoenergetic"                                       \
-    or experimentName == "01_10_Physics_eNoiseOn_Monoenergetic"                              \
-    or experimentName == "01_11_Physics_qNoiseOn_Monoenergetic"                              \
+    if experimentName == "01_09_Physics_Monoenergetic"                               \
+    or experimentName == "01_10_Physics_eNoiseOn_Monoenergetic"                      \
+    or experimentName == "01_11_Physics_qNoiseOn_Monoenergetic"                      \
     or experimentName == "01_12_Physics_NoiseOn_Monoenergetic":
         cfg.physics.monochromatic = 70
-        cfg.protocol.spectrumScaling = 1.0
+        cfg.recon.mu = 0.019326
 
     # Vary the recon kernel
     if experimentName == "02_01_Physics_NoiseOn_Recon_128mmFOV_R-LKernel":
@@ -322,8 +350,8 @@ def getReconImageTitle(cfg):
         string1 = formatString.format(cfg.physics.monochromatic, cfg.physics.energyCount)
         formatString = "cfg.physics.enableElectronicNoise = {}; cfg.protocol.spectrumScaling = {}"
         string2 = formatString.format(cfg.physics.enableElectronicNoise, cfg.protocol.spectrumScaling)
-        formatString = "cfg.physics.enableQuantumNoise = {}; cfg.protocol.mA = {}"
-        string3 = formatString.format(cfg.physics.enableQuantumNoise, cfg.protocol.mA)
+        formatString = "cfg.physics.enableQuantumNoise = {}; cfg.protocol.mA = {}; cfg.recon.mu = {}"
+        string3 = formatString.format(cfg.physics.enableQuantumNoise, cfg.protocol.mA, cfg.recon.mu)
         return string1 + "\n" + string2 + "\n" + string3
 
     if experimentName == "02_01_Physics_NoiseOn_Recon_128mmFOV_R-LKernel"      \
@@ -526,7 +554,6 @@ def getUserPath():
     if not os.path.exists(userPath):
         raise Exception("******** Error! Environment variable 'XCIST_UserPath' not found.".format(userPath))
 
-    xc.CommonTools.my_path.add_search_path(userPath)
     return userPath
 
 
@@ -534,6 +561,7 @@ def getUserPath():
 
 userPath = getUserPath()
 experimentDirectory = os.path.join(userPath, "my_experiments", "experiment_CatSimLogo_SimAndRecon")
+xc.CommonTools.my_path.add_search_path(os.path.join(experimentDirectory, "cfg"))
 
 # Use the default cfg parameters found in Scanner_Default.cfg, Physics_Default.cfg, Protocol_Default.cfg.
 # Use experiment-specific config files Phantom_CatSimLogo.cfg and Recon_CatSimLogo.cfg.
@@ -566,7 +594,7 @@ cfg.recon.saveSingleImages = True
 
 # Top-level cfg parameters related to control of this experiment.
 cfg.waitForKeypress = False             # Wait for keypress after plot display?
-cfg.do_Sim = False                       # The simulation is usually run except when only varying recon parameters.
+cfg.do_Sim = True                       # The simulation is usually run except when only varying recon parameters.
 cfg.displayWindowMin = -200             # In HU.
 cfg.displayWindowMax = 200              # In HU.
 
@@ -576,7 +604,7 @@ cfg.displayWindowMax = 200              # In HU.
 # Uncomment the ones you want to run.
 
 experimentNames = [
-    "01_01_Baseline",
+    # "01_01_Baseline",
     "01_02_Physics_eNoiseOn",
     "01_03_Physics_qNoiseOn",
     "01_04_Physics_NoiseOn",
