@@ -8,22 +8,29 @@ from reconstruction.pyfiles.fdk_equiAngle import fdk_equiAngle
 
 def recon(cfg):
 
-    prep = load_prep(cfg)
+    # If doing the recon, load the projection data, do the recon, and save the resulting image volume.
+    if cfg.do_Recon:
+        prep = load_prep(cfg)
 
-    # The following line doesn't work - need to fix it when new recons are added.
-    # imageVolume3D = feval("reconstruction." + cfg.recon.reconType, cfg, prep)
-    # imageVolume3D = feval("reconstruction.pyfiles." + cfg.recon.reconType, cfg, prep)
+        # The following line doesn't work - need to fix it when new recons are added.
+        # imageVolume3D = feval("reconstruction." + cfg.recon.reconType, cfg, prep)
+        # imageVolume3D = feval("reconstruction.pyfiles." + cfg.recon.reconType, cfg, prep)
 
-    # A hack until the previous line is fixed.
-    imageVolume3D = fdk_equiAngle(cfg, prep)
-    imageVolume3D = scaleReconData(cfg, imageVolume3D)
+        # A hack until the previous line is fixed.
+        imageVolume3D = fdk_equiAngle(cfg, prep)
+        imageVolume3D = scaleReconData(cfg, imageVolume3D)
 
-    if cfg.recon.saveImageVolume:
-        saveImageVolume(cfg, imageVolume3D)
+        if cfg.recon.saveImageVolume:
+            saveImageVolume(cfg, imageVolume3D)
 
+    # If not doing the recon, load the previously-saved recon image volume.
+    else:
+        imageVolume3D = loadImageVolume(cfg)
+
+    # In either case, save the results as individual images and display results at the specified window/level.
     if cfg.recon.saveSingleImages:
         saveSingleImages(cfg, imageVolume3D)
-
+            
     if cfg.recon.displayImagePictures:
         cfg = displayImagePictures(cfg, imageVolume3D)
 
@@ -67,6 +74,21 @@ def saveImageVolume(cfg, imageVolume3D):
     imageVolume3D = imageVolume3D.transpose(2, 0, 1)
     imageVolume3D = imageVolume3D.copy(order='C')
     rawwrite(fname, imageVolume3D)
+
+
+def loadImageVolume(cfg):
+
+    print('* Reading the recon results from one big file...')
+
+    imageVolume3D_size_string = str(cfg.recon.imageSize) + 'x' + str(cfg.recon.imageSize) + 'x' + str(cfg.recon.sliceCount)
+    fname = cfg.resultsName + '_' + imageVolume3D_size_string + '.raw'
+    imageVolume3D = rawread(fname,
+                    [cfg.recon.sliceCount, cfg.recon.imageSize, cfg.recon.imageSize],
+                    'float')
+    imageVolume3D = imageVolume3D.copy(order='C')
+    imageVolume3D = imageVolume3D.transpose(1, 2, 0)
+
+    return imageVolume3D
 
 
 def saveSingleImages(cfg, imageVolume3D):
