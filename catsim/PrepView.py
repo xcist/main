@@ -3,6 +3,7 @@
 import numpy as np
 import numpy.matlib as nm
 from catsim.CommonTools import *
+from catsim.Prep_BHC_Accurate import Prep_BHC_Accurate
 
 def prep_view(cfg):
     
@@ -30,6 +31,16 @@ def prep_view(cfg):
     
     ###--------- post-log
     
+    # now perform BHC
+    if hasattr(cfg.physics, "call_back_log") and cfg.physics.call_back_log is not None:
+        print("Applying Beam Hardening Correction (ACCURATE BHC)...\n")
+        prep = Prep_BHC_Accurate(prep, cfg)
+        print("... done applying water BHC.\n")
+
+    # a simple low signal correction, further limiting mu values if desired
+    if cfg.protocol.maxPrep>0:
+        prep[prep>cfg.protocol.maxPrep] = cfg.protocol.maxPrep
+        
     
     
     ###--------- save prep
