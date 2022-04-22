@@ -1,27 +1,23 @@
-# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
-# Made with CatSim material calculator, version 1.0.
+# Copyright 2022, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.1.
 # Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
-# Density souce: NCAT software distribution
+# Density source: NCAT software distribution
 # Material composition source: same as density
 
 # Material name:
 # NCAT lymph
 
 # Number of elements:
-11
+7
 
 # Density:
-1.030
+1.030000
 
 # Atomic number(s) and corresponding mass fraction(s):
-1    0.108    # hydrogen
-6    0.041    # carbon
-7    0.011    # nitrogen
-8    0.832    # oxygen
-11    0.003    # sodium
-16    0.001    # sulfur
-17    0.004    # chlorine
-18    0.000    # argon
-19    0.000    # potassium
-20    0.000    # calcium
-21    0.000    # scandium
+1    0.108000    # hydrogen
+6    0.041000    # carbon
+7    0.011000    # nitrogen
+8    0.832000    # oxygen
+11    0.003000    # sodium
+16    0.001000    # sulfur
+17    0.004000    # chlorine

@@ -1,14 +1,25 @@
-# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Copyright 2022, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.1.
+# Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
+# Density source: NCAT software distribution
+# Material composition source: same as density
 
-10
-1.03
-1	0.105
-6	0.414
-7	0.034
-8	0.439
-11	0
-15	0.001
-16	0.002
-17	0.002
-19	0.002
-26	0.001
+# Material name:
+# NCAT red marrow
+
+# Number of elements:
+9
+
+# Density:
+1.030000
+
+# Atomic number(s) and corresponding mass fraction(s):
+1    0.105000    # hydrogen
+6    0.414000    # carbon
+7    0.034000    # nitrogen
+8    0.439000    # oxygen
+15    0.001000    # phosphorus
+16    0.002000    # sulfur
+17    0.002000    # chlorine
+19    0.002000    # potassium
+26    0.001000    # iron

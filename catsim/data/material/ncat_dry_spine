@@ -1,27 +1,26 @@
-# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
-# Made with CatSim material calculator, version 1.0.
+# Copyright 2022, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.1.
 # Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
-# Density souce: NCAT software distribution
+# Density source: NCAT software distribution
 # Material composition source: same as density
 
 # Material name:
 # NCAT dry spine
 
 # Number of elements:
-11
+10
 
 # Density:
-1.420
+1.420000
 
 # Atomic number(s) and corresponding mass fraction(s):
-1    0.063    # hydrogen
-6    0.261    # carbon
-7    0.039    # nitrogen
-8    0.436    # oxygen
-11    0.001    # sodium
-12    0.001    # magnesium
-15    0.061    # phosphorus
-16    0.003    # sulfur
-17    0.001    # chlorine
-19    0.001    # potassium
-20    0.133    # calcium
+1    0.063063    # hydrogen
+6    0.261261    # carbon
+7    0.039039    # nitrogen
+8    0.436436    # oxygen
+11    0.001001    # sodium
+15    0.001001    # phosphorus
+16    0.061061    # sulfur
+17    0.003003    # chlorine
+19    0.001001    # potassium
+20    0.133133    # calcium

@@ -1,27 +1,24 @@
-# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
-# Made with CatSim material calculator, version 1.0.
+# Copyright 2022, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.1.
 # Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
-# Density souce: NCAT software distribution
+# Density source: NCAT software distribution
 # Material composition source: same as density
 
 # Material name:
 # NCAT cartilage
 
 # Number of elements:
-11
+8
 
 # Density:
-1.100
+1.100000
 
 # Atomic number(s) and corresponding mass fraction(s):
-1    0.096    # hydrogen
-6    0.099    # carbon
-7    0.022    # nitrogen
-8    0.744    # oxygen
-11    0.005    # sodium
-15    0.022    # phosphorus
-16    0.009    # sulfur
-17    0.003    # chlorine
-18    0.000    # argon
-19    0.000    # potassium
-20    0.000    # calcium
+1    0.096000    # hydrogen
+6    0.099000    # carbon
+7    0.022000    # nitrogen
+8    0.744000    # oxygen
+11    0.005000    # sodium
+15    0.022000    # phosphorus
+16    0.009000    # sulfur
+17    0.003000    # chlorine

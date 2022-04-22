@@ -1,27 +1,25 @@
-# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
-# Made with CatSim material calculator, version 1.0.
+# Copyright 2022, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.1.
 # Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
-# Density souce: NCAT software distribution
+# Density source: NCAT software distribution
 # Material composition source: same as density
 
 # Material name:
 # NCAT skull
 
 # Number of elements:
-11
+9
 
 # Density:
-1.610
+1.610000
 
 # Atomic number(s) and corresponding mass fraction(s):
-1    0.050    # hydrogen
-6    0.212    # carbon
-7    0.040    # nitrogen
-8    0.435    # oxygen
-11    0.001    # sodium
-12    0.002    # magnesium
-15    0.081    # phosphorus
-16    0.003    # sulfur
-20    0.176    # calcium
-21    0.000    # scandium
-22    0.000    # titanium
+1    0.054348    # hydrogen
+6    0.230435    # carbon
+7    0.043478    # nitrogen
+8    0.472826    # oxygen
+11    0.001087    # sodium
+12    0.002174    # magnesium
+15    0.001087    # phosphorus
+16    0.003261    # sulfur
+20    0.191304    # calcium

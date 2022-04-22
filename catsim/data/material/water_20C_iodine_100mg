@@ -1,25 +1,19 @@
 # Copyright 2022, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 # Made with CatSim material calculator, version 1.1.
 # Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
-# Density source: NCAT software distribution
-# Material composition source: same as density
+# Density source: https://www.engineeringtoolbox.com/water-density-specific-weight-d_595.html?vA=37&units=C#
+# Material composition source: modified water
 
 # Material name:
-# NCAT brain
+# water at 20 deg C, with 9.105892% iodine (100 mg iodine/mL water-iodine solution)
 
 # Number of elements:
-9
+3
 
 # Density:
-1.040000
+1.098190
 
 # Atomic number(s) and corresponding mass fraction(s):
-1    0.107000    # hydrogen
-6    0.145000    # carbon
-7    0.022000    # nitrogen
-8    0.712000    # oxygen
-11    0.002000    # sodium
-15    0.004000    # phosphorus
-16    0.002000    # sulfur
-17    0.003000    # chlorine
-19    0.003000    # potassium
+1    0.101712    # hydrogen
+8    0.807229    # oxygen
+53    0.091059    # iodine

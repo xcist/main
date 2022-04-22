@@ -5,23 +5,23 @@
 # Material composition source: modified NCAT blood from NCAT software distribution
 
 # Material name:
-# NCAT blood with 0.7% iodine (7.5 mg iodine/mL blood)
+# NCAT blood with 2% iodine (21.6 mg iodine/mL blood)
 
 # Number of elements:
 11
 
 # Density:
-1.067472
+1.081632
 
 # Atomic number(s) and corresponding mass fraction(s):
-1    0.101286    # hydrogen
-6    0.109230    # carbon
-7    0.032769    # nitrogen
-8    0.739785    # oxygen
-11    0.000993    # sodium
-15    0.000993    # phosphorus
-16    0.001986    # sulfur
-17    0.002979    # chlorine
-19    0.001986    # potassium
-26    0.000993    # iron
-53    0.007000    # iodine
+1    0.099960    # hydrogen
+6    0.107800    # carbon
+7    0.032340    # nitrogen
+8    0.730100    # oxygen
+11    0.000980    # sodium
+15    0.000980    # phosphorus
+16    0.001960    # sulfur
+17    0.002940    # chlorine
+19    0.001960    # potassium
+26    0.000980    # iron
+53    0.020000    # iodine
