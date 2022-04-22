@@ -1,0 +1,18 @@
+# Copyright 2022, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.1.
+# Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
+# Density source: https://www.engineeringtoolbox.com/water-density-specific-weight-d_595.html?vA=37&units=C#
+# Material composition source: same as density
+
+# Material name:
+# water, 37 C
+
+# Number of elements:
+2
+
+# Density:
+0.99336
+
+# Atomic number(s) and corresponding mass fraction(s):
+1    0.111902    # hydrogen
+8    0.888098    # oxygen

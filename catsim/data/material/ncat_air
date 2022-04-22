@@ -1,8 +1,20 @@
-# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Copyright 2022, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.0.
+# Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
+# Density source: NCAT software distribution
+# Material composition source: same as density
 
+# Material name:
+# NCAT air
+
+# Number of elements:
 4
+
+# Density:
 0.001205
-6	0.000124
-7	0.755268
-8	0.231781
-17	0.012827
+
+# Atomic number(s) and corresponding mass fraction(s):
+6    0.000124    # carbon
+7    0.755268    # nitrogen
+8    0.231781    # oxygen
+17    0.012827    # chlorine

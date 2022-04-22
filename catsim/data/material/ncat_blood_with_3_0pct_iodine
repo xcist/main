@@ -1,0 +1,27 @@
+# Copyright 2022, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.1.
+# Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
+# Density source: estimate from CatSim material calculator
+# Material composition source: modified NCAT blood from NCAT software distribution
+
+# Material name:
+# NCAT blood with 3% iodine (32.8 mg iodine/mL blood)
+
+# Number of elements:
+11
+
+# Density:
+1.092784
+
+# Atomic number(s) and corresponding mass fraction(s):
+1    0.098940    # hydrogen
+6    0.106700    # carbon
+7    0.032010    # nitrogen
+8    0.722650    # oxygen
+11    0.000970    # sodium
+15    0.000970    # phosphorus
+16    0.001940    # sulfur
+17    0.002910    # chlorine
+19    0.001940    # potassium
+26    0.000970    # iron
+53    0.030000    # iodine

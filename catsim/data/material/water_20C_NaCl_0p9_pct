@@ -1,0 +1,20 @@
+# Copyright 2022, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.1.
+# Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
+# Density source: https://www.engineeringtoolbox.com/water-density-specific-weight-d_595.html?vA=37&units=C#
+# Material composition source: modified water
+
+# Material name:
+# water at 20 deg C, with 0.9% NaCl in water-NaCl solution (1.089174  mg NaCl/mL solution)
+
+# Number of elements:
+4
+
+# Density:
+1.007255
+
+# Atomic number(s) and corresponding mass fraction(s):
+1    0.110895    # hydrogen
+8    0.880105    # oxygen
+11    0.003540    # sodium
+17    0.005460    # chlorine

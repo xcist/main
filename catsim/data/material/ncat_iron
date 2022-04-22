@@ -1,5 +1,17 @@
-# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Copyright 2022, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.1.
 
+# Density source: NCAT software distribution
+# Material composition source: same as density
+
+# Elemental material: 
+# NCAT iron
+
+# Number of elements:
 1
-7.86
-26	1
+
+# Density:
+7.860000
+
+# Atomic number(s) and corresponding mass fraction(s):
+26    1.000000    # iron

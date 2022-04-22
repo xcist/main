@@ -199,9 +199,9 @@ def fdk_equiAngle(cfg, prep):
     t.XOffSet = centerOffset[0]
     t.YOffSet = centerOffset[1]
     t.ZOffSet = centerOffset[2]
-    t.phantomXOffSet = phantomOffset[0]
-    t.phantomYOffSet = phantomOffset[1]
-    t.phantomZOffSet = phantomOffset[2]
+    t.phantomXOffSet = 0
+    t.phantomYOffSet = 0
+    t.phantomZOffSet = 0
     
     if cfg.recon.printReconParameters:
         print("* Reconstruction parameters:")

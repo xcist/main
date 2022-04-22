@@ -1,27 +1,21 @@
-# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Copyright 2022, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 # Made with CatSim material calculator, version 1.0.
 # Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
-# Density souce: NCAT software distribution
+# Density source: NCAT software distribution
 # Material composition source: same as density
 
 # Material name:
 # NCAT adipose
 
 # Number of elements:
-11
+5
 
 # Density:
-0.920
+0.920000
 
 # Atomic number(s) and corresponding mass fraction(s):
-1    0.120    # hydrogen
-6    0.641    # carbon
-7    0.008    # nitrogen
-8    0.229    # oxygen
-15    0.002    # phosphorus
-20    0.000    # calcium
-21    0.000    # scandium
-22    0.000    # titanium
-23    0.000    # vanadium
-24    0.000    # chromium
-25    0.000    # manganese
+1    0.120120    # hydrogen
+6    0.640641    # carbon
+7    0.008008    # nitrogen
+8    0.229229    # oxygen
+15    0.002002    # phosphorus

@@ -33,6 +33,7 @@ def feval(funcName, *args):
         md = __import__("catsim."+funcName, fromlist=[funcName])  # equal to: from catsim.foo import foo
     strip_leading_module = '.'.join(funcName.split('.')[1:])
     func_name_only = funcName.split('.')[-1]
+
     if len(strip_leading_module) > 0:
         eval_name = f"md.{strip_leading_module}.{func_name_only}"
     else:

@@ -1,5 +1,17 @@
-# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Copyright 2022, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.0.
 
+# Density source: NCAT software distribution
+# Material composition source: same as density
+
+# Elemental material: 
+# NCAT aluminum
+
+# Number of elements:
 1
-2.6941
-13	1
+
+# Density:
+2.694100
+
+# Atomic number(s) and corresponding mass fraction(s):
+13    1.000000    # aluminum

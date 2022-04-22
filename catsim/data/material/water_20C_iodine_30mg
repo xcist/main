@@ -1,0 +1,18 @@
+# Made with CatSim material calculator, version 1.1.
+# Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
+# Density source: https://www.engineeringtoolbox.com/water-density-specific-weight-d_595.html?vA=37&units=C#
+# Material composition source: modified water
+
+# Material name:
+# water at 20 deg C, with 2.917749% iodine (30 mg iodine/mL water-iodine solution)
+
+# Number of elements:
+3
+
+# Density:
+1.028190
+
+# Atomic number(s) and corresponding mass fraction(s):
+1    0.108637    # hydrogen
+8    0.862186    # oxygen
+53    0.029177    # iodine
