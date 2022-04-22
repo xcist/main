@@ -17,20 +17,24 @@ def prep_view(cfg):
 
     ###--------- pre-log
     
-    
-    
     ###--------- log
     if cfg.protocol.airViewCount==1:
         airscan = nm.repmat(airscan, cfg.protocol.viewCount, 1)
     if cfg.protocol.offsetViewCount==1:
         offsetScan = nm.repmat(offsetScan, cfg.protocol.viewCount, 1)
     prep = (phantomScan-offsetScan)/(airscan-offsetScan)
-    
     smallValue = 6.1442124e-06  # exp(-12) 
     prep[prep<smallValue] = smallValue # limits mu values to 12
     prep = -np.log(prep)
     
     ###--------- post-log
+
+    # now perform BHC
+    if hasattr(cfg.physics, "callback_post_log") and cfg.physics.callback_post_log is not None:
+        print("Applying Beam Hardening Correction (ACCURATE BHC)...\n")
+        prep = feval(cfg.physics.callback_post_log, cfg, prep)
+        print("... done applying water BHC.\n")
+
     # a simple low signal correction, further limiting mu values if desired
     if cfg.protocol.maxPrep>0:
         prep[prep>cfg.protocol.maxPrep] = cfg.protocol.maxPrep
