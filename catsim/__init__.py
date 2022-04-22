@@ -1,5 +1,5 @@
 # TODO: should this version match setup.py?
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 from .CatSim import CatSim
 from .GetMu import GetMu
 from .CommonTools import rawread, rawwrite, check_value, CFG, source_cfg

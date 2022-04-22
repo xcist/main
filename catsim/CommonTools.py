@@ -33,7 +33,12 @@ def feval(funcName, *args):
         md = __import__("catsim."+funcName, fromlist=[funcName])  # equal to: from catsim.foo import foo
     strip_leading_module = '.'.join(funcName.split('.')[1:])
     func_name_only = funcName.split('.')[-1]
-    return eval("md." + strip_leading_module + func_name_only)(*args)
+
+    if len(strip_leading_module) > 0:
+        eval_name = f"md.{strip_leading_module}.{func_name_only}"
+    else:
+        eval_name = f"md.{func_name_only}"
+    return eval(eval_name)(*args)
 
 
 def load_C_lib():
@@ -96,14 +101,17 @@ class PathHelper:
 
         # check user-defined search paths BEFORE default paths
         for p in self.extra_search_paths:
-            if os.path.isfile(os.path.join(p, filename)):
-                return os.path.join(p, filename)
-            elif os.path.isfile(os.path.join(p, f"{filename}{extension}")):
-                return os.path.join(p, f"{filename}{extension}")
-            elif os.path.isfile(os.path.join(p, key, filename)):
-                return os.path.join(p, key, filename)
-            elif os.path.isfile(os.path.join(p, key, f"{filename}{extension}")):
-                return os.path.join(p, key, f"{filename}{extension}")
+            # if we want to limit the depth at some point, then we might want to use the walkDir module
+            # https://walkdir.readthedocs.io/en/stable/
+            for p2, dirs, files in os.walk(p):
+                if os.path.isfile(os.path.join(p2, filename)):
+                    return os.path.join(p2, filename)
+                elif os.path.isfile(os.path.join(p2, f"{filename}{extension}")):
+                    return os.path.join(p2, f"{filename}{extension}")
+                elif os.path.isfile(os.path.join(p2, key, filename)):
+                    return os.path.join(p2, key, filename)
+                elif os.path.isfile(os.path.join(p2, key, f"{filename}{extension}")):
+                    return os.path.join(p2, key, f"{filename}{extension}")
 
         if os.path.isfile(os.path.join(path, filename)):
             return os.path.join(path, filename)
