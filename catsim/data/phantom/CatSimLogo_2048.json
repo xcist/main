@@ -1,0 +1,51 @@
+{
+    "n_materials": 2,
+    "mat_name": [
+        "water",
+        "bone"
+    ],
+    "volumefractionmap_filename": [
+        "CatSimLogo_2048_water_2048x2048x1.raw",
+        "CatSimLogo_2048_bone_2048x2048x1.raw"
+    ],
+    "volumefractionmap_datatype": [
+        "float",
+        "float"
+    ],
+    "cols": [
+        2048,
+        2048
+    ],
+    "rows": [
+        2048,
+        2048
+    ],
+    "slices": [
+        1,
+        1
+    ],
+    "x_size": [
+        0.25,
+        0.25
+    ],
+    "y_size": [
+        0.25,
+        0.25
+    ],
+    "z_size": [
+        16.0,
+        16.0
+    ],
+    "x_offset": [
+        1024.5,
+        1024.5
+    ],
+    "y_offset": [
+        1024.5,
+        1024.5
+    ],
+    "z_offset": [
+        1.0,
+        1.0
+    ]
+}

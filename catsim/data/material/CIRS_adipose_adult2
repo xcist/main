@@ -1,0 +1,22 @@
+# Copyright 2022, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Made with CatSim material calculator, version 1.0.
+# Molecular weights from https://www.nist.gov/pml/atomic-weights-and-isotopic-compositions-relative-atomic-masses.
+# Density source: CIRS, as used for GE CRC's phantoms, Rev: May 6, 2014
+# Material composition source: same as density
+
+# Material name:
+# CIRS_adipose
+
+# Number of elements:
+6
+
+# Density:
+0.962000
+
+# Atomic number(s) and corresponding mass fraction(s):
+1    0.100560    # hydrogen
+6    0.698419    # carbon
+7    0.016310    # nitrogen
+8    0.166400    # oxygen
+12    0.016510    # magnesium
+17    0.001801    # chlorine

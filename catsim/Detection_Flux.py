@@ -8,7 +8,7 @@ def Detection_Flux(cfg):
     '''
     Compute the photon flux at the detector per cell per subview
     Flux dim: [pixel, Ebin] ([col, row, Ebin])
-    Note: the unit of spectrum file: photons per mAs per cm^2 at 1-m distance
+    Note: the unit of spectrum: photons per mAs per mm^2 at 1-m distance
           and spec.Ivec is already scaled to mA and view time, i.e. mAs
     Mingye Wu, GE Research
     
@@ -19,7 +19,7 @@ def Detection_Flux(cfg):
         return cfg
     
     ###------- air or phantom scan
-    detActiveArea = cfg.det.activeArea/100*cfg.det.cosBetas # cm^2
+    detActiveArea = cfg.det.activeArea*cfg.det.cosBetas # mm^2
     detActiveArea = nm.repmat(detActiveArea, 1, cfg.spec.nEbin)
     
     distanceFactor = np.square(1000/cfg.det.rayDistance) # mm

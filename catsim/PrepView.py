@@ -26,11 +26,12 @@ def prep_view(cfg):
     if cfg.protocol.offsetViewCount==1:
         offsetScan = nm.repmat(offsetScan, cfg.protocol.viewCount, 1)
     prep = (phantomScan-offsetScan)/(airscan-offsetScan)
-    prep[prep<1e-12] = 1e-12
+    
+    smallValue = 6.1442124e-06  # exp(-12) 
+    prep[prep<smallValue] = smallValue # limits mu values to 12
     prep = -np.log(prep)
     
     ###--------- post-log
-    
     # now perform BHC
     if hasattr(cfg.physics, "call_back_log") and cfg.physics.call_back_log is not None:
         print("Applying Beam Hardening Correction (ACCURATE BHC)...\n")
@@ -41,8 +42,6 @@ def prep_view(cfg):
     if cfg.protocol.maxPrep>0:
         prep[prep>cfg.protocol.maxPrep] = cfg.protocol.maxPrep
         
-    
-    
     ###--------- save prep
     fname = cfg.resultsName + '.prep'
     rawwrite(fname, prep)

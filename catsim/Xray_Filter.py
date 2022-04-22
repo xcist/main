@@ -47,17 +47,7 @@ def bowtie_filter(cfg):
         return cfg
     
     # find bowtie file
-    bowtieFile = cfg.protocol.bowtie
-    if not os.path.isfile(bowtieFile):
-        bowtiePath = get_path().bowtie + "/"
-        if os.path.isfile(bowtieFile + ".dat"):
-            bowtieFile += ".dat"
-        elif os.path.isfile(bowtiePath + bowtieFile):
-            bowtieFile = bowtiePath + bowtieFile
-        elif os.path.isfile(bowtiePath + bowtieFile + ".dat"):
-            bowtieFile = bowtiePath + bowtieFile + ".dat"
-        else:
-            raise Exception("Cannot find bowtie file: %s or %s.dat" %(bowtieFile, bowtieFile))
+    bowtieFile = my_path.find("bowtie", cfg.protocol.bowtie, ".dat")
 
     # read bowtie file
     data = np.loadtxt(bowtieFile, dtype=np.single, comments=['#', '%'])
