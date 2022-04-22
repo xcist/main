@@ -3,7 +3,6 @@
 import numpy as np
 import numpy.matlib as nm
 from catsim.CommonTools import *
-from catsim.Prep_BHC_Accurate import Prep_BHC_Accurate
 
 def prep_view(cfg):
     
@@ -24,7 +23,8 @@ def prep_view(cfg):
     if cfg.protocol.offsetViewCount==1:
         offsetScan = nm.repmat(offsetScan, cfg.protocol.viewCount, 1)
     prep = (phantomScan-offsetScan)/(airscan-offsetScan)
-    prep[prep<1e-12] = 1e-12
+    smallValue = 6.1442124e-06  # exp(-12) 
+    prep[prep<smallValue] = smallValue # limits mu values to 12
     prep = -np.log(prep)
     
     ###--------- post-log

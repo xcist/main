@@ -2,20 +2,17 @@ import os
 import copy
 import numpy as np
 from catsim.CommonTools import rawread
-from catsim.CatSim import CatSim 
 
 def Prep_BHC_Accurate(cfg, prep):
-    ct = CatSim()
-    ct.cfg_to_self(cfg)
-    if hasattr(ct.physics, "BHC_vec_fname"):
-        if os.path.isfile(ct.physics.BHC_vec_fname):
-            poly_coef = np.load(ct.physics.BHC_vec_fname)
+    if hasattr(cfg.physics, "BHC_vec_fname"):
+        if os.path.isfile(cfg.physics.BHC_vec_fname):
+            poly_coef = np.load(cfg.physics.BHC_vec_fname)
         else:
-            poly_coef = gen_BHC_vec(ct)
+            poly_coef = gen_BHC_vec(cfg)
     else:
-        poly_coef = gen_BHC_vec(ct)
+        poly_coef = gen_BHC_vec(cfg)
 
-    num_poly_coefs = ct.physics.BHC_poly_order+1
+    num_poly_coefs = cfg.physics.BHC_poly_order+1
     for viewId in range(cfg.protocol.viewCount):
         view_out = poly_coef[:, 0]
         for i in range(1, num_poly_coefs):
@@ -25,7 +22,11 @@ def Prep_BHC_Accurate(cfg, prep):
 
     return prep
 
-def gen_BHC_vec(ct):
+def gen_BHC_vec(cfg):
+
+    from catsim.CatSim import CatSim 
+    ct = CatSim()
+    ct.cfg_to_self(cfg)
 
     poly_order = ct.physics.BHC_poly_order
     num_poly_coefs = poly_order+1
