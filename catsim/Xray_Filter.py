@@ -47,7 +47,7 @@ def bowtie_filter(cfg):
         return cfg
     
     # find bowtie file
-    bowtieFile = my_path.find("bowtie", cfg.protocol.bowtie, ".dat")
+    bowtieFile = my_path.find("bowtie", cfg.protocol.bowtie, ".txt")
 
     # read bowtie file
     data = np.loadtxt(bowtieFile, dtype=np.single, comments=['#', '%'])
