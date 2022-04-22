@@ -97,6 +97,8 @@ def set_detector(cfg):
 NOTE: phobject here is object in matlab [simply the parsed phantom], phantobject here is phobject in matlab
 '''
 def Phantom_Analytic_Get(cfg):
+    ###----------- phantom file
+    cfg.phantom.filename = my_path.find('phantom', cfg.phantom.filename, '')
 
     PhantomFilename=cfg.phantom.filename
     Scale=cfg.phantom.scale

@@ -9,7 +9,7 @@ import catsim as xc
 # add any additional search directories
 #my_path.add_search_path("my-experiments")
 
-ct = xc.CatSim("Phantom_Sample", "Scanner_Sample_generic", "Protocol_Sample_axial")  # initialization
+ct = xc.CatSim("./cfg/Phantom_Sample", "./cfg/Scanner_Sample_generic", "./cfg/Protocol_Sample_axial")  # initialization
 
 ##--------- Make changes to parameters (optional)
 ct.resultsName = "test"

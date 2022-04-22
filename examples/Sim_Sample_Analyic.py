@@ -3,20 +3,26 @@
 ###------------ import XCIST-CatSim
 import catsim as xc
 
-
 ##--------- Initialize 
-ct = xc.CatSim("./cfg/Phantom_Sample_XCAT")  # initialization
+ct = xc.CatSim("./cfg/Phantom_Sample_Analytic")  # initialization
 
 ##--------- Make changes to parameters (optional)
-ct.phantom.filename = '../../phantom/vmale50_chest_phantom.nrb'
+# ct.phantom.filename = 'water20.ppm'
+ct.phantom.filename = 'CTDI_16cm_WaterAirPEBoneChambers.ppm'
 
-ct.resultsName = "test_XCAT"
-ct.protocol.viewsPerRotation = 2
+ct.resultsName = "test_Analytic"
+ct.protocol.viewsPerRotation = 500
 ct.protocol.viewCount = ct.protocol.viewsPerRotation
 ct.protocol.stopViewId = ct.protocol.viewCount-1
 
 ct.physics.enableQuantumNoise = 0
 ct.physics.enableElectronicNoise = 0
+
+ct.physics.callback_post_log = 'Prep_BHC_Accurate'
+ct.physics.EffectiveMu = 0.2
+ct.physics.BHC_poly_order = 5
+ct.physics.BHC_max_length_mm = 220
+ct.physics.BHC_length_step_mm = 10
 
 ct.physics.colSampleCount = 2
 ct.physics.rowSampleCount = 2
