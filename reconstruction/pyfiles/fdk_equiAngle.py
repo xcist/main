@@ -28,7 +28,7 @@ class TestStruct(ct.Structure):
                 ("YL", ct.c_int),               # Detector cell number on each row along the horizontal direction
                 ("ZL", ct.c_int),               # Detector cell number on each column along the vertical direction
                 ("dectorYoffset", ct.c_float),               # Detector along the horizontal direction (pixel, e.g. quarter pixel)
-                ("dectorYoffset", ct.c_float),               # Detector offset along the vertical direcion (pixel, e.g. quarter pixel)
+                ("dectorZoffset", ct.c_float),               # Detector offset along the vertical direcion (pixel, e.g. quarter pixel)
                 ("XOffSet", ct.c_float),       # recon offset along the x axis
                 ("YOffSet", ct.c_float),       # recon offset along the y axis
                 ("ZOffSet", ct.c_float),       # recon offset along the z axis
@@ -83,8 +83,12 @@ def float3Dpointer2array(ptr, n, m, o):
 def load_C_recon_lib():
 
     # add recon lib path to environment value "PATH" for depending DLLs
-    recon_lib = my_path.find_dir("top", os.path.join("reconstruction", "lib"))
-    my_path.add_dir_to_path(recon_lib)
+    # # # # recon_lib = my_path.find_dir("top", os.path.join("reconstruction", "lib"))
+    # # # # my_path.add_dir_to_path(recon_lib)
+    
+    #  my_path.find_dir doesn't have the key "reconstruction", use the temp solution below:
+    recon_lib = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../lib")
+    
 
     # load C/C++ lib
     ll = ctypes.cdll.LoadLibrary
