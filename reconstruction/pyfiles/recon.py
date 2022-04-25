@@ -141,19 +141,22 @@ def drawImages(drawTo, cfg, imageVolume3D):
         fileName = cfg.resultsName + '_' + sliceNumberString + '.png'
         plt.figure(int(sliceIndexToDraw+1))
         plt.imshow(sliceToDraw, cmap='gray', vmin=cfg.displayWindowMin, vmax=cfg.displayWindowMax)
+        if not cfg.recon.displayImagePictureAxes:
+            plt.axis('off')
 
-        sliceString = "slice " + str(sliceIndexToDraw+1) + " of " + str(cfg.recon.sliceCount)
-        if hasattr(cfg, 'reconImageTitle'):
-            # If a plot title is specified, use it, and add the slice info if specified.
-            if hasattr(cfg, 'addSliceInfoToReconImageTitle') \
-            and cfg.addSliceInfoToReconImageTitle:
-                titleString = cfg.reconImageTitle + "\n" + sliceString
+        if cfg.recon.displayImagePictureTitles:
+            sliceString = "slice " + str(sliceIndexToDraw+1) + " of " + str(cfg.recon.sliceCount)
+            if hasattr(cfg, 'reconImageTitle'):
+                # If a plot title is specified, use it, and add the slice info if specified.
+                if hasattr(cfg, 'addSliceInfoToReconImageTitle') \
+                and cfg.addSliceInfoToReconImageTitle:
+                    titleString = cfg.reconImageTitle + "\n" + sliceString
+                else:
+                    titleString = cfg.reconImageTitle
             else:
-                titleString = cfg.reconImageTitle
-        else:
-            # Otherwise, title the plot with the slice info.
-            titleString = sliceString
-        plt.title(titleString, fontsize=10)
+                # Otherwise, title the plot with the slice info.
+                titleString = sliceString
+            plt.title(titleString, fontsize=10)
 
         if drawTo == 'file':
             plt.savefig(fileName, bbox_inches='tight')
