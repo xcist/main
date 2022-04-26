@@ -7,7 +7,7 @@ def mapConfigVariablesToFDK(cfg):
     nMod = ceil(cfg.scanner.detectorColCount/cfg.scanner.detectorColsPerMod)
     rowSize = cfg.scanner.detectorRowSize
     modWidth = cfg.scanner.detectorColsPerMod*cfg.scanner.detectorColSize
-    dectorYoffset = cfg.scanner.detectorColOffset
+    dectorYoffset = -cfg.scanner.detectorColOffset
     dectorZoffset = cfg.scanner.detectorRowOffset
 
     fov = cfg.recon.fov
