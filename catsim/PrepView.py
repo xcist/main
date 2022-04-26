@@ -23,8 +23,8 @@ def prep_view(cfg):
     if cfg.protocol.offsetViewCount==1:
         offsetScan = nm.repmat(offsetScan, cfg.protocol.viewCount, 1)
     prep = (phantomScan-offsetScan)/(airscan-offsetScan)
-    smallValue = 6.1442124e-06  # exp(-12) 
-    prep[prep<smallValue] = smallValue # limits mu values to 12
+    smallValue = 1e-12
+    prep[prep<smallValue] = smallValue
     prep = -np.log(prep)
     
     ###--------- post-log
