@@ -5,6 +5,7 @@ from catsim.CommonTools import *
 
 # This is a simplified kernel based scatter model, will have roughly 15% SPR for 35-cm water phantom, 120 kVp, 40-mm beam width.
 def Scatter_ConvolutionModel(cfg, viewId, subViewId):
+    epsilon = 1.E-10
     # Get scatter kernel
     if viewId == cfg.sim.startViewId and subViewId == 0:
         if cfg.physics.scatterKernelCallback:
@@ -14,7 +15,9 @@ def Scatter_ConvolutionModel(cfg, viewId, subViewId):
             
     # Scatter is low frequency signal and computational expensive, we only calculate it at the first subview.
     if subViewId == 0:
-        prep = -np.log(cfg.thisSubView.sum(1)/cfg.detFlux.sum(1))
+        _prep = cfg.thisSubView.sum(1)/cfg.detFlux.sum(1)
+        _prep[_prep<epsion] = epsilon
+        prep = -np.log(_prep)
         if not hasattr(cfg.physics, "scatterScaleFactor"):
             cfg.physics.scatterScaleFactor = 1
         sc_preConv = cfg.thisSubView.sum(1)*prep*0.025*cfg.physics.scatterScaleFactor
