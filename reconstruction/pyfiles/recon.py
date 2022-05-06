@@ -1,9 +1,10 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
-from catsim.CommonTools import *
+import catsim as xc
+from catsim.pyfiles.CommonTools import *
 import matplotlib.pyplot as plt
+import numpy as np
 # Need to import new recons as they are added
-from reconstruction.pyfiles.fdk_equiAngle import fdk_equiAngle
 
 
 def recon(cfg):
@@ -14,10 +15,10 @@ def recon(cfg):
 
         # The following line doesn't work - need to fix it when new recons are added.
         # imageVolume3D = feval("reconstruction." + cfg.recon.reconType, cfg, prep)
-        # imageVolume3D = feval("reconstruction.pyfiles." + cfg.recon.reconType, cfg, prep)
+        imageVolume3D = feval("reconstruction.pyfiles." + cfg.recon.reconType, cfg, prep)
 
         # A hack until the previous line is fixed.
-        imageVolume3D = fdk_equiAngle(cfg, prep)
+        #imageVolume3D = fdk_equiAngle(cfg, prep)
         imageVolume3D = scaleReconData(cfg, imageVolume3D)
 
         if cfg.recon.saveImageVolume:
@@ -43,7 +44,7 @@ def recon(cfg):
 def load_prep(cfg):
 
     print("* Loading the projection data...")
-    prep = rawread(cfg.resultsName + ".prep",
+    prep = xc.rawread(cfg.resultsName + ".prep",
                   [cfg.protocol.viewCount, cfg.scanner.detectorRowCount, cfg.scanner.detectorColCount],
                   'float')
                   
@@ -73,7 +74,7 @@ def saveImageVolume(cfg, imageVolume3D):
     fname = cfg.resultsName + '_' + imageVolume3D_size_string + '.raw'
     imageVolume3D = imageVolume3D.transpose(2, 0, 1)
     imageVolume3D = imageVolume3D.copy(order='C')
-    rawwrite(fname, imageVolume3D)
+    xc.rawwrite(fname, imageVolume3D)
 
 
 def loadImageVolume(cfg):
@@ -82,7 +83,7 @@ def loadImageVolume(cfg):
 
     imageVolume3D_size_string = str(cfg.recon.imageSize) + 'x' + str(cfg.recon.imageSize) + 'x' + str(cfg.recon.sliceCount)
     fname = cfg.resultsName + '_' + imageVolume3D_size_string + '.raw'
-    imageVolume3D = rawread(fname,
+    imageVolume3D = xc.rawread(fname,
                     [cfg.recon.sliceCount, cfg.recon.imageSize, cfg.recon.imageSize],
                     'float')
     imageVolume3D = imageVolume3D.copy(order='C')
@@ -102,7 +103,7 @@ def saveSingleImages(cfg, imageVolume3D):
         fileName = cfg.resultsName + '_' + sliceNumberString + '_' + imageVolume3D_size_string + '.raw'
         sliceToSave = imageVolume3D[:, :, sliceIndexToSave]
         sliceToSave = sliceToSave.copy(order='C')
-        rawwrite(fileName, sliceToSave)
+        xc.rawwrite(fileName, sliceToSave)
 
 
 def displayImagePictures(cfg, imageVolume3D):

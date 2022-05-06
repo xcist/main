@@ -5,7 +5,7 @@ import catsim as xc
 
 
 ##--------- Initialize
-#my_path = xc.CommonTools.my_path
+#my_path = xc.pyfiles.CommonTools.my_path
 # add any additional search directories
 #my_path.add_search_path("my-experiments")
 
@@ -24,7 +24,6 @@ ct.run_all()  # run the scans defined by protocol.scanTypes
 
 
 ##--------- Show results
-import numpy as np
 import matplotlib.pyplot as plt
 
 prep = xc.rawread(ct.resultsName+'.prep', [ct.protocol.viewCount, ct.scanner.detectorRowCount, ct.scanner.detectorColCount], 'float')

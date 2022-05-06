@@ -1,16 +1,10 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
 import ctypes as ct
-import numpy as np
 import math
-import scipy.io as scio
-import matplotlib.pyplot as plt
 from reconstruction.pyfiles.createHSP import createHSP
 from reconstruction.pyfiles.mapConfigVariablesToFDK import mapConfigVariablesToFDK
-from catsim.CommonTools import *
-import scipy.interpolate
-from scipy.interpolate import interp1d
-
+from catsim.pyfiles.CommonTools import *
 
 # Init ctypes types
 FLOAT = ct.c_float
@@ -91,7 +85,7 @@ def load_C_recon_lib():
     
 
     # load C/C++ lib
-    ll = ctypes.cdll.LoadLibrary
+    ll = ct.cdll.LoadLibrary
     if os.name == "nt":
         lib_file = "fdk_equiAngle.dll"
     else:

@@ -1,10 +1,8 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
-import os
-import numpy as np
 from ctypes import *
 from numpy.ctypeslib import ndpointer
-from catsim.CommonTools import *
+from catsim.pyfiles.CommonTools import *
 
 def C_Projector_NCAT(cfg, viewId, subViewId):
     

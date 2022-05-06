@@ -1,7 +1,7 @@
 import os
 import copy
 import numpy as np
-from catsim.CommonTools import rawread
+from catsim.pyfiles.CommonTools import rawread
 
 def Prep_BHC_Accurate(cfg, prep):
     if hasattr(cfg.physics, "BHC_vec_fname"):
@@ -24,7 +24,7 @@ def Prep_BHC_Accurate(cfg, prep):
 
 def gen_BHC_vec(cfg):
 
-    from catsim.CatSim import CatSim 
+    from catsim.pyfiles.CatSim import CatSim
     ct = CatSim()
     ct.cfg_to_self(cfg)
 

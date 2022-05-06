@@ -2,8 +2,8 @@
 
 from ctypes import *
 from numpy.ctypeslib import ndpointer
-from catsim.GetMu import GetMu
-from catsim.CommonTools import *
+from catsim.pyfiles.GetMu import GetMu
+from catsim.pyfiles.CommonTools import *
 
 
 def Phantom_NCAT(cfg):

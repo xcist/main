@@ -1,9 +1,8 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
-import numpy as np
 import numpy.matlib as nm
-from catsim.GetMu import GetMu
-from catsim.CommonTools import *
+from catsim.pyfiles.GetMu import GetMu
+from catsim.pyfiles.CommonTools import *
 
 def Detection_prefilter( cfg ):
     # Wvec dim: [pixel, Ebin] ([col, row, Ebin])

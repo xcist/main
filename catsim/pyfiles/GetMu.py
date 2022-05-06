@@ -1,10 +1,8 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
 from ctypes import *
-import numpy as np
-import os, sys
-from catsim.ReadMaterialFile import ReadMaterialFile
-from catsim.CommonTools import *
+from catsim.pyfiles.ReadMaterialFile import ReadMaterialFile
+from catsim.pyfiles.CommonTools import *
 
 def GetMu(materialFile, Evec):
 

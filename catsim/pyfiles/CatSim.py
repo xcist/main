@@ -1,8 +1,7 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
-import numpy as np
-from catsim.CommonTools import *
-from catsim.OneScan import one_scan
+from catsim.pyfiles.CommonTools import *
+from catsim.pyfiles.OneScan import one_scan
 
 class CatSim:
     '''
@@ -52,7 +51,7 @@ class CatSim:
         return cfg
     
     def prep_view(self, *para):
-        import catsim.PrepView as PrepView
+        import catsim.pyfiles.PrepView as PrepView
         cfg = self.get_current_cfg(*para)
         print('Prep view')
         cfg = PrepView.prep_view(cfg)

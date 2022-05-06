@@ -1,9 +1,8 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
-import numpy as np
 import math
 import copy
-from catsim.CommonTools import *
+from catsim.pyfiles.CommonTools import *
 
 def Gantry_Helical(cfg, viewId):
     ### calculate transform matrices
