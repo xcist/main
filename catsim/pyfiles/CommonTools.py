@@ -30,7 +30,7 @@ def feval(funcName, *args):
     try:
         md = __import__(funcName)
     except:
-        md = __import__("catsim."+funcName, fromlist=[funcName])  # equal to: from catsim.foo import foo
+        md = __import__("catsim.pyfiles."+funcName, fromlist=[funcName])  # equal to: from catsim.foo import foo
     strip_leading_module = '.'.join(funcName.split('.')[1:])
     func_name_only = funcName.split('.')[-1]
 
@@ -67,16 +67,13 @@ class PathHelper:
         self.paths = {}
         self.paths["main"] = os.path.dirname(os.path.abspath(__file__))
         self.paths["top"] = os.path.split(self.paths["main"])[0]
-        self.paths["cfg"] = os.path.join(self.paths["main"],'cfg')
-        self.paths["lib"] = os.path.join(self.paths["main"], 'lib')
-        self.paths["data"] = os.path.join(self.paths["main"], 'data')
-
-        # data paths
-        self.paths["bowtie"] = os.path.join(self.paths["data"], 'bowtie')
-        self.paths["material"] = os.path.join(self.paths["data"], 'material')
-        self.paths["phantom"] = os.path.join(self.paths["data"], 'phantom')
-        self.paths["scatter"] = os.path.join(self.paths["data"], 'scatter')
-        self.paths["spectrum"] = os.path.join(self.paths["data"], 'spectrum')
+        self.paths["cfg"] = os.path.join(self.paths["top"], 'cfg')
+        self.paths["lib"] = os.path.join(self.paths["top"], 'lib')
+        self.paths["bowtie"] = os.path.join(self.paths["top"], 'bowtie')
+        self.paths["material"] = os.path.join(self.paths["top"], 'material')
+        self.paths["phantom"] = os.path.join(self.paths["top"], 'phantom')
+        self.paths["scatter"] = os.path.join(self.paths["top"], 'scatter')
+        self.paths["spectrum"] = os.path.join(self.paths["top"], 'spectrum')
         self.extra_search_paths = []
         self.read_catsim_init()
 

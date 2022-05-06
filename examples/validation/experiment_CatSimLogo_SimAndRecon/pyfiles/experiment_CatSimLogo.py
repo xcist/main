@@ -595,14 +595,14 @@ def getUserPath():
 ##--------- Initialize
 
 userPath = getUserPath()
-xc.CommonTools.my_path.add_search_path(userPath)
+xc.pyfiles.CommonTools.my_path.add_search_path(userPath)
 experimentDirectory = os.path.join(userPath, "my_experiments", "experiment_CatSimLogo_SimAndRecon")
 
 # Use the default cfg parameters found in Scanner_Default.cfg, Physics_Default.cfg, Protocol_Default.cfg.
 # Use experiment-specific config files Phantom_CatSimLogo.cfg and Recon_CatSimLogo.cfg.
 
-cfg = xc.CatSim(xc.CommonTools.my_path.find("cfg", "Phantom_CatSimLogo.cfg", ""),
-                xc.CommonTools.my_path.find("cfg", "Recon_CatSimLogo.cfg", ""))
+cfg = xc.CatSim(xc.pyfiles.CommonTools.my_path.find("cfg", "Phantom_CatSimLogo.cfg", ""),
+                xc.pyfiles.CommonTools.my_path.find("cfg", "Recon_CatSimLogo.cfg", ""))
 
 # These are changes to the defaults config parameters to be used for the "base" experiment,
 # but some of these and some other defaults are overridden for certain experiments.
