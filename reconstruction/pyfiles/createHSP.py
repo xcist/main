@@ -2,8 +2,6 @@
 
 import numpy as np
 import math
-import scipy.interpolate
-import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 
 def createHSP(Length, kernelType):

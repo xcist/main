@@ -130,10 +130,10 @@ def drawImages(drawTo, cfg, imageVolume3D):
 
     # If displayWindowMin and displayWindowMax were not passed in,
     # get them from the image data, so all images are displayed using the same W/L.
-    if not hasattr(cfg, 'displayWindowMin'):
-        cfg.displayWindowMin = np.min(imageVolume3D)
-    if not hasattr(cfg, 'displayWindowMax'):
-        cfg.displayWindowMax = np.max(imageVolume3D)
+    if not hasattr(cfg.recon, 'displayWindowMin'):
+        cfg.recon.displayWindowMin = np.min(imageVolume3D)
+    if not hasattr(cfg.recon, 'displayWindowMax'):
+        cfg.recon.displayWindowMax = np.max(imageVolume3D)
 
     for sliceIndexToDraw in sliceIndicesToDraw:
         sliceToDraw = imageVolume3D[:, :, sliceIndexToDraw]
@@ -141,7 +141,7 @@ def drawImages(drawTo, cfg, imageVolume3D):
         sliceNumberString = 'slice' + str(sliceIndexToDraw+1).zfill(3) + 'of' + str(cfg.recon.sliceCount).zfill(3)
         fileName = cfg.resultsName + '_' + sliceNumberString + '.png'
         plt.figure(int(sliceIndexToDraw+1))
-        plt.imshow(sliceToDraw, cmap='gray', vmin=cfg.displayWindowMin, vmax=cfg.displayWindowMax)
+        plt.imshow(sliceToDraw, cmap='gray', vmin=cfg.recon.displayWindowMin, vmax=cfg.recon.displayWindowMax)
         if not cfg.recon.displayImagePictureAxes:
             plt.axis('off')
 

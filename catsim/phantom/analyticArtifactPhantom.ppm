@@ -1,0 +1,41 @@
+materialList = {'water' 'bone' 'ti' 'fe'};
+
+object.center(1,:) = [0.000000 0.000000 0.000000];
+object.half_axes(1,:) = [150 100 300];
+object.euler_angs(1,:) = [0.000000 0.000000 0.000000];
+object.density(1) = 1.000000;
+object.type(1) = 2;
+object.material(1) = 1;
+object.axial_lims(1,:) = [0 0];
+object.shape(1) = 0;
+object.clip{1} = [];
+
+object.center(2,:) = [0. 60. 0.];
+object.half_axes(2,:) = [20 20 300];
+object.euler_angs(2,:) = [0.000000 0.000000 0.000000];
+object.density(2) = 1.000000;
+object.type(2) = 2;
+object.material(2) = 2;
+object.axial_lims(2,:) = [0 0];
+object.shape(2) = 0;
+object.clip{2} = [];
+
+object.center(3,:) = [75 -50 0.];
+object.half_axes(3,:) = [10 10 300];
+object.euler_angs(3,:) = [0.000000 0.000000 0.000000];
+object.density(3) = 1.000000;
+object.type(3) = 2;
+object.material(3) = 3;
+object.axial_lims(3,:) = [0 0];
+object.shape(3) = 0;
+object.clip{3} = [];
+
+object.center(4,:) = [-75 -50. 0.];
+object.half_axes(4,:) = [5 5 300];
+object.euler_angs(4,:) = [0.000000 0.000000 0.000000];
+object.density(4) = 1.000000;
+object.type(4) = 2;
+object.material(4) = 4;
+object.axial_lims(4,:) = [0 0];
+object.shape(4) = 0;
+object.clip{4} = [];

@@ -4,9 +4,8 @@
 # Date: April 18, 2022
 #
 # Purpose: This is an XCIST "experiment file" that is used to evaluate several aspects of XCIST simulation and recon
-# using the CatSim log phantom. The default config files are used for everything except the phantom and recon - for
-# these, you will need Phantom_CatSimLogo.cfg and Recon_CatSimLogo.cfg, which should be included in the same folder
-# where you found this file.
+# using the CatSim logo phantom. The default config files are used for everything except the phantom - for that, you
+# will need Phantom_CatSimLogo.cfg, which should be included in the same folder where you found this file.
 #
 # The CatSim logo phantom used in this experiment is a voxelized phantom. Therefore, the simulation portion of this
 # evaluation only evaluates the voxelized projector. However, the recon aspects of this experiment are independent of
@@ -41,18 +40,28 @@
 #      This includes parameters relevant to the experiment.
 # f.   Run the simulation - function runSim().
 # g.   Run the recon - function runRecon().
+#
+# Note that if you set
+#   cfg.do_Sim = False
+# the simulation will not run, but there needs to be a valid simulation result based on the defined simulation parameters,
+# and the projection plots will be desplayed from that simulation.
+# Also, if you set
+#   cfg.do_Recon = False
+# the reconstruction will not run, but there needs to be a valid reconstruction result based on the defined simulation and
+# reconstuction parameters, and the reconstruction results will be displayed/saved based on the reconstruction display
+# parameters such as window/level and titles.
 
 import os
 import copy
 import shutil
 import catsim as xc
-import reconstruction.pyfiles.recon as recon
+from my_commonTools import *
 
 def setExperimentParameters(cfg):
 
     experimentName = cfg.experimentName
 
-    # Some experiments use 1000 views and low mA.
+    # Some experiments use low mA.
     if experimentName == "01_01_Baseline"                        \
     or experimentName == "01_02_Physics_eNoiseOn"                \
     or experimentName == "01_03_Physics_qNoiseOn"                \
@@ -120,12 +129,10 @@ def setExperimentParameters(cfg):
         or experimentName == "02_03_Physics_NoiseOn_Recon_128mmFOV_SoftKernel"                   \
         or experimentName == "02_04_Physics_NoiseOn_Recon_128mmFOV_StandardKernel"               \
         or experimentName == "02_05_Physics_NoiseOn_Recon_128mmFOV_BoneKernel":
-            copyFromExperimentName = "02_01_Physics_NoiseOn_Recon_128mmFOV_R-LKernel"
             cfg.do_Sim = False
-    
-        if not experimentName == "02_01_Physics_NoiseOn_Recon_128mmFOV_R-LKernel":
-            copyFromPathname = os.path.join(experimentDirectory, copyFromExperimentName,  copyFromExperimentName + ".prep")
-            copyToPathname = cfg.resultsName + ".prep"
+            copyFromExperimentName = "02_01_Physics_NoiseOn_Recon_128mmFOV_R-LKernel"
+            copyFromPathname = os.path.join(cfg.experimentDirectory, copyFromExperimentName,  copyFromExperimentName + ".prep")
+            copyToPathname = os.path.join(cfg.experimentDirectory,  experimentName,  experimentName + ".prep")
             shutil.copy2(copyFromPathname, copyToPathname)
 
     # Most experiments use the baseline polyenergetic spectrum and number of energy bins,
@@ -140,17 +147,18 @@ def setExperimentParameters(cfg):
     cfg.recon.mu = 0.019672
 
     # Some experiments use a polyenergetic spectrum but only one energy bin.
-    if experimentName == "01_05_Physics_1ebin"                                       \
-    or experimentName == "01_06_Physics_eNoiseOn_1ebin"                              \
-    or experimentName == "01_07_Physics_qNoiseOn_1ebin"                              \
+    if experimentName == "01_05_Physics_1ebin"                                      \
+    or experimentName == "01_06_Physics_eNoiseOn_1ebin"                             \
+    or experimentName == "01_07_Physics_qNoiseOn_1ebin"                             \
     or experimentName == "01_08_Physics_NoiseOn_1ebin":
         cfg.physics.energyCount = 1
         cfg.recon.mu = 0.02061
 
     # Some experiments use a monoenergetic spectrum.
-    if experimentName == "01_09_Physics_Monoenergetic"                               \
-    or experimentName == "01_10_Physics_eNoiseOn_Monoenergetic"                      \
-    or experimentName == "01_11_Physics_qNoiseOn_Monoenergetic"                      \
+    if experimentName == "01_01_Baseline"                                           \
+    or experimentName == "01_09_Physics_Monoenergetic"                              \
+    or experimentName == "01_10_Physics_eNoiseOn_Monoenergetic"                     \
+    or experimentName == "01_11_Physics_qNoiseOn_Monoenergetic"                     \
     or experimentName == "01_12_Physics_NoiseOn_Monoenergetic":
         cfg.physics.monochromatic = 70
         cfg.recon.mu = 0.019326
@@ -224,8 +232,8 @@ def setExperimentParameters(cfg):
     or experimentName == "05_07_Physics_ViewSampling1_Recon_300mmFOV"      \
     or experimentName == "05_08_Physics_ViewSampling2_Recon_300mmFOV"      \
     or experimentName == "05_09_Physics_ViewSampling3_Recon_300mmFOV":
-        cfg.displayWindowMin = -100             # In HU.
-        cfg.displayWindowMax = 1300             # In HU.
+        cfg.recon.displayWindowMin = -100             # In HU.
+        cfg.recon.displayWindowMax = 1300             # In HU.
 
     # Vary scatter
     if experimentName == "06_00_Scanner_64rows_Physics_NoScatter"      \
@@ -236,8 +244,8 @@ def setExperimentParameters(cfg):
         cfg.scanner.detectorRowsPerMod = 64
         cfg.scanner.detectorRowCount = cfg.scanner.detectorRowsPerMod
         cfg.recon.sliceCount = 64
-        cfg.displayWindowMin = -200             # In HU.
-        cfg.displayWindowMax = 200              # In HU.
+        cfg.recon.displayWindowMin = -200             # In HU.
+        cfg.recon.displayWindowMax = 200              # In HU.
 
     if experimentName == "06_01_Scanner_64rows_Physics_ScatterScale1"  \
     or experimentName == "06_02_Scanner_64rows_Physics_ScatterScale8"  \
@@ -279,11 +287,11 @@ def setExperimentParameters(cfg):
     or experimentName == "07_03_Scanner_16rows_Recon_16slices":
         cfg.do_Sim = False
         copyFromExperimentName = "07_01_Scanner_16rows_Recon_1slice"
-        copyFromPathname = os.path.join(experimentDirectory,  copyFromExperimentName,  copyFromExperimentName + ".prep")
-        copyToPathname = cfg.resultsName + ".prep"
+        copyFromPathname = os.path.join(cfg.experimentDirectory,  copyFromExperimentName,  copyFromExperimentName + ".prep")
+        copyToPathname = os.path.join(cfg.experimentDirectory,  experimentName,  experimentName + ".prep")
         shutil.copy2(copyFromPathname, copyToPathname)
 
-    # For phantom and recon offset tests, use 360 views and don't use oversampling.
+    # For phantom and recon offset tests, use 360 views, a monenergetic spectrum, and don't use oversampling.
     if experimentName == "08_01_Scanner_16rows_Phantom_offset0"               \
     or experimentName == "08_02_Scanner_16rows_Phantom_offset+50mmX"          \
     or experimentName == "08_03_Scanner_16rows_Phantom_offset+50mmY"          \
@@ -296,6 +304,7 @@ def setExperimentParameters(cfg):
         cfg.protocol.viewsPerRotation = 360
         cfg.protocol.viewCount = cfg.protocol.viewsPerRotation
         cfg.protocol.stopViewId = cfg.protocol.viewCount - 1
+        cfg.physics.monochromatic = 70
         cfg.physics.srcXSampleCount = 1
         cfg.physics.srcYSampleCount = 1
         cfg.physics.rowSampleCount = 1
@@ -315,10 +324,10 @@ def setExperimentParameters(cfg):
         cfg.phantom.centerOffset = [0.0, 0.0, 8.0]
 
     # Using a 16-slice sim and recon with 0.5-mm slices, vary the recon X, Y, and Z offset.
-    if experimentName == "09_02_Scanner_16rows_Recon_0p5mmSlices_offset+22mmX" \
+    if experimentName == "09_01_Scanner_16rows_Recon_0p5mmSlices_offset0"      \
+    or experimentName == "09_02_Scanner_16rows_Recon_0p5mmSlices_offset+22mmX" \
     or experimentName == "09_03_Scanner_16rows_Recon_0p5mmSlices_offset+22mmY" \
-    or experimentName == "09_04_Scanner_16rows_Recon_0p5mmSlices_offset+1mmZ"  \
-    or experimentName == "09_01_Scanner_16rows_Recon_0p5mmSlices_offset0":
+    or experimentName == "09_04_Scanner_16rows_Recon_0p5mmSlices_offset+1mmZ":
         cfg.recon.sliceThickness = 0.5
 
     if experimentName == "09_01_Scanner_16rows_Recon_0p5mmSlices_offset0":
@@ -334,31 +343,20 @@ def setExperimentParameters(cfg):
     if experimentName == "09_02_Scanner_16rows_Recon_0p5mmSlices_offset+22mmX" \
     or experimentName == "09_03_Scanner_16rows_Recon_0p5mmSlices_offset+22mmY" \
     or experimentName == "09_04_Scanner_16rows_Recon_0p5mmSlices_offset+1mmZ":
-        copyFromExperimentName = "09_01_Scanner_16rows_Recon_0p5mmSlices_offset0"
-        copyFromPathname = os.path.join(experimentDirectory,  copyFromExperimentName,  copyFromExperimentName + ".prep")
-        copyToPathname = cfg.resultsName + ".prep"
-        shutil.copy2(copyFromPathname, copyToPathname)
         cfg.do_Sim = False
+        copyFromExperimentName = "09_01_Scanner_16rows_Recon_0p5mmSlices_offset0"
+        copyFromPathname = os.path.join(cfg.experimentDirectory,  copyFromExperimentName,  copyFromExperimentName + ".prep")
+        copyToPathname = os.path.join(cfg.experimentDirectory,  experimentName,  experimentName + ".prep")
+        shutil.copy2(copyFromPathname, copyToPathname)
 
-    cfg.displayWindow = cfg.displayWindowMax - cfg.displayWindowMin
-    cfg.displayLevel = (cfg.displayWindowMax + cfg.displayWindowMin)/2
+    cfg.recon.displayWindow = cfg.recon.displayWindowMax - cfg.recon.displayWindowMin
+    cfg.recon.displayLevel = (cfg.recon.displayWindowMax + cfg.recon.displayWindowMin)/2
 
     # For single-row simulations, use the native slice thickness.
     if cfg.scanner.detectorRowCount == 1:
         cfg.recon.sliceThickness = cfg.scanner.detectorRowSize*cfg.scanner.sid/cfg.scanner.sdd
     
     return cfg
-
-
-def WLString(cfg):
-    # Used below to create strings with the window/Level info.
-
-    if cfg.recon.unit == 'HU':
-        return "W/L = {:.0f}/{:.0f} {:s}; ".format(cfg.displayWindow, cfg.displayLevel, cfg.recon.unit)
-    if cfg.recon.unit == '/cm':
-        return "W/L = {:.2f}/{:.2f} {:s}; ".format(cfg.displayWindow, cfg.displayLevel, cfg.recon.unit)
-    if cfg.recon.unit == '/mm':
-        return "W/L = {:.3f}/{:.3f} {:s}; ".format(cfg.displayWindow, cfg.displayLevel, cfg.recon.unit)
 
 
 def getReconImageTitle(cfg):
@@ -463,176 +461,55 @@ def getReconImageTitle(cfg):
         return formatString.format(cfg.recon.centerOffset[0], cfg.recon.centerOffset[1], cfg.recon.centerOffset[2])
 
 
-def runSim(cfg):
-
-    import numpy as np
-    import matplotlib.pyplot as plt
-
-    experimentName = cfg.experimentName
-
-    if cfg.do_Sim == True:
-        print("**************************")
-        print("* Running the simulation *")
-        print("**************************")
-        print("cfg.physics.enableElectronicNoise = {}".format(cfg.physics.enableElectronicNoise))
-        print("cfg.physics.enableQuantumNoise = {}".format(cfg.physics.enableQuantumNoise))
-
-        cfg.run_all()  # as specified by protocol.scanTypes
-
-    ##--------- Show selected results - 4 views for each of selected rows.
-
-    print("*********************************")
-    print("* Plotting selected projections *")
-    print("*********************************")
-
-    projectionData = xc.rawread(cfg.resultsName + ".prep",
-                    [cfg.protocol.viewCount, cfg.scanner.detectorRowCount, cfg.scanner.detectorColCount],
-                    'float')
-
-    rowCount = cfg.scanner.detectorRowCount
-    if rowCount == 1:
-        rowIndicesToPlot = [0]
-    elif rowCount <= 8:
-        # rowIndicesToPlot = range(8, 16)
-        rowIndicesToPlot = range(0, rowCount)
-    else:
-        if experimentName == "08_01_Scanner_16rows_Phantom_offset0"       \
-        or experimentName == "08_02_Scanner_16rows_Phantom_offset+50mmX"  \
-        or experimentName == "08_03_Scanner_16rows_Phantom_offset+50mmY":
-            # Plot the first 3 rows, a middle row, and the last 3 rows.
-            rowIndicesToPlot = [0, 1, 2, int(rowCount/2), rowCount-3, rowCount-2, rowCount-1]
-        elif experimentName == "08_04_Scanner_16rows_Phantom_offset+4mmZ":
-            # Plot the 2 middle rows.
-            rowIndicesToPlot = [int(rowCount/2)-1, int(rowCount/2)]
-        elif experimentName == "08_05_Scanner_16rows_Phantom_offset+8mmZ":
-            # Plot the last 4 rows.
-            rowIndicesToPlot = [rowCount-4, rowCount-3, rowCount-2, rowCount-1]
-        else:
-            rowIndicesToPlot = range(0, rowCount)
-
-    for rowIndexToPlot in rowIndicesToPlot:
-        for viewIndexToPlot in range(0, cfg.protocol.viewCount, int(cfg.protocol.viewCount/4)):
-            viewToPlot = projectionData[viewIndexToPlot, rowIndexToPlot, :]
-            # viewToPlot = np.subtract(projectionData[viewIndexToPlot, rowIndexToPlot, :], projectionData[viewIndexToPlot, 15, :])
-            plt.figure(int(viewIndexToPlot+1))
-            plt.plot(viewToPlot)
-            plt.title("All " + str(cfg.scanner.detectorColCount) + " columns"
-                    + " of row(s) " + str([s + 1 for s in rowIndicesToPlot]) + " of " + str(cfg.scanner.detectorRowCount)
-                    + ", view " + str(viewIndexToPlot+1) + " of " + str(cfg.protocol.viewCount))
-            fileName = cfg.resultsName + "_" + "View_" + str(viewIndexToPlot+1)
-            plt.savefig(fileName, bbox_inches='tight')
-
-    if rowCount == 16:
-        if experimentName == "08_01_Scanner_16rows_Phantom_offset0"       \
-        or experimentName == "08_02_Scanner_16rows_Phantom_offset+50mmX"  \
-        or experimentName == "08_03_Scanner_16rows_Phantom_offset+50mmY":
-            # Confirm that symmetrical rows are exactly the same.
-            rowsToDiff = np.array([[0, rowCount-1], [1, rowCount-2], [2, rowCount-3]])
-        elif experimentName == "08_04_Scanner_16rows_Phantom_offset+4mmZ":
-            # Compare the 4 middle rows.
-            firstRowToDiff = int(rowCount/2 - 1)
-            rowsToDiff = np.array([[firstRowToDiff,   firstRowToDiff+1],
-                                [firstRowToDiff+1, firstRowToDiff+2],
-                                [firstRowToDiff+2, firstRowToDiff+3]])
-        elif experimentName == "08_05_Scanner_16rows_Phantom_offset+8mmZ":
-            # Compare the last 5 rows.
-            rowsToDiff = np.array([[rowCount-5, rowCount-4],
-                                [rowCount-4, rowCount-3],
-                                [rowCount-3, rowCount-2],
-                                [rowCount-2, rowCount-1]])
-
-        if experimentName == "08_01_Scanner_16rows_Phantom_offset0"       \
-        or experimentName == "08_02_Scanner_16rows_Phantom_offset+50mmX"  \
-        or experimentName == "08_03_Scanner_16rows_Phantom_offset+50mmY"  \
-        or experimentName == "08_04_Scanner_16rows_Phantom_offset+4mmZ"   \
-        or experimentName == "08_05_Scanner_16rows_Phantom_offset+8mmZ":
-            numRowsToDiff = np.shape(rowsToDiff)[0]
-            for rowIndex in range(0, numRowsToDiff):
-                diff = np.subtract(projectionData[0, rowsToDiff[rowIndex, 0], :], projectionData[0, rowsToDiff[rowIndex, 1], :])
-                print("Max diff of rows ", rowsToDiff[rowIndex, 0], " and ", rowsToDiff[rowIndex, 1], " is ", np.max(np.abs(diff)))
-
-    plt.draw()
-    plt.pause(1)
-    if cfg.waitForKeypress:
-        print("*******************************************")
-        print("* Press Enter to close plots and continue *")
-        input("*******************************************")
-    
-    plt.close('all')
-
-
-def runRecon(cfg):
-
-    print("******************************")
-    print("* Running the reconstruction *")
-    print("******************************")
-
-    cfg = recon.recon(cfg)
-
-    return cfg
-
-
-def getUserPath():
-
-    # Get the user-specified environment variable.
-    userPath = os.environ.get('XCIST_UserPath')
-
-    if userPath is None:
-        raise Exception("******** Error! Please set the environment variable 'XCIST_UserPath'")
-    # Convert to a list to see if more than one path was specified.
-    userPath = userPath.split(";")
-    if len(userPath) > 1:
-        raise Exception("******** Error! Environment variable 'XCIST_UserPath' can only contain a single path.\nIt contains {:s}.".format(userPath))
-
-    # Convert back to a simple string.
-    userPath = userPath[0]
-    if not os.path.exists(userPath):
-        raise Exception("******** Error! Environment variable 'XCIST_UserPath' not found.".format(userPath))
-
-    return userPath
-
-
 ##--------- Initialize
 
 userPath = getUserPath()
-xc.pyfiles.CommonTools.my_path.add_search_path(userPath)
-experimentDirectory = os.path.join(userPath, "my_experiments", "experiment_CatSimLogo_SimAndRecon")
+xc.CommonTools.my_path.add_search_path(userPath)
 
-# Use the default cfg parameters found in Scanner_Default.cfg, Physics_Default.cfg, Protocol_Default.cfg.
-# Use experiment-specific config files Phantom_CatSimLogo.cfg and Recon_CatSimLogo.cfg.
+# Use the default cfg parameters found in the default .cfg files, except use a specific phantom file.
 
-cfg = xc.CatSim(xc.pyfiles.CommonTools.my_path.find("cfg", "Phantom_CatSimLogo.cfg", ""),
-                xc.pyfiles.CommonTools.my_path.find("cfg", "Recon_CatSimLogo.cfg", ""))
+cfg = xc.CatSim(xc.CommonTools.my_path.find("cfg", "Phantom_CatSimLogo.cfg", ""))
+cfg.experimentDirectory = os.path.join(userPath, "examples", "evaluation", "experiment_01_CatSimLogo_SimAndRecon")
 
 # These are changes to the defaults config parameters to be used for the "base" experiment,
 # but some of these and some other defaults are overridden for certain experiments.
 
-cfg.scanner.detectorRowsPerMod = 1
-cfg.scanner.detectorRowCount = cfg.scanner.detectorRowsPerMod
+cfg.scanner.detectorRowsPerMod = 1                              # Will be revised for certain experiments.
+cfg.scanner.detectorRowCount = cfg.scanner.detectorRowsPerMod   # Will be revised for certain experiments.
 cfg.scanner.detectorColOffset = 0.25
 
-cfg.physics.enableQuantumNoise = 0
-cfg.physics.enableElectronicNoise = 0
+cfg.protocol.viewsPerRotation = 1000                            # Will be revised for certain experiments.
+cfg.protocol.viewCount = cfg.protocol.viewsPerRotation          # Will be revised for certain experiments.
+cfg.protocol.stopViewId = cfg.protocol.viewCount - 1            # Will be revised for certain experiments.
+cfg.protocol.spectrumScaling = 0.931
+cfg.protocol.mA = 300                                           # Will be revised for certain experiments.
+
+cfg.physics.enableQuantumNoise = 0                              # Will be revised for certain experiments.
+cfg.physics.enableElectronicNoise = 0                           # Will be revised for certain experiments.
 cfg.physics.energyCount = 12 # Using 120 kVp, so 10 kV/bin.
 
-cfg.protocol.viewsPerRotation = 1000 # 360 is about the minimum to get minor aliasing, but need 1000 for minimal aliasing.
-cfg.protocol.viewCount = cfg.protocol.viewsPerRotation
-cfg.protocol.stopViewId = cfg.protocol.viewCount - 1
-cfg.protocol.spectrumScaling = 0.931
-cfg.protocol.mA = 300
-
-cfg.recon.fov = 300.0
-cfg.recon.displayImagePictures = True
+cfg.recon.fov = 300.0                                           # Will be revised for certain experiments.
+cfg.recon.sliceCount = 1                                        # Will be revised for certain experiments.
+cfg.recon.kernelType = 'Standard'                               # Will be revised for certain experiments.
+cfg.recon.mu = 0.02                                             # Will be revised for certain experiments.
+cfg.recon.displayWindowMin = -200             # In HU.
+cfg.recon.displayWindowMax = 200              # In HU.
+cfg.recon.displayWindow = cfg.recon.displayWindowMax - cfg.recon.displayWindowMin
+cfg.recon.displayLevel = (cfg.recon.displayWindowMax + cfg.recon.displayWindowMin)/2
+# For publication.
 cfg.recon.saveImagePictureFiles = True
-cfg.recon.saveImageVolume = True
-cfg.recon.saveSingleImages = True
+# For test development - comment out if desired for published figures.
+# cfg.recon.displayImagePictureAxes = True
+# cfg.recon.displayImagePictureTitles = True
+# For single-row simulations, use the native slice thickness.     Will be revised for certain experiments.
+if cfg.scanner.detectorRowCount == 1:
+    cfg.recon.sliceThickness = cfg.scanner.detectorRowSize*cfg.scanner.sid/cfg.scanner.sdd
 
 # Top-level cfg parameters related to control of this experiment.
 cfg.waitForKeypress = False             # Wait for keypress after plot display?
 cfg.do_Sim = True                       # The simulation is usually run except when only varying recon parameters.
+cfg.displaySimProjectionPlots = False   # Flag to display plots to screen.
 cfg.do_Recon = True                     # The recon is usually run except when only varying display parameters.
-cfg.displayWindowMin = -200             # In HU.
-cfg.displayWindowMax = 200              # In HU.
 
 ##--------- Define experiment names
 
@@ -640,7 +517,7 @@ cfg.displayWindowMax = 200              # In HU.
 # Uncomment the ones you want to run.
 
 experimentNames = [
-    "01_01_Baseline",
+    # "01_01_Baseline",
     # "01_02_Physics_eNoiseOn",
     # "01_03_Physics_qNoiseOn",
     # "01_04_Physics_NoiseOn",
@@ -677,25 +554,25 @@ experimentNames = [
     # "05_08_Physics_ViewSampling2_Recon_300mmFOV",
     # "05_09_Physics_ViewSampling3_Recon_300mmFOV",
 
-    # "06_00_Scanner_64rows_Physics_NoScatter",
-    # "06_01_Scanner_64rows_Physics_ScatterScale1",
-    # "06_02_Scanner_64rows_Physics_ScatterScale8",
-    # "06_03_Scanner_64rows_Physics_ScatterScale64",
+    "06_00_Scanner_64rows_Physics_NoScatter",
+    "06_01_Scanner_64rows_Physics_ScatterScale1",
+    "06_02_Scanner_64rows_Physics_ScatterScale8",
+    "06_03_Scanner_64rows_Physics_ScatterScale64",
 
-    # "07_01_Scanner_16rows_Recon_1slice",
-    # "07_02_Scanner_16rows_Recon_2slices",
-    # "07_03_Scanner_16rows_Recon_16slices",
+    "07_01_Scanner_16rows_Recon_1slice",
+    "07_02_Scanner_16rows_Recon_2slices",
+    "07_03_Scanner_16rows_Recon_16slices",
 
-    # "08_01_Scanner_16rows_Phantom_offset0",
-    # "08_02_Scanner_16rows_Phantom_offset+50mmX",
-    # "08_03_Scanner_16rows_Phantom_offset+50mmY",
-    # "08_04_Scanner_16rows_Phantom_offset+4mmZ",
-    # "08_05_Scanner_16rows_Phantom_offset+8mmZ",
+    "08_01_Scanner_16rows_Phantom_offset0",
+    "08_02_Scanner_16rows_Phantom_offset+50mmX",
+    "08_03_Scanner_16rows_Phantom_offset+50mmY",
+    "08_04_Scanner_16rows_Phantom_offset+4mmZ",
+    "08_05_Scanner_16rows_Phantom_offset+8mmZ",
 
-    # "09_01_Scanner_16rows_Recon_0p5mmSlices_offset0",  # Needs to be done before the next 3 because those use projections from this.
-    # "09_02_Scanner_16rows_Recon_0p5mmSlices_offset+22mmX",
-    # "09_03_Scanner_16rows_Recon_0p5mmSlices_offset+22mmY",
-    # "09_04_Scanner_16rows_Recon_0p5mmSlices_offset+1mmZ",
+    "09_01_Scanner_16rows_Recon_0p5mmSlices_offset0",  # Needs to be done before the next 3 because those use projections from this.
+    "09_02_Scanner_16rows_Recon_0p5mmSlices_offset+22mmX",
+    "09_03_Scanner_16rows_Recon_0p5mmSlices_offset+22mmY",
+    "09_04_Scanner_16rows_Recon_0p5mmSlices_offset+1mmZ",
 ]
 
 # The current config is the base config, and will be used as the basis each time through the loop.
@@ -703,25 +580,20 @@ base = copy.deepcopy(cfg)
 
 for experimentIndex in range(0, len(experimentNames)):
 
+    # Start with the "base" config.
     cfg = copy.deepcopy(base)
-    experimentName = experimentNames[experimentIndex]
-    resultsPath = os.path.join(experimentDirectory, experimentName)
-    
-    print("**************************")
-    print("* Experiment: {:s}".format(experimentName))
-    print("**************************")
 
-    # Create the results folder if it doesn't exist.
-    if not os.path.exists(resultsPath):
-        os.makedirs(resultsPath)
-    cfg.resultsName = os.path.join(resultsPath, experimentName)
+    cfg.experimentName = experimentNames[experimentIndex]
+
+    # Initialize the experiment directory.
+    cfg = initializeExperimentDirectory(cfg)
 
     # Define the specific parameters for this experiment.
-    cfg.experimentName = experimentName
     cfg = setExperimentParameters(cfg)
+
     # Get the title for the recon images.
     cfg.reconImageTitle = getReconImageTitle(cfg)
-    # Run the simulation.
-    runSim(cfg)
-    # Run the recon.
-    cfg = runRecon(cfg)
+
+    # Do the experiment.
+    doExperiment(cfg)
+    

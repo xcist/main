@@ -99,7 +99,7 @@ def fdk_equiAngle(cfg, prep):
 
     # scanner & recon geometry
     sid, sdd, nMod, rowSize, modWidth, dectorYoffset, dectorZoffset, \
-    fov, imageSize, sliceCount, sliceThickness, centerOffset, phantomOffset, startView, kernelType      \
+    fov, imageSize, sliceCount, sliceThickness, centerOffset, startView, kernelType      \
         = mapConfigVariablesToFDK(cfg)
 
     # initialize parameters
