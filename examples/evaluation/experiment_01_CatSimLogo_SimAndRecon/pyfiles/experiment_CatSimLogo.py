@@ -55,7 +55,7 @@
 import os
 import copy
 import shutil
-import catsim as xc
+import catsim.pyfiles as catsim
 from my_commonTools import *
 
 def setExperimentParameters(cfg):
@@ -465,11 +465,12 @@ def getReconImageTitle(cfg):
 ##--------- Initialize
 
 userPath = getUserPath()
-xc.CommonTools.my_path.add_search_path(userPath)
+catsim.CommonTools.my_path.add_search_path(userPath)
 
 # Use the default cfg parameters found in the default .cfg files, except use a specific phantom file.
 
-cfg = xc.CatSim(xc.CommonTools.my_path.find("cfg", "Phantom_CatSimLogo.cfg", ""))
+cfgFile = catsim.CommonTools.my_path.find("cfg", "Phantom_CatSimLogo.cfg", "")
+cfg = catsim.CatSim.CatSim(cfgFile)
 cfg.experimentDirectory = os.path.join(userPath, "examples", "evaluation", "experiment_01_CatSimLogo_SimAndRecon")
 
 # These are changes to the defaults config parameters to be used for the "base" experiment,
