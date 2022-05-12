@@ -5,44 +5,44 @@
         "bone"
     ],
     "volumefractionmap_filename": [
-        "CatSimLogo_2048_water_2048x2048x1.raw",
-        "CatSimLogo_2048_bone_2048x2048x1.raw"
+        "CatSim_logo_1024_water_1024x1024x1.raw",
+        "CatSim_logo_1024_bone_1024x1024x1.raw"
     ],
     "volumefractionmap_datatype": [
         "float",
         "float"
     ],
     "cols": [
-        2048,
-        2048
+        1024,
+        1024
     ],
     "rows": [
-        2048,
-        2048
+        1024,
+        1024
     ],
     "slices": [
         1,
         1
     ],
     "x_size": [
-        0.25,
-        0.25
+        0.5,
+        0.5
     ],
     "y_size": [
-        0.25,
-        0.25
+        0.5,
+        0.5
     ],
     "z_size": [
         16.0,
         16.0
     ],
     "x_offset": [
-        1024.5,
-        1024.5
+        512.5,
+        512.5
     ],
     "y_offset": [
-        1024.5,
-        1024.5
+        512.5,
+        512.5
     ],
     "z_offset": [
         1.0,

@@ -14,3 +14,4 @@ I created a folder C:\my_XCIST_files and copied the entire tree "examples" under
 I then created C:\my_XCIST_files\my_phantoms and put the downloaded phantoms there.
 I then assigned the environment variable XCIST_UserPath to C:\my_XCIST_files.
 I also added C:\my_XCIST_files\examples\evaluation\pyfiles to the environment variable PYTHONPATH.
+

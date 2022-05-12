@@ -1,11 +1,12 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
 # Author: Paul FitzGerald
-# Date: April 18, 2022
+# Date: May 10, 2022
 #
 # Purpose: This is an XCIST "experiment file" that is used to evaluate several aspects of XCIST simulation and recon
 # using the CatSim logo phantom. The default config files are used for everything except the phantom - for that, you
-# will need Phantom_CatSimLogo.cfg, which should be included in the same folder where you found this file.
+# will need Phantom_CatSimLogo.cfg, which should be included a "cfg" folder where you found this file, and the files
+# in the "CatSimLogo_1024" folder in XCIST's "phantoms-voxelized" repository.
 #
 # The CatSim logo phantom used in this experiment is a voxelized phantom. Therefore, the simulation portion of this
 # evaluation only evaluates the voxelized projector. However, the recon aspects of this experiment are independent of
