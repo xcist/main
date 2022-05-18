@@ -1,7 +1,7 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
 # Author: Paul FitzGerald
-# Date: April 18, 2022
+# Date: May 16, 2022
 #
 # Purpose: This is an XCIST "experiment file" that is used to evaluate several aspects of XCIST simulation and recon
 # using the artifacts phantom. The default config files are used for everything except the phantom - for that, you
@@ -45,8 +45,7 @@
 
 import os
 import copy
-import shutil
-import catsim as xc
+import catsim.pyfiles as catsim
 from my_commonTools import *
 
 def setExperimentParameters(cfg):
@@ -95,11 +94,12 @@ def getReconImageTitle(cfg):
 ##--------- Initialize
 
 userPath = getUserPath()
-xc.CommonTools.my_path.add_search_path(userPath)
+catsim.CommonTools.my_path.add_search_path(userPath)
 
 # Use the default cfg parameters found in the default .cfg files, except use a specific phantom file.
 
-cfg = xc.CatSim(xc.CommonTools.my_path.find("cfg", "Phantom_analyticArtifactPhantom.cfg", ""))
+phantomCfgPathname = catsim.CommonTools.my_path.find("cfg", "Phantom_analyticArtifactPhantom.cfg", "")
+cfg = catsim.CatSim.CatSim(phantomCfgPathname)
 cfg.experimentDirectory = os.path.join(userPath, "examples", "evaluation", "experiment_04_analyticArtifactPhantom_SimAndRecon")
 
 # These are changes to the defaults config parameters to be used for the "base" experiment,
@@ -129,8 +129,8 @@ cfg.physics.enableElectronicNoise = 0                           # Will be revise
 cfg.recon.fov = 300.0
 cfg.recon.sliceThickness = cfg.scanner.detectorRowSize*cfg.scanner.sid/cfg.scanner.sdd
 cfg.recon.sliceCount = 1                                        # Will be revised for certain experiments.
-cfg.recon.kernelType = 'Standard'
-cfg.recon.mu = xc.GetMu('water', cfg.physics.monochromatic)[0]/10 # Will be revised for certain experiments.
+cfg.recon.kernelType = 'standard'
+cfg.recon.mu = catsim.GetMu.GetMu('water', cfg.physics.monochromatic)[0]/10 # Will be revised for certain experiments.
 cfg.recon.displayWindowMin = -250             # In HU.
 cfg.recon.displayWindowMax = 250              # In HU.
 cfg.recon.displayWindow = cfg.recon.displayWindowMax - cfg.recon.displayWindowMin
@@ -170,10 +170,10 @@ for experimentIndex in range(0, len(experimentNames)):
     cfg = copy.deepcopy(base)
 
     # Initialize the experiment directory.
+    cfg.experimentName = experimentNames[experimentIndex]
     cfg = initializeExperimentDirectory(cfg)
 
     # Define the specific parameters for this experiment.
-    cfg.experimentName = experimentNames[experimentIndex]
     cfg = setExperimentParameters(cfg)
 
     # Get the title for the recon images.

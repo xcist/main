@@ -36,7 +36,7 @@ def createHSP(Length, kernelType):
         HS = TempF * complex(0, 1)
         FFT_F = np.fft.fft(HS)
 
-    elif kernelType == "Soft":
+    elif kernelType == "soft":
         x = np.array([0, 0.25, 0.5, 0.75, 1])
         y = np.array([1, 0.815, 0.4564, 0.1636, 0])
         # y = np.array([1, 1.0485, 1.17, 1.2202, 0.9201])
@@ -48,7 +48,7 @@ def createHSP(Length, kernelType):
             FFT_F[nn2 - i - 1] = f((i)/nn)* 0.997*(i + 1 + 0.003) / nn2
         FFT_F= FFT_F * complex(0,1)
 
-    elif kernelType == "Standard":
+    elif kernelType == "standard":
         x = np.array([0, 0.25, 0.5, 0.75, 1])
         # y = np.array([1, 0.815, 0.4564, 0.1636, 0])
         # y = np.array([1, 1.0485, 1.17, 1.2202, 0.9201])
@@ -60,7 +60,7 @@ def createHSP(Length, kernelType):
             FFT_F[nn2 - i - 1] = f((i) / nn) * 0.997 * (i + 1 + 0.003) / nn2
         FFT_F = FFT_F * complex(0, 1)
 
-    elif kernelType == "Bone":
+    elif kernelType == "bone":
         x = np.array([0, 0.25, 0.5, 0.75, 1])
         # y = np.array([1, 0.815, 0.4564, 0.1636, 0])
         y = np.array([1, 1.0485, 1.17, 1.2202, 0.9201])

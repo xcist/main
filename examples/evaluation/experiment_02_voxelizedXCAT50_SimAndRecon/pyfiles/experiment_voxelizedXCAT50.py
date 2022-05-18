@@ -1,7 +1,7 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
 # Author: Paul FitzGerald
-# Date: April 18, 2022
+# Date: May 16, 2022
 #
 # Purpose: This is an XCIST "experiment file" that is used to evaluate several aspects of XCIST simulation and recon
 # using a voxelized version of an XCAT phantom. The default config files are used for everything except the phantom - for
@@ -38,7 +38,7 @@
 # parameters such as window/level and titles.
 
 import os
-import catsim as xc
+import catsim.pyfiles as catsim
 from my_commonTools import *
 
 
@@ -55,11 +55,12 @@ def getReconImageTitle(cfg):
 ##--------- Initialize
 
 userPath = getUserPath()
-xc.CommonTools.my_path.add_search_path(userPath)
+catsim.CommonTools.my_path.add_search_path(userPath)
 
 # Use the default cfg parameters found in the default .cfg files, except use a specific phantom file.
 
-cfg = xc.CatSim(xc.CommonTools.my_path.find("cfg", "Phantom_voxelizedXCAT50.cfg", ""))
+phantomCfgPathname = catsim.CommonTools.my_path.find("cfg", "Phantom_voxelizedXCAT50.cfg", "")
+cfg = catsim.CatSim.CatSim(phantomCfgPathname)
 cfg.phantomGender = "female"
 cfg.experimentDirectory = os.path.join(userPath, "examples", "evaluation", "experiment_02_voxelizedXCAT50_SimAndRecon", cfg.phantomGender)
 cfg.phantom.filename = "adult_" + cfg.phantomGender + "_50percentile_chest_slab_400.json"
@@ -106,9 +107,9 @@ if cfg.scanner.detectorRowCount == 1:
 
 # Top-level cfg parameters related to control of this experiment.
 cfg.waitForKeypress = False             # Wait for keypress after plot display?
-cfg.do_Sim = False                      # The simulation is usually run except when only varying recon parameters.
+cfg.do_Sim = True                       # The simulation is usually run except when only varying recon parameters.
 cfg.displaySimProjectionPlots = False   # Flag to display plots to screen.
-cfg.do_Recon = False                    # The recon is usually run except when only varying display parameters.
+cfg.do_Recon = True                     # The recon is usually run except when only varying display parameters.
 
 ##--------- Loop through experiment parameters
 

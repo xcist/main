@@ -1,7 +1,7 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
 # Author: Paul FitzGerald
-# Date: April 27, 2022
+# Date: May 16, 2022
 #
 # Purpose: This is an XCIST "experiment file" that is used to evaluate several aspects of XCIST simulation and recon
 # using an XCAT phantom. The default config files are used for everything except the phantom - for that, you will need
@@ -38,7 +38,7 @@
 # parameters such as window/level and titles.
 
 import os
-import catsim as xc
+import catsim.pyfiles as catsim
 from my_commonTools import *
 
 
@@ -59,11 +59,12 @@ def getReconImageTitle(cfg):
 ##--------- Initialize
 
 userPath = getUserPath()
-xc.CommonTools.my_path.add_search_path(userPath)
+catsim.CommonTools.my_path.add_search_path(userPath)
 
 # Use the default cfg parameters found in the default .cfg files, except use a specific phantom file.
 
-cfg = xc.CatSim(xc.CommonTools.my_path.find("cfg", "Phantom_XCAT50.cfg", ""))
+phantomCfgPathname = catsim.CommonTools.my_path.find("cfg", "Phantom_XCAT50.cfg", "")
+cfg = catsim.CatSim.CatSim(phantomCfgPathname)
 cfg.experimentDirectory = os.path.join(userPath, "examples", "evaluation", "experiment_03_XCAT50_SimAndRecon")
 
 # These are changes to the default config parameters to be used for this experiment.
