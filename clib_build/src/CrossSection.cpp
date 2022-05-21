@@ -6,6 +6,8 @@
 #include <sstream>
 #include <fstream>
 #include <math.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 //--------------------
 CrossSection::CrossSection(){
@@ -73,37 +75,104 @@ double CrossSection::GetValue(int Z, double Energy){
 bool CrossSection::load(string FileBase){
 
   double Energy, CS;
-  for (unsigned int Z = 1; Z <= this->MaxZ; Z++){
-    map < double, double > ThisEntry;
-    stringstream FileName;
-    FileName << FileBase << "-" << Z << ".dat";
-    ifstream IF(FileName.str().c_str());
-/*    while(IF >> Energy >> CS){
-      if(Energy > 0)
-	ThisEntry[Energy] = CS;
-    } */
-    string curLine;
-    while(!IF.eof())
-    {
-        getline(IF, curLine);
-		if (curLine[0] == '%')
-		{
-			continue;
-		}
-        std::stringstream ss(curLine, std::stringstream::in);
-        ss >> Energy >> CS;
+  stringstream CSDataPath;
+  CSDataPath << FileBase << "-all.dat";
+  //test if file already exists
+  struct stat file_exists;
+  if (0==stat(CSDataPath.str().c_str(), &file_exists)) {
+      //cout << "Binary database" << CSDataPath.str() << " already exists, will directly read." << endl;
+      ifstream ifs;
+      ifs.open(CSDataPath.str().c_str(), ios::binary);
+      ifs.seekg(0, ifs.end);
+      int db_size = ifs.tellg();
+      ifs.seekg(0, ifs.beg);
+
+      char* buffer = new char[db_size];
+      ifs.read(buffer, db_size);
+      char* this_pt = buffer;
+
+      map<double, double> thisEntry;
+      int Z, num;
+      double energy, intensity;
+      while(this_pt < buffer+db_size) {
+          Z = *(int*) this_pt;
+          this_pt += 4;
+          num = *(int*) this_pt; 
+          this_pt += 4;
+          for (int i=0; i<num; ++i) {
+              energy = *(double*) this_pt;
+              this_pt += 8;
+              intensity = *(double*) this_pt;
+              this_pt += 8;
+              thisEntry[energy] = intensity;
+          }
+          this->TheData[Z] = thisEntry;
+      }
+      ifs.close();
+      delete buffer;
+  }
+  else {
+    cout << "Binary database" << CSDataPath.str() << " does not exist, will be generated." << endl;
+    cout << "You should only see this notice once." << endl;
+    ofstream ofs;
+    ofs.open(CSDataPath.str().c_str(), ios::binary);
+    ofs.seekp(0, ios::beg);
+    //#pragma omp parallel for 
+    for (unsigned int Z = 1; Z <= this->MaxZ; Z++){
+      map < double, double > ThisEntry;
+      stringstream FileName;
+      FileName << FileBase << "-" << Z << ".dat";
+      ifstream IF(FileName.str().c_str());
+      /*      while(IF >> Energy >> CS){
         if(Energy > 0)
-        {
-            ThisEntry[Energy] = CS;
-        }
+      ThisEntry[Energy] = CS;
+      } */
+      string curLine;
+      while(!IF.eof())
+      {
+          getline(IF, curLine);
+      	if (curLine[0] == '%')
+      	{
+      		continue;
+      	}
+          std::stringstream ss(curLine, std::stringstream::in);
+          ss >> Energy >> CS;
+          if(Energy > 0)
+          {
+              ThisEntry[Energy] = CS;
+          }
+      }
+      if( ThisEntry.size() == 0)
+        ofs.close();
+        cerr << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl 
+         << "failed to load data for " << FileName.str() << "\n"
+         << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl ;
+      this->TheData[Z] = ThisEntry;
+
+      //now write this->theData to file
+      ofs.write((char*)&Z, sizeof(Z));
+      int map_size = ThisEntry.size();
+      ofs.write((char*)&map_size, sizeof(map_size));
+      if (map_size>0) {
+          map<double, double>::iterator it;
+          for (it = ThisEntry.begin(); it != ThisEntry.end(); ++it) {
+              ofs.write((char*)&(it->first), sizeof(double));
+              ofs.write((char*)&(it->second), sizeof(double));
+          }
+      }
     }
-    if( ThisEntry.size() == 0)
-      cerr << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl 
-	   << "failed to load data for " << FileName.str() << "\n"
-	   << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl ;
-    this->TheData[Z] = ThisEntry;
+    ofs.close();
   }
   return true;
 }
 
-
+//bool  CrossSection::write(ostream& f){
+//  map < double, double >::iterator it2;
+//  map <int, < double, double >>::iterator it1;
+//  for (it1=this->TheData.begin(); it1!=this->TheData.end(); it1++) {
+//    for (it2=it1->second.begin(); it2!=it2->second.end(); it2++) {
+//        f.write((char*)&it2, sizeof(it2));
+//    }
+//  }
+//  return true;
+//}
