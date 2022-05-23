@@ -19,10 +19,12 @@ def GetMu(materialFile, Evec):
 
     clib.InitializeCrossSectionDB.argtypes = [POINTER(c_char), c_int] # here c_char_p = POINTER(c_char)
     clib.InitializeCrossSectionDB.restype = None
+    
+    PairProductionFlag = int(np.max(Evec)>1024)
 
-    # clib.InitializeCrossSectionDB(MaterialDirectory, 0) # not working
-    clib.InitializeCrossSectionDB(c_MaterialDirectory, 0) # works
-    # clib.InitializeCrossSectionDB(b_MaterialDirectory, 0) # works
+    # clib.InitializeCrossSectionDB(MaterialDirectory, PairProductionFlag) # not working
+    clib.InitializeCrossSectionDB(c_MaterialDirectory, PairProductionFlag) # works
+    # clib.InitializeCrossSectionDB(b_MaterialDirectory, PairProductionFlag) # works
 
     #----------------- read material file
     materialFile = my_path.find("material", materialFile, '')

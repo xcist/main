@@ -80,7 +80,7 @@ bool CrossSection::load(string FileBase){
   //test if file already exists
   struct stat file_exists;
   if (0==stat(CSDataPath.str().c_str(), &file_exists)) {
-      //cout << "Binary database" << CSDataPath.str() << " already exists, will directly read." << endl;
+      //cout << "Cross section database " << CSDataPath.str() << " already exists, will directly read." << endl;
       ifstream ifs;
       ifs.open(CSDataPath.str().c_str(), ios::binary);
       ifs.seekg(0, ifs.end);
@@ -112,8 +112,8 @@ bool CrossSection::load(string FileBase){
       delete buffer;
   }
   else {
-    cout << "Binary database" << CSDataPath.str() << " does not exist, will be generated." << endl;
-    cout << "You should only see this notice once." << endl;
+    cout << "Generating cross section database: " << CSDataPath.str() << endl;
+    // cout << "You should only see this notice once." << endl;
     ofstream ofs;
     ofs.open(CSDataPath.str().c_str(), ios::binary);
     ofs.seekp(0, ios::beg);

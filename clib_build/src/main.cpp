@@ -95,23 +95,23 @@ extern "C" {
   EXPORT  void InitializeCrossSectionDB(char *dirpath, int pairProdFlag) {
     if ((crossSectionsInitialized) && (usePairProduction == pairProdFlag)) return;
     usePairProduction = pairProdFlag;
-    Report("Loading GEANT4/EDLP97 cross section database...");
-    Report("compton..");
+    // Report("Loading GEANT4/EDLP97 cross section database...");
+    // Report("compton..");
     ComptonCrossSection.load(string(dirpath) + "edlp/comp/ce-cs");
-    Report("rayleigh..");
+    // Report("rayleigh..");
     RayleighCrossSection.load(string(dirpath) + "edlp/rayl/re-cs");
-    Report("photo..");
+    // Report("photo..");
     if (usePairProduction)
       {
         PairProductionCrossSection.load(string(dirpath) + "edlp/pair/pp-cs");
-        Report("pair..");
+        // Report("pair..");
       }    
     PhotoElectricCrossSection.load(string(dirpath) + "edlp/phot/pe-cs");
-    Report("scatter..");
+    // Report("scatter..");
     ComptonScatterFunction.load(string(dirpath) + "edlp/comp/ce-sf");
-    Report("form..");
+    // Report("form..");
     RayleighFormFactor.load(string(dirpath) + "edlp/rayl/re-ff");
-    Report("done\r\n");
+    // Report("done\r\n");
     crossSectionsInitialized = true;
   }
 
