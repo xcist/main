@@ -18,7 +18,7 @@ $(64bitLibrary): $(OBJECTS)
 	@echo . Building system-specific library ...
 	@echo .
 	@echo .
-	$(CXX) $(CXXFLAGS) -static-libgcc -o $(64bitLibrary) -shared $(OBJECTS) $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) -static-libgcc -static-libstdc++ -o $(64bitLibrary) -shared $(OBJECTS) $(LDFLAGS)
 	mv libcatsim.so ../../catsim/lib
 	@echo .
 	@echo .
