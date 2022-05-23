@@ -91,20 +91,20 @@ bool CrossSection::load(string FileBase){
       ifs.read(buffer, db_size);
       char* this_pt = buffer;
 
-      map<double, double> thisEntry;
       int Z, num;
-      double energy, intensity;
+      double eng, xsec;
       while(this_pt < buffer+db_size) {
+          map<double, double> thisEntry;
           Z = *(int*) this_pt;
           this_pt += 4;
           num = *(int*) this_pt; 
           this_pt += 4;
           for (int i=0; i<num; ++i) {
-              energy = *(double*) this_pt;
+              eng = *(double*) this_pt;
               this_pt += 8;
-              intensity = *(double*) this_pt;
+              xsec = *(double*) this_pt;
               this_pt += 8;
-              thisEntry[energy] = intensity;
+              thisEntry[eng] = xsec;
           }
           this->TheData[Z] = thisEntry;
       }
@@ -142,11 +142,12 @@ bool CrossSection::load(string FileBase){
               ThisEntry[Energy] = CS;
           }
       }
-      if( ThisEntry.size() == 0)
-        ofs.close();
+      if( ThisEntry.size() == 0) {
+        //ofs.close();
         cerr << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl 
          << "failed to load data for " << FileName.str() << "\n"
          << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl ;
+      }
       this->TheData[Z] = ThisEntry;
 
       //now write this->theData to file
