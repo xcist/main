@@ -76,7 +76,6 @@ class PathHelper:
         self.paths["spectrum"] = os.path.join(self.paths["top"], 'spectrum')
         self.extra_search_paths = []
         self.read_catsim_init()
-        print(self.paths)
 
     def base(self, *args):
         return os.path.join(self._base_dir, *args)
