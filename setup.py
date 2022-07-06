@@ -5,15 +5,15 @@
 
 from setuptools import setup
 
-setup(name='catsim',
-      version='0.1.6',
+setup(name='catsim-xcist',
+      version='0.1.7',
       description='Simulation toolkit for X-ray based cancer imaging',
       url='https://github.com/xcist',
       author='Mingye Wu, Paul FitzGerald, Brion Sarachan, Bruno De Man',
       author_email='Mingye.Wu@ge.com',
       license='BSD 3-Clause License',
       install_requires=['numpy', 'scipy', 'matplotlib'],
-      packages=['catsim'],
+      packages=['catsim', 'catsim.pyfiles'],
       zip_safe=False,
       package_data={'catsim':[r'lib/*.*', r'cfg/*.cfg', 
         r'bowtie/*.txt', r'material/*', r'material/edlp/*/*.dat',
