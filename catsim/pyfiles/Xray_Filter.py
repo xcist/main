@@ -51,7 +51,7 @@ def bowtie_filter(cfg):
     
     gammas0 = data[:, 0]
     t0 = data[:, 1:] # thickness in cm
-    bowtieMaterials = ['al', 'graphite', 'cu', 'ti']
+    bowtieMaterials = ['Al', 'graphite', 'Cu', 'Ti']
     
     Evec = cfg.spec.Evec
     gammas1 = cfg.det.gammas
