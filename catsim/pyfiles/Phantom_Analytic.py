@@ -960,9 +960,7 @@ def euler_angs(R=None):
 
 def Phantom_Polygonal_ReadPolygon(Verts):
 
-    ddir_ext = "./data/phantom/poly_bin"
-    base_dir = os.path.dirname(os.path.realpath(__file__))
-    ddir = os.path.join(base_dir, ddir_ext)
+    ddir = my_path.find_dir("phantom", "poly_bin")
     filename = 'poly{}'.format(Verts)
     with open(os.path.join(ddir, filename),'rb') as fid:
         data_array = np.fromfile(fid, dtype=np.int32, count=4)
