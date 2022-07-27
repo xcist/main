@@ -110,10 +110,12 @@ class PathHelper:
                 elif os.path.isfile(os.path.join(p2, key, f"{filename}{extension}")):
                     return os.path.join(p2, key, f"{filename}{extension}")
 
-        if os.path.isfile(os.path.join(path, filename)):
-            return os.path.join(path, filename)
-        if os.path.isfile(os.path.join(path, f"{filename}{extension}")):
-            return os.path.join(path, f"{filename}{extension}")
+        # check path and its subdirectories
+        for p2, dirs, files in os.walk(path):
+            if os.path.isfile(os.path.join(p2, filename)):
+                return os.path.join(p2, filename)
+            elif os.path.isfile(os.path.join(p2, f"{filename}{extension}")):
+                return os.path.join(p2, f"{filename}{extension}")
 
         # exhausted all the paths to search and could not find the file
         raise Exception("Cannot find %s or %s%s" %(filename, filename, extension))

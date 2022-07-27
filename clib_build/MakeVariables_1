@@ -15,4 +15,5 @@ spline.c \
 xybowtie.c \
 DD2ParProj.c \
 analytic_projector.c \
-rndpoi.c
+rndpoi.c \
+nCAT_main.c
