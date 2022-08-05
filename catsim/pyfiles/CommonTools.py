@@ -277,16 +277,17 @@ def overlap(x0, y0, x1):
     y1 = np.zeros(x1.shape)
     
     # pre-loop, find the start boundaries
-    i = 0
+    i = -1
     j = 0
     previous = b1[j]
-    while b0[i] < previous:
+    while b0[i+1] <= previous:
         i += 1
         if i>=n0:
             return y1
-    if i == 0:
-        previous = b0[0]
-        while b1[j] < previous:
+    if i == -1:
+        i = 0
+        previous = b0[i]
+        while b1[j+1] <= previous:
             j += 1
             if j >= n1:
                 return y1    
@@ -317,6 +318,27 @@ def get_vector_boundaries(x):
         b = np.concatenate(([x[0]-0.5*(x[1]-x[0])], b, [x[-1]+0.5*(x[-1]-x[-2])]))
     return b
 
+def overlap2d(oldimg, old_pos_x, old_pos_y, pos_x, pos_y):
+    nrows=len(old_pos_x)
+    ncols=len(old_pos_y)
+    nrows2=len(pos_x)
+    ncols2=len(pos_y)
+    a, b = oldimg.shape
+    if a != nrows or b != ncols:
+      print('ERROR: dimensions of image dont agree with dimensions of coords !')
+      exit()
+    
+    # RESAMPLE EACH ROW
+    tmpimg = np.zeros((nrows,ncols2))
+    for row in range(nrows):
+      tmpimg[row] = overlap(old_pos_y, oldimg[row], pos_y)
+    
+    # RESAMPLE EACH COL
+    newimg = np.zeros((nrows2,ncols2))
+    for col in range(ncols2):
+      newimg[:,col] = overlap(old_pos_x, tmpimg[:,col], pos_x)
+
+    return newimg
 
 def rawread(fname, dataShape, dataType):
     # dataType is for numpy, ONLY allows: 'float'/'single', 'double', 'int'/'int32', 'uint'/'uint32', 'int8', 'int16' 
