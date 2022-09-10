@@ -1,5 +1,6 @@
 # Copyright 2022, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
+import sys
 import numpy.matlib as nm
 from scipy import interpolate, io
 import matplotlib.pyplot as plt
@@ -18,8 +19,8 @@ def GetDefaultWidthLength(shape):
     elif shape=="performix":
         width = 1.
         length = 1.
-        scanner.fs_performix_width = 0.92
-        scanner.fs_performix_length = 0.76
+        #scanner.fs_performix_width = 0.92
+        #scanner.fs_performix_length = 0.76
     elif shape=="pharos_small":
         width = 1.
         length = 1.
@@ -218,7 +219,7 @@ def SetFocalspot(cfg):
         cfg.src = CFG()
     cfg.src.nSamples = nSamples
     cfg.src.samples = np.single(samples)
-    cfg.src.weights = np.single(weights)
+    cfg.src.weights = np.single(weights[None])
     cfg.src.front   = np.array([[0, -1, 0]], dtype=np.single)
     cfg.src.lateral = np.array([[1, 0, 0]], dtype=np.single)
     cfg.src.long    = np.array([[0, 0, 1]], dtype=np.single)
