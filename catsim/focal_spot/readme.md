@@ -22,7 +22,7 @@ scanner.focalspotWidthThreshold = 0.5
 scanner.focalspotLengthThreshold = 0.5`
 3. Customized focal spot image
 `scanner.focalspotCallback = "SetFocalspot"
-scanner.focalspotData = "Gaussian"
+scanner.focalspotData = "xxx/xxx/xxx.npz"
 scanner.focalspotWidth = 1.0
 scanner.focalspotLength = 1.0
 scanner.focalspotPixSizeX = 0.04
