@@ -501,8 +501,8 @@ cfg.recon.displayLevel = (cfg.recon.displayWindowMax + cfg.recon.displayWindowMi
 # For publication.
 cfg.recon.saveImagePictureFiles = True
 # For test development - comment out if desired for published figures.
-# cfg.recon.displayImagePictureAxes = True
-# cfg.recon.displayImagePictureTitles = True
+cfg.recon.displayImagePictureAxes = True
+cfg.recon.displayImagePictureTitles = True
 # For single-row simulations, use the native slice thickness.     Will be revised for certain experiments.
 if cfg.scanner.detectorRowCount == 1:
     cfg.recon.sliceThickness = cfg.scanner.detectorRowSize*cfg.scanner.sid/cfg.scanner.sdd
@@ -519,62 +519,62 @@ cfg.do_Recon = True                     # The recon is usually run except when o
 # Uncomment the ones you want to run.
 
 experimentNames = [
-    "01_01_Baseline",
-    "01_02_Physics_eNoiseOn",
-    "01_03_Physics_qNoiseOn",
-    "01_04_Physics_NoiseOn",
-    "01_05_Physics_1ebin",
-    "01_06_Physics_eNoiseOn_1ebin",
-    "01_07_Physics_qNoiseOn_1ebin",
-    "01_08_Physics_NoiseOn_1ebin",
-    "01_09_Physics_Monoenergetic",
-    "01_10_Physics_eNoiseOn_Monoenergetic",
-    "01_11_Physics_qNoiseOn_Monoenergetic",
-    "01_12_Physics_NoiseOn_Monoenergetic",
+    # "01_01_Baseline",
+    # "01_02_Physics_eNoiseOn",
+    # "01_03_Physics_qNoiseOn",
+    # "01_04_Physics_NoiseOn",
+    # "01_05_Physics_1ebin",
+    # "01_06_Physics_eNoiseOn_1ebin",
+    # "01_07_Physics_qNoiseOn_1ebin",
+    # "01_08_Physics_NoiseOn_1ebin",
+    # "01_09_Physics_Monoenergetic",
+    # "01_10_Physics_eNoiseOn_Monoenergetic",
+    # "01_11_Physics_qNoiseOn_Monoenergetic",
+    # "01_12_Physics_NoiseOn_Monoenergetic",
 
-    "02_01_Physics_NoiseOn_Recon_128mmFOV_R-LKernel", # Needs to be done before the next 4 because those use projections from this.
-    "02_02_Physics_NoiseOn_Recon_128mmFOV_S-LKernel",
-    "02_03_Physics_NoiseOn_Recon_128mmFOV_SoftKernel",
-    "02_04_Physics_NoiseOn_Recon_128mmFOV_StandardKernel",
-    "02_05_Physics_NoiseOn_Recon_128mmFOV_BoneKernel",
+    # "02_01_Physics_NoiseOn_Recon_128mmFOV_R-LKernel", # Needs to be done before the next 4 because those use projections from this.
+    # "02_02_Physics_NoiseOn_Recon_128mmFOV_S-LKernel",
+    # "02_03_Physics_NoiseOn_Recon_128mmFOV_SoftKernel",
+    # "02_04_Physics_NoiseOn_Recon_128mmFOV_StandardKernel",
+    # "02_05_Physics_NoiseOn_Recon_128mmFOV_BoneKernel",
 
-    "03_01_Physics_NoiseOn_Protocol_0p5rotation",
-    "03_02_Physics_NoiseOn_Protocol_1p0rotation",
-    "03_03_Physics_NoiseOn_Protocol_2p0rotation",
+    # "03_01_Physics_NoiseOn_Protocol_0p5rotation",
+    # "03_02_Physics_NoiseOn_Protocol_1p0rotation",
+    # "03_03_Physics_NoiseOn_Protocol_2p0rotation",
     
-    "04_01_Physics_NoiseOn_Protocol_100views",
-    "04_02_Physics_NoiseOn_Protocol_360views",
-    "04_03_Physics_NoiseOn_Protocol_1000views",
+    # "04_01_Physics_NoiseOn_Protocol_100views",
+    # "04_02_Physics_NoiseOn_Protocol_360views",
+    # "04_03_Physics_NoiseOn_Protocol_1000views",
     
     "05_01_Physics_SourceSampling1_Recon_128mmFOV",
     "05_02_Physics_SourceSampling2_Recon_128mmFOV",
     "05_03_Physics_SourceSampling3_Recon_128mmFOV",
-    "05_04_Physics_DetectorSampling1_Recon_128mmFOV",
-    "05_05_Physics_DetectorSampling2_Recon_128mmFOV",
-    "05_06_Physics_DetectorSampling3_Recon_128mmFOV",
-    "05_07_Physics_ViewSampling1_Recon_300mmFOV",
-    "05_08_Physics_ViewSampling2_Recon_300mmFOV",
-    "05_09_Physics_ViewSampling3_Recon_300mmFOV",
+    # "05_04_Physics_DetectorSampling1_Recon_128mmFOV",
+    # "05_05_Physics_DetectorSampling2_Recon_128mmFOV",
+    # "05_06_Physics_DetectorSampling3_Recon_128mmFOV",
+    # "05_07_Physics_ViewSampling1_Recon_300mmFOV",
+    # "05_08_Physics_ViewSampling2_Recon_300mmFOV",
+    # "05_09_Physics_ViewSampling3_Recon_300mmFOV",
 
-    "06_00_Scanner_64rows_Physics_NoScatter",
-    "06_01_Scanner_64rows_Physics_ScatterScale1",
-    "06_02_Scanner_64rows_Physics_ScatterScale8",
-    "06_03_Scanner_64rows_Physics_ScatterScale64",
+    # "06_00_Scanner_64rows_Physics_NoScatter",
+    # "06_01_Scanner_64rows_Physics_ScatterScale1",
+    # "06_02_Scanner_64rows_Physics_ScatterScale8",
+    # "06_03_Scanner_64rows_Physics_ScatterScale64",
 
-    "07_01_Scanner_16rows_Recon_1slice",
-    "07_02_Scanner_16rows_Recon_2slices",
-    "07_03_Scanner_16rows_Recon_16slices",
+    # "07_01_Scanner_16rows_Recon_1slice",
+    # "07_02_Scanner_16rows_Recon_2slices",
+    # "07_03_Scanner_16rows_Recon_16slices",
 
-    "08_01_Scanner_16rows_Phantom_offset0",
-    "08_02_Scanner_16rows_Phantom_offset+50mmX",
-    "08_03_Scanner_16rows_Phantom_offset+50mmY",
-    "08_04_Scanner_16rows_Phantom_offset+4mmZ",
-    "08_05_Scanner_16rows_Phantom_offset+8mmZ",
+    # "08_01_Scanner_16rows_Phantom_offset0",
+    # "08_02_Scanner_16rows_Phantom_offset+50mmX",
+    # "08_03_Scanner_16rows_Phantom_offset+50mmY",
+    # "08_04_Scanner_16rows_Phantom_offset+4mmZ",
+    # "08_05_Scanner_16rows_Phantom_offset+8mmZ",
 
-    "09_01_Scanner_16rows_Recon_0p5mmSlices_offset0",  # Needs to be done before the next 3 because those use projections from this.
-    "09_02_Scanner_16rows_Recon_0p5mmSlices_offset+22mmX",
-    "09_03_Scanner_16rows_Recon_0p5mmSlices_offset+22mmY",
-    "09_04_Scanner_16rows_Recon_0p5mmSlices_offset+1mmZ",
+    # "09_01_Scanner_16rows_Recon_0p5mmSlices_offset0",  # Needs to be done before the next 3 because those use projections from this.
+    # "09_02_Scanner_16rows_Recon_0p5mmSlices_offset+22mmX",
+    # "09_03_Scanner_16rows_Recon_0p5mmSlices_offset+22mmY",
+    # "09_04_Scanner_16rows_Recon_0p5mmSlices_offset+1mmZ",
 ]
 
 # The current config is the base config, and will be used as the basis each time through the loop.
