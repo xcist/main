@@ -1,5 +1,5 @@
 
-# How to compile in linux
+# How to compile on linux
 
 Go to the `reconstruction\src` folder and run following command:
 
