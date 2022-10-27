@@ -1,18 +1,73 @@
 name: Build
 on:
   push:
-    branches:
-      - master
+    branches: [ "master" ]
   pull_request:
     types: [opened, synchronize, reopened]
+permissions:
+  contents: read
 jobs:
-  sonarcloud:
-    name: SonarCloud
+  test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pytest pytest-cov
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Lint with flake8
+        run: |
+          # stop the build if there are Python syntax errors or undefined names
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude=EXE
+          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --exclude=EXE
+      - name: Test with pytest
+        run: |
+          python -m pytest -v -s --junitxml=xunit.xml --cov=catsim --cov-report=xml --cov-report=html
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: xunit.xml
+        # Use always() to always run this step to publish test results when there are test failures
+        if: ${{ always() }}
+      - name: Upload code coverage results
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-results
+          path: coverage.xml
+        # Use always() to always run this step to publish test results when there are test failures
+        if: ${{ always() }}
+      - name: Upload code coverage results in html
+        uses: actions/upload-artifact@v3
+        with:
+          name: html-coverage-results
+          path: htmlcov
+        # Use always() to always run this step to publish test results when there are test failures
+        if: ${{ always() }}
+
+  sonarcloud:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Download test results
+        uses: actions/download-artifact@v3
+        with:
+          name: test-results
+      - name: Download code coverage results
+        uses: actions/download-artifact@v3
+        with:
+          name: coverage-results
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
