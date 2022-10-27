@@ -1,0 +1,5 @@
+[run]
+omit=
+  test_catsim/*
+[coverage:run]
+relative_files = True

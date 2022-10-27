@@ -1,5 +1,5 @@
 # TODO: should this version match setup.py?
-__version__ = '0.1.7'
+__version__ = '0.1.8'
 
 from catsim.pyfiles.CatSim import CatSim
 from catsim.pyfiles.GetMu import GetMu
