@@ -5,3 +5,5 @@ The X-ray-based cancer imaging simulation toolkit (XCIST) project is supported b
 This toolkit includes software developed by Members of the Geant4 Collaboration ( http://cern.ch/geant4 ). Specifically it builds on the X-ray attenuation cross-sections produced by Geant4.
 
 For more information, please visit: https://github.com/xcist/documentation/wiki
+
+Please consider citing our paper if this package is useful to your research/work: https://iopscience.iop.org/article/10.1088/1361-6560/ac9174
