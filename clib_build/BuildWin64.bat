@@ -3,7 +3,7 @@ REM Copyright 2020, General Electric Company. All rights reserved. See https://g
 ECHO ON
 
 set PATH=C:\mingw64\bin;%PATH%
-CD src
+CD clib_build\src
 
 C:\mingw64\bin\mingw32-make -f ..\MakeWindows64
 move /Y libcatsim64.dll ..\..\catsim\lib
