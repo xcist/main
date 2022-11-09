@@ -2,16 +2,22 @@ ECHO OFF
 REM Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 ECHO ON
 
-set PATH=C:\mingw64\bin;%PATH%
+REM show environment variables
+set
 CD clib_build\src
 
-C:\mingw64\bin\mingw32-make -f ..\MakeWindows64
+mingw32-make -f ..\MakeWindows64
+if %ERRORLEVEL% NEQ 0 (
+    exit /B %ERRORLEVEL%
+)
 move /Y libcatsim64.dll ..\..\catsim\lib
-@PAUSE
+if %ERRORLEVEL% NEQ 0 (
+    exit /B %ERRORLEVEL%
+)
 
-C:\mingw64\bin\mingw32-make -f ..\MakeWindows64 clean
-
-CD ..
+mingw32-make -f ..\MakeWindows64 clean
+if %ERRORLEVEL% NEQ 0 (
+    exit /B %ERRORLEVEL%
+)
 
 @ECHO Windows build complete
-@PAUSE
