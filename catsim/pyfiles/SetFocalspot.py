@@ -187,7 +187,7 @@ def SetFocalspot(cfg):
     os_yy = -os_zz/np.tan(cfg.scanner.targetAngle*np.pi/180.);
 
     # remove low-weight sampling and normalize
-    weights = os_I.flatten()
+    weights = os_I.T.flatten()
     nSamples = weights.size
     samples = np.c_[os_xx.flatten(), cfg.scanner.sid+os_yy.flatten(), os_zz.flatten()]
     weights /= np.sum(weights)
