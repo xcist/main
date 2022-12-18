@@ -3,11 +3,6 @@ import numpy as np
 
 # only the previous view matters
 def Detection_Lag(thisView, viewId, cfg):
-    # those are hardcoded values based on real scan data on VCT at GRC
-    #tau1 = 0.96 #in ms
-    #tau2 = 6.0135
-    #alpha1 = 0.9489
-    #alpha2 = 0.0474
     tau1, tau2 = cfg.physics.lag_taus
     alpha1, alpha2 = cfg.physics.lag_alphas
     dt = 1000.*cfg.protocol.rotationTime/cfg.protocol.viewsPerRotation # in ms
