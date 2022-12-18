@@ -34,8 +34,8 @@ def Detection_EI(cfg, viewId, subViewId):
     thisSubView = thisSubView.dot(Evec)
         
     # lag
-    if cfg.physics.lagCallback:
-        thisSubView = feval(cfg.physics.lagCallback, thisSubView, cfg)
+    #if cfg.physics.lagCallback:
+    #    thisSubView = feval(cfg.physics.lagCallback, thisSubView, cfg)
 
     # accumulate subviews
     if subViewId == 0:
@@ -50,7 +50,7 @@ def Detection_EI(cfg, viewId, subViewId):
             cfg.thisView = feval(cfg.physics.opticalCrosstalkCallback, cfg.thisView, cfg)
         
         # DAS
-        cfg.thisView = feval(cfg.physics.DASCallback, cfg.thisView, cfg)
+        cfg.thisView = feval(cfg.physics.DASCallback, cfg.thisView, viewId, cfg)
     
     return cfg
 
