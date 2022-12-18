@@ -18,6 +18,7 @@ class TestStruct(ct.Structure):
                 ("ScanR", ct.c_float),         # Radius of the scanning trajectory of x-ray source
                 ("DecFanAng", ct.c_float),     # Fan angle coverage of the detector element along the horizontal diretion
                 ("startangle", ct.c_float),     # recon startangle
+                ("rotdir", ct.c_int), # //rotation direction
                 ("DecHeight", ct.c_float),      # Physical height of the detector along the vertical direction
                 ("YL", ct.c_int),               # Detector cell number on each row along the horizontal direction
                 ("ZL", ct.c_int),               # Detector cell number on each column along the vertical direction
@@ -99,7 +100,7 @@ def fdk_equiAngle(cfg, prep):
 
     # scanner & recon geometry
     sid, sdd, nMod, rowSize, modWidth, dectorYoffset, dectorZoffset, \
-    fov, imageSize, sliceCount, sliceThickness, centerOffset, startView, kernelType      \
+    fov, imageSize, sliceCount, sliceThickness, centerOffset, startView, rotdir, kernelType      \
         = mapConfigVariablesToFDK(cfg)
 
     # initialize parameters
@@ -178,6 +179,7 @@ def fdk_equiAngle(cfg, prep):
     t.DistD = DistD
     t.DecFanAng = DecFanAng
     t.startangle = startView # Inconsistent C variable name - should be startAngle. Also, this seems to be the start view, not angle.
+    t.rotdir = rotdir
     t.DecHeight = DecHeight
     t.YL = YL
     t.ZL = ZL

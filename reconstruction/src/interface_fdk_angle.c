@@ -9,6 +9,7 @@ typedef struct TestStruct {
     float    ScanR;
     float    DecFanAng;
     float    startangle;
+    int      rotdir; //rotation direction
     float    DecHeight;
     int       YL;
     int       ZL;
@@ -37,7 +38,7 @@ extern void fbp(TestStruct *t) {
 	float ScanR, DecL,DecHeight,DistD,Radius,sliceThickness,dectorYoffset,dectorZoffset;
 	float DeltaY,DeltaZ,DeltaL,YCtr,ZCtr,DeltaR,RCtr,RadiusSquare,XOffSet,YOffSet,ZOffSet;
 	float centerX,centerY,centerZ,startangle,phantomXOffSet,phantomYOffSet,phantomZOffSet;
-	int YL,ZL,ProjNum,RecSize;
+	int YL,ZL,ProjNum,RecSize, rotdir;
 	int FOILength,FOIWidth,FOIHeight;
 
 	ScanR = t->ScanR;        /*source object distance*/
@@ -57,6 +58,7 @@ extern void fbp(TestStruct *t) {
     phantomZOffSet = t->phantomZOffSet;
 
     startangle = t->startangle;
+    rotdir = t->rotdir;
     FOILength = t->FOILength;
     FOIWidth = t->FOIWidth;
     FOIHeight = t->FOIHeight;
@@ -87,7 +89,7 @@ extern void fbp(TestStruct *t) {
 
 	for(loop=0;loop<ProjNum;loop++)
 	{
-		temp = (loop+startangle)*DeltaL;
+		temp = (rotdir*loop+startangle)*DeltaL;
 		VectorS[loop*2  ] = ScanR*cos(temp);
 		VectorS[loop*2+1] = ScanR*sin(temp);
 		VectorE[loop*2  ]= cos(temp);
