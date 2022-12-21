@@ -27,7 +27,11 @@ def GetMu(materialFile, Evec):
     # clib.InitializeCrossSectionDB(b_MaterialDirectory, PairProductionFlag) # works
 
     #----------------- read material file
-    materialFile = my_path.find("material", materialFile, '')
+    try:
+        materialFile = my_path.find("material", materialFile, '')
+    except:
+        materialFile = my_path.find("material", materialFile.capitalize(), '') # temp solution to be compatible with old material files
+    
     (numberOfElements, density, atomicNumbers, massFractions) = ReadMaterialFile(materialFile)
     atomicNumbers = (c_int*numberOfElements)(*atomicNumbers)
     massFractions = (c_float*numberOfElements)(*massFractions)
