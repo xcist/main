@@ -81,8 +81,9 @@ def SetFocalspot(cfg):
     if (not hasattr(cfg.scanner, "focalspotShape")) and (not hasattr(cfg.scanner, "focalspotData")):
         cfg.scanner.focalspotShape = "Uniform"
     elif hasattr(cfg.scanner, "focalspotShape") and hasattr(cfg.scanner, "focalspotData"):
-        print("Error: Both shape and data are provided in focal spot.")
-        sys.exit()
+        print("Warning: Both shape and data are provided in focal spot, only data will be used.")
+        delattr(cfg.scanner, "focalspotShape")
+        #sys.exit()
     # load default width and length
     if not all([hasattr(cfg.scanner, "focalspotWidth"), hasattr(cfg.scanner, "focalspotLength")]):
         cfg.scanner.focalspotWidth, cfg.scanner.focalspotLength = GetDefaultWidthLength(cfg.scanner.focalspotShape)
