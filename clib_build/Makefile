@@ -7,7 +7,7 @@ include ../MakeVariables_3
 CFLAGS = -fPIC -O3
 CXXFLAGS = -Wall -fPIC -O3
 
-LDFLAGS = -fPIC
+LDFLAGS = -fPIC -lpthread
 
 
 64bitLibrary = libcatsim.so

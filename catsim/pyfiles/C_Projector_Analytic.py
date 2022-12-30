@@ -9,11 +9,6 @@ def C_Projector_Analytic(cfg, viewId, subViewId):
     # analytic_projector.c: void Projector(double *Paras, double subviewWeight, double *thisView, double *sourcePoints, int nSubSources, 
     #    double *srcHullPoints, int nSrcHullPoints, int *firstDetIndex, int nModulesIn, int *modTypeInds, 
     #    double *Up, double *Right, double *Center, int UNUSED_tvLength)
-    fun = cfg.clib.Projector
-    fun.argtypes = [ndpointer(c_double), c_double, ndpointer(c_double), ndpointer(c_double), c_int, \
-        ndpointer(c_double), c_int, ndpointer(c_int), c_int, ndpointer(c_int), \
-        ndpointer(c_double), ndpointer(c_double), ndpointer(c_double), c_int]
-    fun.restype = None
     
     ###------- Arguments
     det = cfg.detNew
@@ -33,11 +28,30 @@ def C_Projector_Analytic(cfg, viewId, subViewId):
     Right = det.uvecs.astype(np.double)
     Center = det.modCoords.astype(np.double)
     UNUSED_tvLength = cfg.spec.nEbin*det.totalNumCells
+    UNUSED = 0
     
-    ###------- Run C function
-    fun(Paras, subviewWeight, thisView, sourcePoints, nSubSources, \
-        srcHullPoints, nSrcHullPoints, firstDetIndex, nModulesIn, modTypeInds, \
-        Up, Right, Center, UNUSED_tvLength)
+    numThreads = cfg.phantom.projectorNumThreads
+    if numThreads>1:
+        fun = cfg.clib.Projector_threaded
+        fun.argtypes = [ndpointer(c_double), c_double, ndpointer(c_double), ndpointer(c_double), c_int, \
+            ndpointer(c_double), c_int, ndpointer(c_int), c_int, ndpointer(c_int), \
+            ndpointer(c_double), ndpointer(c_double), ndpointer(c_double), c_int, c_int, c_double]
+        fun.restype = None
+        ###------- Run C function
+        fun(Paras, subviewWeight, thisView, sourcePoints, nSubSources, \
+            srcHullPoints, nSrcHullPoints, firstDetIndex, nModulesIn, modTypeInds, \
+            Up, Right, Center, UNUSED_tvLength, numThreads, UNUSED)
+    
+    else:
+        fun = cfg.clib.Projector
+        fun.argtypes = [ndpointer(c_double), c_double, ndpointer(c_double), ndpointer(c_double), c_int, \
+            ndpointer(c_double), c_int, ndpointer(c_int), c_int, ndpointer(c_int), \
+            ndpointer(c_double), ndpointer(c_double), ndpointer(c_double), c_int]
+        fun.restype = None
+        ###------- Run C function
+        fun(Paras, subviewWeight, thisView, sourcePoints, nSubSources, \
+            srcHullPoints, nSrcHullPoints, firstDetIndex, nModulesIn, modTypeInds, \
+            Up, Right, Center, UNUSED_tvLength)
     
     ###------- Apply transmittance
     cfg.thisSubView *= thisView
