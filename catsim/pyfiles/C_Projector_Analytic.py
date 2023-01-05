@@ -31,6 +31,9 @@ def C_Projector_Analytic(cfg, viewId, subViewId):
     UNUSED = 0
     
     numThreads = cfg.phantom.projectorNumThreads
+    if os.name == "nt":
+         numThreads = 1
+         
     if numThreads>1:
         fun = cfg.clib.Projector_threaded
         fun.argtypes = [ndpointer(c_double), c_double, ndpointer(c_double), ndpointer(c_double), c_int, \
