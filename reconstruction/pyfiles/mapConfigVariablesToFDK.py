@@ -31,7 +31,8 @@ def mapConfigVariablesToFDK(cfg):
     else:
         raise Exception("******** Error! Invalid start angle = {} specified. ********".format(cfg.recon.startAngle))
 
+    rotdir = cfg.protocol.rotationDirection
     kernelType = cfg.recon.kernelType
 
     return sid, sdd, nMod, rowSize, modWidth, dectorYoffset, dectorZoffset, \
-           fov, imageSize, sliceCount, sliceThickness, centerOffset, startView, kernelType
+           fov, imageSize, sliceCount, sliceThickness, centerOffset, startView, rotdir, kernelType
