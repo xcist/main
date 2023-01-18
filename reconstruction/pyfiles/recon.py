@@ -10,7 +10,7 @@ import numpy as np
 def recon(cfg):
 
     # If doing the recon, load the projection data, do the recon, and save the resulting image volume.
-    if cfg.do_Recon:
+    if cfg.recon.do_Recon:
         prep = load_prep(cfg)
 
         # The following line doesn't work - need to fix it when new recons are added.

@@ -96,12 +96,12 @@ extern void fbp(TestStruct *t) {
 		VectorE[loop*2+1]= sin(temp);
 	}
 
-	for(loop=0;loop<RecSize;loop++)
-		xCor[loop] = (loop-centerX)*DeltaR-XOffSet-phantomXOffSet;
-	for(loop=0;loop<RecSize;loop++)
-		yCor[loop] = (loop-centerY)*DeltaR-YOffSet-phantomYOffSet;
-    for(loop=0;loop<RecSize;loop++)
-        zCor[loop] = (loop-centerZ)*sliceThickness-ZOffSet-phantomZOffSet;
+	for(loop=0;loop<RecSize;loop++) {
+		xCor[loop] = (loop-centerX)*DeltaR-XOffSet-phantomXOffSet;}
+	for(loop=0;loop<RecSize;loop++) {
+		yCor[loop] = (loop-centerY)*DeltaR-YOffSet-phantomYOffSet;}
+    for(loop=0;loop<RecSize;loop++) {
+        zCor[loop] = (loop-centerZ)*sliceThickness-ZOffSet-phantomZOffSet;}
 
 	/* argument about object:  ObjR RecMX RecMY RecMZ*/
 
