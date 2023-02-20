@@ -9,4 +9,4 @@ Go to the `reconstruction\src` folder and run following command:
 This will generate a `fdk_equiAngle.so` file and copy it to your `reconstruction\lib` folder.
 
 # For Windows
-`xxx\mingw64\bin\gcc.exe -Wall -O -g -fPIC -shared -o fdk_equiAngle.dll .\interface_fdk_angle.c `
+in cmd, run `xxx\mingw64\bin\gcc.exe -Wall -O -g -fPIC -shared -o fdk_equiAngle.dll .\interface_fdk_angle.c `
