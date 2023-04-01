@@ -18,7 +18,7 @@ def load_C_lib():
     # load C/C++ lib
     ll = ctypes.cdll.LoadLibrary
     if os.name == "nt":
-        lib_file = "xxx.dll"
+        lib_file = "Dose_Recon_Library_Windows64.dll"
     else:
         lib_file = "Dose_Recon_Library_Linux64.so"
     clib = ll(os.path.join(recon_lib, lib_file))
