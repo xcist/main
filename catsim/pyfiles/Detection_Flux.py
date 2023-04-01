@@ -13,6 +13,7 @@ def Detection_Flux(cfg):
     
     '''
     ###------- offset scan, flux = 0
+    #if hasattr(cfg, 'sim.isOffsetScan') and cfg.sim.isOffsetScan:
     if cfg.sim.isOffsetScan:
         cfg.detFlux = np.zeros([cfg.det.totalNumCells, cfg.spec.nEbin], dtype=np.single)
         return cfg

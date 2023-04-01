@@ -13,10 +13,11 @@ def Spectrum(cfg):
     
     '''
     
-    viewTime = cfg.protocol.rotationTime/cfg.protocol.viewsPerRotation/cfg.sim.subViewCount*cfg.protocol.dutyRatio
+    viewTime = cfg.protocol.rotationTime/cfg.protocol.viewsPerRotation/cfg.physics.viewSampleCount*cfg.protocol.dutyRatio
     specScale = cfg.protocol.spectrumScaling*cfg.protocol.mA*viewTime
     
     if not cfg.spec:
+    #if not hasattr(cfg, 'spec'):
         cfg.spec = CFG()
     
     ###------------- monochromatic

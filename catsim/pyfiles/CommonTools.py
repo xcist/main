@@ -74,6 +74,7 @@ class PathHelper:
         self.paths["phantom"] = os.path.join(self.paths["top"], 'phantom')
         self.paths["scatter"] = os.path.join(self.paths["top"], 'scatter')
         self.paths["spectrum"] = os.path.join(self.paths["top"], 'spectrum')
+        self.paths["dose_data"] = os.path.join(self.paths["top"], 'dose_data')
         self.extra_search_paths = []
         self.read_catsim_init()
 
@@ -237,7 +238,7 @@ def source_cfg(*para):
         cfg = para[1]
         
     # initialize structs in cfg and structs
-    attrList = ['sim', 'det', 'detNew', 'src', 'srcNew', 'spec', 'protocol', 'scanner', 'phantom', 'physics', 'recon']
+    attrList = ['sim', 'det', 'detNew', 'src', 'srcNew', 'spec', 'protocol', 'scanner', 'phantom', 'physics', 'recon', 'dose']
     for attr in attrList:
         if not hasattr(cfg, attr):
             setattr(cfg, attr, emptyCFG())

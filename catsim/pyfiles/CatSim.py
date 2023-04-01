@@ -12,7 +12,7 @@ class CatSim:
     '''
     def __init__(self, *para):
         cfg = CFG(*para)
-        self.attrList = ['protocol', 'scanner', 'phantom', 'physics', 'recon', 'resultsName']
+        self.attrList = ['protocol', 'scanner', 'phantom', 'physics', 'recon', 'resultsName', 'dose']
         self.cfg_to_self(cfg)
         
     def run_all(self, *para):
