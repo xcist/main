@@ -34,8 +34,8 @@ def Detection_EI(cfg, viewId, subViewId):
     thisSubView = thisSubView.dot(Evec)
         
     # lag
-    #if cfg.physics.lagCallback:
-    #    thisSubView = feval(cfg.physics.lagCallback, thisSubView, cfg)
+    if cfg.physics.lagCallback:
+        thisSubView = feval(cfg.physics.lagCallback, thisSubView, viewId, subViewId, cfg)
 
     # accumulate subviews
     if subViewId == 0:
