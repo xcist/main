@@ -43,9 +43,8 @@ def gen_BHC_vec(cfg):
     ndet = ct.scanner.detectorColCount*ct.scanner.detectorRowCount
     sig = np.zeros((num_length, ndet))
 
-    mtViews = rawread(ct.resultsName+".air", [ndet, 1], 'float')
-    mtViews = mtViews.reshape(ct.scanner.detectorColCount, ct.scanner.detectorRowCount)
-    I0 = mtViews.T
+    mtViews = rawread(ct.resultsName+".air", [ndet], 'float')
+    I0 = mtViews
 
     orginal_prefilter = copy.copy(ct.scanner.detectorPrefilter)
     for j in range(num_length):
@@ -53,9 +52,8 @@ def gen_BHC_vec(cfg):
 
         ct.scanner.detectorPrefilter = orginal_prefilter + [mt, thick]
         ct.air_scan()
-        rawViews = rawread(ct.resultsName+".air", [ndet, 1], 'float')
-        rawViews = rawViews.reshape(ct.scanner.detectorColCount, ct.scanner.detectorRowCount)
-        sig[j] = -np.log(rawViews.T/I0).ravel()
+        rawViews = rawread(ct.resultsName+".air", [ndet], 'float')
+        sig[j] = -np.log(rawViews/I0)
 
     ct.scanner.detectorPrefilter = orginal_prefilter
     ct.air_scan()
