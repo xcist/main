@@ -110,6 +110,7 @@ extern void fbp(TestStruct *t) {
 
     IR = (int)(RecSize/10);
 
+#pragma omp parallel for collapse(3) private(i,j,k,ProjIndex, DSX, Dlocal, dis, UCor, VCor, UL, VL, UU, VV, alfa, beta)
 	for (i=0;i<FOILength;i++)
 		{
             if ((i%IR)==0)

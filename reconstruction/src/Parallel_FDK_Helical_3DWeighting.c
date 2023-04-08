@@ -161,6 +161,7 @@ extern void fbp(TestStruct *t) {
              for(yi=0;yi<YN;yi++)
              {
                  y = -(yi-YNC)*dy;
+                 #pragma omp parallel for private(xi,x, UU, Yr, Zr, U1, U,V1,V, Dey,Dez,touying,weight1,weight2,Gama,Gama_C,m1,m2,weight)
                  for(xi=0;xi<XN;xi++)
                  {
                     x  = -(xi-XNC)*dx;

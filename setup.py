@@ -18,6 +18,7 @@ setup(name='catsim-xcist',
       package_data={
           'catsim':[r'lib/*.*', r'cfg/*.cfg', 
                     r'pyfiles/doserecon/*.*',
+                    r'dose_data/*.*',
                     r'bowtie/*.txt', r'material/*', r'material/edlp/*/*.dat',
                     r'phantom/*.*', r'phantom/CatSimLogo_1024/*.*', r'phantom/poly_bin/poly*',
                     r'scatter/*.dat', r'spectrum/*.dat'],
