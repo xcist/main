@@ -43,7 +43,7 @@ def one_scan(cfg):
             cfg = feval(cfg.physics.fluxCallback, cfg)
 
         # phantom and material
-        if (viewId == cfg.sim.startViewId or cfg.physics.recalcPht) and cfg.sim.isPhantomScan:
+        if cfg.physics.recalcPht and cfg.sim.isPhantomScan:
             cfg = feval(cfg.phantom.callback, cfg)
     
         for subViewId in range(cfg.sim.subViewCount):
