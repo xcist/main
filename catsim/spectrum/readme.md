@@ -1,0 +1,1 @@
+can use `XCISTspectrum.m` to generate spectrum at different kVp/angle/energybin size, but notice that only the shape is validated but not the magnitude, thus `protocol.spectrumScaling` need to be tuned. Currently it is about `9000`

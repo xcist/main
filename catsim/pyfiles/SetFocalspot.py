@@ -216,6 +216,7 @@ def SetFocalspot(cfg):
     nCorners = corners.shape[0]
     
     # source definition
+    #if not hasattr(cfg, 'src'):
     if not cfg.src:
         cfg.src = CFG()
     cfg.src.nSamples = nSamples

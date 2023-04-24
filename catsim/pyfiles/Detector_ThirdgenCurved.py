@@ -63,6 +63,7 @@ def Detector_ThirdgenCurved(cfg):
     startIndices = np.arange(0, nMod)*nRow*nCol
     
     # detector definition
+    #if not hasattr(cfg, 'det'):
     if not cfg.det:
         cfg.det = CFG()
     

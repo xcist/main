@@ -17,6 +17,7 @@ def Spectrum(cfg):
     specScale = cfg.protocol.spectrumScaling*cfg.protocol.mA*viewTime
     
     if not cfg.spec:
+    #if not hasattr(cfg, 'spec'):
         cfg.spec = CFG()
     
     ###------------- monochromatic

@@ -168,11 +168,12 @@ def Phantom_Analytic_Get(cfg):
             if phobject['type'][i] == 8:
                 phobject['type'][i] = 2
                 Bt = Rmat(phobject['euler_angs'][i]).T
-                phobject['clip'][i] = np.vstack([phobject['clip'][i]],[Bt[:,0].T, phobject['half_axes'][i,0] + phobject['center'][i],Bt[:,0]])
-                phobject['clip'][i] = np.vstack([phobject['clip'][i]],[-Bt[:,0].T, phobject['half_axes'][i,0] - phobject['center'][i],Bt[:,0]])
-                phobject['clip'][i] = np.vstack([phobject['clip'][i]],[Bt[:,1].T, phobject['half_axes'][i,1] + phobject['center'][i],Bt[:,1]])
-                phobject['clip'][i] = np.vstack([phobject['clip'][i]],[-Bt[:,1].T, phobject['half_axes'][i,1] - phobject['center'][i],Bt[:,1]])
-                phobject['half_axes'][i,:2]= phobject['half_axes'][i,:2]*np.sqrt(2)
+                phobject['clip'][i] = np.vstack((
+                    np.hstack((Bt[:,0].T, phobject['half_axes'][i][0] + np.array(phobject['center'][i])@Bt[:,0])),
+                    np.hstack((-Bt[:,0].T, phobject['half_axes'][i][0] - np.array(phobject['center'][i])@Bt[:,0])),
+                    np.hstack((Bt[:,1].T, phobject['half_axes'][i][1] + np.array(phobject['center'][i])@Bt[:,1])),
+                    np.hstack((-Bt[:,1].T, phobject['half_axes'][i][1] - np.array(phobject['center'][i])@Bt[:,1]))))
+                phobject['half_axes'][i][:2]= np.array(phobject['half_axes'][i][:2])*np.sqrt(2)
 
         print('Scaling and compacting format.')
         indsToScale= list(range(6)) + [13,14]
@@ -201,13 +202,13 @@ def Phantom_Analytic_Get(cfg):
     
     
 def Rmat(p=None):
-    p=p*3.141592653589793 / 180
-    p1=p[1]
-    p2=p[2]
-    p3=p[3]
-    R=np.vstack([np.cos(p1)*np.cos(p3) - np.sin(p1)*np.cos(p2)*np.sin(p3), np.cos(p1)*np.sin(p3) + np.sin(p1)*np.cos(p2)*np.cos(p3), np.sin(p1)*np.sin(p2)],
+    p=np.array(p)*3.141592653589793 / 180
+    p1=p[0]
+    p2=p[1]
+    p3=p[2]
+    R=np.vstack(([np.cos(p1)*np.cos(p3) - np.sin(p1)*np.cos(p2)*np.sin(p3), np.cos(p1)*np.sin(p3) + np.sin(p1)*np.cos(p2)*np.cos(p3), np.sin(p1)*np.sin(p2)],
             [-np.sin(p1)*np.cos(p3) - np.cos(p1)*np.cos(p2)*np.sin(p3), -np.sin(p1)*np.sin(p3) + np.cos(p1)*np.cos(p2)*np.cos(p3),np.cos(p1)*np.sin(p2)],
-            [np.sin(p2)*np.sin(p3), -np.sin(p2)*np.cos(p3), np.cos(p2)])
+            [np.sin(p2)*np.sin(p3), -np.sin(p2)*np.cos(p3), np.cos(p2)]))
     return R
     
 # Mingye Wu, Sept 15 2017

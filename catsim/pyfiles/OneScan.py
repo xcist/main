@@ -3,12 +3,21 @@
 import copy, time
 import matplotlib.pyplot as plt
 from catsim.pyfiles.CommonTools import *
+from tqdm import tqdm
 
 def one_scan(cfg):
     cfg = initialize_scan(cfg)
     
     # view loop
-    for viewId in range(cfg.sim.startViewId, cfg.sim.stopViewId+1):
+    if cfg.sim.isPhantomScan:
+        # phantom and material
+        cfg = feval(cfg.phantom.callback, cfg)
+        print('phantom scan view loop...')
+        tmp = tqdm(range(cfg.sim.startViewId, cfg.sim.stopViewId+1))
+    else:
+        tmp = range(cfg.sim.startViewId, cfg.sim.stopViewId+1)
+    for viewId in tmp:
+    #for viewId in range(cfg.sim.startViewId, cfg.sim.stopViewId+1):
         # detector
         if viewId == cfg.sim.startViewId or cfg.physics.recalcDet:
             cfg = feval(cfg.scanner.detectorCallback, cfg)
@@ -34,7 +43,7 @@ def one_scan(cfg):
             cfg = feval(cfg.physics.fluxCallback, cfg)
 
         # phantom and material
-        if (viewId == cfg.sim.startViewId or cfg.physics.recalcPht) and cfg.sim.isPhantomScan:
+        if cfg.physics.recalcPht and cfg.sim.isPhantomScan:
             cfg = feval(cfg.phantom.callback, cfg)
     
         for subViewId in range(cfg.sim.subViewCount):
@@ -61,8 +70,6 @@ def one_scan(cfg):
         # save cfg.thisView to file
         cfg = feval(cfg.physics.outputCallback, cfg, viewId)
         
-        if cfg.sim.viewCount>10 and (viewId+1)%round(cfg.sim.viewCount/10)==0:
-            print("Simulated view %d/%d, time: %.1f s" % (viewId+1, cfg.sim.viewCount, time.time()-cfg.sim.timer))
     print("Scan sim time: %.1f s" % (time.time()-cfg.sim.timer))
     
     return cfg

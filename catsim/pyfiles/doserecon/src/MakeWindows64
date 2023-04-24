@@ -1,0 +1,44 @@
+CPPSOURCES = \
+DD3Dose.cpp
+
+OBJECTS = $(patsubst %.cpp,%.o,$(CPPSOURCES))
+CC = gcc
+CXX = g++
+
+CXXFLAGS = -O3 -Wall
+CFLAGS = -O3
+
+LFLAGS = -LC:\mingw64\lib -lpthreadGC2_x64
+IFLAGS = -IC:\mingw64\include
+
+Library = Dose_Recon_Library_Windows64.dll
+
+Library: $(OBJECTS)
+	@echo ............................................
+	@echo .
+	@echo . Building Windows library ...
+	@echo .
+	@echo .
+	$(CXX) -static-libgcc -o $(Library) -shared $(OBJECTS) $(LFLAGS) $(IFLAGS)
+	@echo . Dose_Recon_Library_Windows64.dll dosemap\bin ..
+	move "Dose_Recon_Library_Windows64.dll"  ..\bin
+	@echo .
+	@echo .
+	@echo . Done building Windows library.
+	@echo .
+	@echo ............................................
+
+clean:
+	@echo ............................................
+	@echo .
+	@echo . Cleaning ...
+	@echo .
+	@echo .
+	del *.o
+	@echo .
+	@echo .
+	@echo . Done cleaning.
+	@echo .
+	@echo ............................................
+
+# DO NOT DELETE
