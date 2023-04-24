@@ -122,3 +122,4 @@ dmypy.json
 .idea/
 .vscode/
 catsim/pyfiles/Source_Uniform.py
+examples/evaluation/experiment_01_CatSimLogo_SimAndRecon/documentation/~$XCIST simulation & recon tests.pptx
