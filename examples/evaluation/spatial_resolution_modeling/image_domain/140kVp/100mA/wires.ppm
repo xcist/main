@@ -1,0 +1,192 @@
+materialList = {'W'};
+
+obj.center(1,:) = [-230.957031 -2.441406 0.000000];
+obj.half_axes(1,:) = [0.05 0.05 100];
+obj.euler_angs(1,:) = [0.000000 0.000000 0.000000];
+obj.density(1) = 1.000000;
+obj.type(1) = 2;
+obj.material(1) = 1;
+object.axial_lims(1,:) = [0 0];
+object.shape(1) = 0;
+object.clip{1} = [];
+
+obj.center(2,:) = [-203.125000 -20.507812 0.000000];
+obj.half_axes(2,:) = [0.05 0.05 100];
+obj.euler_angs(2,:) = [0.000000 0.000000 0.000000];
+obj.density(2) = 1.000000;
+obj.type(2) = 2;
+obj.material(2) = 1;
+object.axial_lims(2,:) = [0 0];
+object.shape(2) = 0;
+object.clip{2} = [];
+
+obj.center(3,:) = [-182.128906 20.019531 0.000000];
+obj.half_axes(3,:) = [0.05 0.05 100];
+obj.euler_angs(3,:) = [0.000000 0.000000 0.000000];
+obj.density(3) = 1.000000;
+obj.type(3) = 2;
+obj.material(3) = 1;
+object.axial_lims(3,:) = [0 0];
+object.shape(3) = 0;
+object.clip{3} = [];
+
+obj.center(4,:) = [-157.714844 0.488281 0.000000];
+obj.half_axes(4,:) = [0.05 0.05 100];
+obj.euler_angs(4,:) = [0.000000 0.000000 0.000000];
+obj.density(4) = 1.000000;
+obj.type(4) = 2;
+obj.material(4) = 1;
+object.axial_lims(4,:) = [0 0];
+object.shape(4) = 0;
+object.clip{4} = [];
+
+obj.center(5,:) = [-129.394531 -20.019531 0.000000];
+obj.half_axes(5,:) = [0.05 0.05 100];
+obj.euler_angs(5,:) = [0.000000 0.000000 0.000000];
+obj.density(5) = 1.000000;
+obj.type(5) = 2;
+obj.material(5) = 1;
+object.axial_lims(5,:) = [0 0];
+object.shape(5) = 0;
+object.clip{5} = [];
+
+obj.center(6,:) = [-109.375000 21.972656 0.000000];
+obj.half_axes(6,:) = [0.05 0.05 100];
+obj.euler_angs(6,:) = [0.000000 0.000000 0.000000];
+obj.density(6) = 1.000000;
+obj.type(6) = 2;
+obj.material(6) = 1;
+object.axial_lims(6,:) = [0 0];
+object.shape(6) = 0;
+object.clip{6} = [];
+
+obj.center(7,:) = [-83.007812 1.953125 0.000000];
+obj.half_axes(7,:) = [0.05 0.05 100];
+obj.euler_angs(7,:) = [0.000000 0.000000 0.000000];
+obj.density(7) = 1.000000;
+obj.type(7) = 2;
+obj.material(7) = 1;
+object.axial_lims(7,:) = [0 0];
+object.shape(7) = 0;
+object.clip{7} = [];
+
+obj.center(8,:) = [-54.199219 -18.066406 0.000000];
+obj.half_axes(8,:) = [0.05 0.05 100];
+obj.euler_angs(8,:) = [0.000000 0.000000 0.000000];
+obj.density(8) = 1.000000;
+obj.type(8) = 2;
+obj.material(8) = 1;
+object.axial_lims(8,:) = [0 0];
+object.shape(8) = 0;
+object.clip{8} = [];
+
+obj.center(9,:) = [-33.691406 21.484375 0.000000];
+obj.half_axes(9,:) = [0.05 0.05 100];
+obj.euler_angs(9,:) = [0.000000 0.000000 0.000000];
+obj.density(9) = 1.000000;
+obj.type(9) = 2;
+obj.material(9) = 1;
+object.axial_lims(9,:) = [0 0];
+object.shape(9) = 0;
+object.clip{9} = [];
+
+obj.center(10,:) = [-7.324219 2.441406 0.000000];
+obj.half_axes(10,:) = [0.05 0.05 100];
+obj.euler_angs(10,:) = [0.000000 0.000000 0.000000];
+obj.density(10) = 1.000000;
+obj.type(10) = 2;
+obj.material(10) = 1;
+object.axial_lims(10,:) = [0 0];
+object.shape(10) = 0;
+object.clip{10} = [];
+
+obj.center(11,:) = [19.531250 -19.042969 0.000000];
+obj.half_axes(11,:) = [0.05 0.05 100];
+obj.euler_angs(11,:) = [0.000000 0.000000 0.000000];
+obj.density(11) = 1.000000;
+obj.type(11) = 2;
+obj.material(11) = 1;
+object.axial_lims(11,:) = [0 0];
+object.shape(11) = 0;
+object.clip{11} = [];
+
+obj.center(12,:) = [41.503906 22.460938 0.000000];
+obj.half_axes(12,:) = [0.05 0.05 100];
+obj.euler_angs(12,:) = [0.000000 0.000000 0.000000];
+obj.density(12) = 1.000000;
+obj.type(12) = 2;
+obj.material(12) = 1;
+object.axial_lims(12,:) = [0 0];
+object.shape(12) = 0;
+object.clip{12} = [];
+
+obj.center(13,:) = [67.871094 0.488281 0.000000];
+obj.half_axes(13,:) = [0.05 0.05 100];
+obj.euler_angs(13,:) = [0.000000 0.000000 0.000000];
+obj.density(13) = 1.000000;
+obj.type(13) = 2;
+obj.material(13) = 1;
+object.axial_lims(13,:) = [0 0];
+object.shape(13) = 0;
+object.clip{13} = [];
+
+obj.center(14,:) = [98.144531 -18.066406 0.000000];
+obj.half_axes(14,:) = [0.05 0.05 100];
+obj.euler_angs(14,:) = [0.000000 0.000000 0.000000];
+obj.density(14) = 1.000000;
+obj.type(14) = 2;
+obj.material(14) = 1;
+object.axial_lims(14,:) = [0 0];
+object.shape(14) = 0;
+object.clip{14} = [];
+
+obj.center(15,:) = [116.699219 25.878906 0.000000];
+obj.half_axes(15,:) = [0.05 0.05 100];
+obj.euler_angs(15,:) = [0.000000 0.000000 0.000000];
+obj.density(15) = 1.000000;
+obj.type(15) = 2;
+obj.material(15) = 1;
+object.axial_lims(15,:) = [0 0];
+object.shape(15) = 0;
+object.clip{15} = [];
+
+obj.center(16,:) = [144.042969 2.441406 0.000000];
+obj.half_axes(16,:) = [0.05 0.05 100];
+obj.euler_angs(16,:) = [0.000000 0.000000 0.000000];
+obj.density(16) = 1.000000;
+obj.type(16) = 2;
+obj.material(16) = 1;
+object.axial_lims(16,:) = [0 0];
+object.shape(16) = 0;
+object.clip{16} = [];
+
+obj.center(17,:) = [173.339844 -16.113281 0.000000];
+obj.half_axes(17,:) = [0.05 0.05 100];
+obj.euler_angs(17,:) = [0.000000 0.000000 0.000000];
+obj.density(17) = 1.000000;
+obj.type(17) = 2;
+obj.material(17) = 1;
+object.axial_lims(17,:) = [0 0];
+object.shape(17) = 0;
+object.clip{17} = [];
+
+obj.center(18,:) = [189.941406 21.972656 0.000000];
+obj.half_axes(18,:) = [0.05 0.05 100];
+obj.euler_angs(18,:) = [0.000000 0.000000 0.000000];
+obj.density(18) = 1.000000;
+obj.type(18) = 2;
+obj.material(18) = 1;
+object.axial_lims(18,:) = [0 0];
+object.shape(18) = 0;
+object.clip{18} = [];
+
+obj.center(19,:) = [217.773438 3.906250 0.000000];
+obj.half_axes(19,:) = [0.05 0.05 100];
+obj.euler_angs(19,:) = [0.000000 0.000000 0.000000];
+obj.density(19) = 1.000000;
+obj.type(19) = 2;
+obj.material(19) = 1;
+object.axial_lims(19,:) = [0 0];
+object.shape(19) = 0;
+object.clip{19} = [];
+
