@@ -56,9 +56,15 @@ long getMemorySize( )
 	mib[1] = HW_PHYSMEM64;		/* NetBSD, OpenBSD. --------- */
 #endif
 	int64_t size = 0;		/* 64-bit */
+#if defined(__APPLE__)
+	size_t len = sizeof( size );
+	if ( sysctl( mib, 2, &size, &len, NULL, 0 ) == 0 )
+		return (long)size;
+#else
 	long len = sizeof( size );
 	if ( sysctl( mib, 2, &size, &len, NULL, 0 ) == 0 )
 		return (long)size;
+#endif
 	return 0L;			/* Failed? */
 
 #elif defined(_SC_AIX_REALMEM)
