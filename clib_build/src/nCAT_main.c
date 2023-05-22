@@ -9,6 +9,9 @@
 #include "ct_nurbs.h"
 #define MATERIAL_INDEX_BASIS 0  //can be 1 or zero
 
+#include <unistd.h>
+#include <ctype.h>
+
 #ifdef WIN32
 #define DLLEXPORT __declspec(dllexport)
 #else
@@ -105,8 +108,9 @@ static int use_tri_model = 0;
 
 static int max_num_models = 5000;
 
-
+#if !defined(__APPLE__)
 #include <malloc.h>
+#endif
 
 #define NR_END 1
 #define FREE_ARG char*
@@ -2866,8 +2870,8 @@ void Create_Bounding_Box_TRI(TRI_MODEL tmodel, int ID)
 typedef float FLOATTYPE;
 
 /* Not currently used, but here if you need them: */
-/* typedef unsigned char BYTETYPE;   /* value range: 0 to 255 */
-/* typedef short INTTYPE;            /* value range: -32768 to 32767 */
+/* typedef unsigned char BYTETYPE;    value range: 0 to 255 */
+/* typedef short INTTYPE;             value range: -32768 to 32767 */
 
 
 int flag = 0;
