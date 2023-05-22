@@ -1,0 +1,7 @@
+###########################################################################################################
+# All files in the current folder are subject to the following Copyright and license conditions:
+# Copyright 2023, GE HealthCare
+# See https://github.com/xcist/code/blob/master/LICENSE
+# The material files are generated using the CatSim material calculator, version 1.0.
+# The material densities were obtained from https://physics.nist.gov/PhysRefData/XrayMassCoef/tab1.html.
+###########################################################################################################
