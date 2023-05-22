@@ -108,7 +108,9 @@ static int use_tri_model = 0;
 
 static int max_num_models = 5000;
 
-
+#if !defined(__APPLE__)
+#include <malloc.h>
+#endif
 
 #define NR_END 1
 #define FREE_ARG char*
