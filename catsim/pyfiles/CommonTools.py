@@ -47,10 +47,13 @@ def load_C_lib():
 
     # load C/C++ lib
     ll = ctypes.cdll.LoadLibrary
-    if os.name == "nt":
+    if os.name == "nt":     # Check for Windows OS
         libFile = "libcatsim64.dll"
     else:
-        libFile = "libcatsim.so"
+        if os.uname()[0] == 'Darwin':    # Check for Mac OS;
+            libFile = "libcatsim_macos.so"
+        else:
+            libFile = "libcatsim.so"
     clib = ll(os.path.join(lib_path, libFile))
     
     return clib

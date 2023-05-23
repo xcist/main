@@ -10,7 +10,7 @@ CXXFLAGS = -Wall -fPIC -O3
 LDFLAGS = -fPIC
 
 
-64bitLibrary = libcatsim.so
+64bitLibrary = libcatsim_macos.so
 
 $(64bitLibrary): $(OBJECTS)
 	@echo ............................................
@@ -19,7 +19,7 @@ $(64bitLibrary): $(OBJECTS)
 	@echo .
 	@echo .
 	$(CXX) $(CXXFLAGS) -static-libstdc++ -o $(64bitLibrary) -shared $(OBJECTS) $(LDFLAGS)
-	mv libcatsim.so ../../catsim/lib
+	mv libcatsim_macos.so ../../catsim/lib
 	@echo .
 	@echo .
 	@echo . Done building system-specific library.
