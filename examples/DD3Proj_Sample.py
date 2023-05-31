@@ -1,7 +1,7 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
 import numpy as np
-from catsim.pyfiles.C_DD3Proj import DD3Proj
+from gecatsim.pyfiles.C_DD3Proj import DD3Proj
 
 #--------- Set parameters
 # source coordinates

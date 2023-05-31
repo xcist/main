@@ -1,7 +1,7 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
 ###------------ import XCIST-CatSim
-import catsim as xc
+import gecatsim as xc
 
 
 ##--------- Initialize 
