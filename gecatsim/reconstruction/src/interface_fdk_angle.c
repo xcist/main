@@ -105,16 +105,16 @@ extern void fbp(TestStruct *t) {
 
 	/* argument about object:  ObjR RecMX RecMY RecMZ*/
 
-	int i,j,k,ProjIndex,UU,UL,VV,VL,IR;
+	int i,j,k,ProjIndex,UU,UL,VV,VL;//,IR;
 	float dis,Dlocal, DSX[2],UCor,VCor,alfa,beta;
 
-    IR = (int)(RecSize/10);
+    //IR = (int)(RecSize/10);
 
 #pragma omp parallel for collapse(3) private(i,j,k,ProjIndex, DSX, Dlocal, dis, UCor, VCor, UL, VL, UU, VV, alfa, beta)
 	for (i=0;i<FOILength;i++)
 		{
-            if ((i%IR)==0)
-            printf("Reconstruction process:  %d %% \n", 10*i/IR);
+            //if ((i%IR)==0)
+            //printf("Reconstruction process:  %d %% \n", 10*i/IR);
 			for (j=0;j<FOIWidth;j++)
 			{
                 for (k=0;k<FOIHeight;k++)
