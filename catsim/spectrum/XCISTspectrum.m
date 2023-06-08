@@ -3,6 +3,7 @@ function [newE,newI] = XCISTspectrum(kVp, angle, dE)
   % ------------------------------------------------------------------------------
   % Created: B. De Man, August 27, 2020, 2020 - GE Research, Niskayuna, NY 12065, USA
   % Last modified: B. De Man, August 27, 2020, 2020 - GE Research, Niskayuna, NY 12065, USA
+  % modified by Jiayong Zhang at June 2023: added the correct scaling factor for spectrum
   %
   % Copyright 2020, General Electric Company
   % Code Developed Using US Government Funding via National Cancer Institute Grant 1U01CA231860-01A1 (ITCR)
@@ -35,7 +36,7 @@ function [newE,newI] = XCISTspectrum(kVp, angle, dE)
   %    figure; plot(E,I); grid on;
   %
   % Limitations
-  %    Only produces normalized spectra. Users should scale the output to the desired total number of photons.
+  %    Only produces normalized spectra for kVp not in [80, 100, 120, 140]. Users should scale the output to the desired total number of photons.
   %    Only valid for Tungsten targets
   %    Input parameter space is limited to 80-140 kVp and 5-9 degrees
   %    Does not include any inherent tube filtration.
@@ -244,7 +245,19 @@ function [newE,newI] = XCISTspectrum(kVp, angle, dE)
   newI(indexh)=newI(indexh)+iik(4)*(eek(4)-newE(indexl))/dxx;
 
   % added by Jiayong Zhang
+  switch kVp
+      case 80
+          newI2 = newI.*8583
+      case 100
+          newI2 = newI.* 17305
+      case 120
+          newI2 = newI.*28831
+      case 140
+          newI2 = newI.*41003
+      otherwise
+          disp('You are using a voltage that has normalized spectrum, and output needs to be scaled before use.\n')
+      end
   %outvar = [newE, newI];
   %keyboard
-  outname = strcat('xcist_kVp', num2str(kVp), '_tar', num2str(angle), '_bin', num2str(dE), '.mat');
-  save(outname,'newE','newI');
+  outname = strcat('xcist_kVp', num2str(kVp), '_tar', num2str(angle), '_bin', num2str(dE), '_final.mat');
+  save(outname,'newE','newI2');
