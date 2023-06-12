@@ -6,7 +6,7 @@ set PATH=C:\mingw64\bin;%PATH%
 CD src
 
 C:\mingw64\bin\mingw32-make -f ..\MakeWindows64
-move /Y libcatsim64.dll ..\..\catsim\lib
+move /Y libcatsim64.dll ..\..\lib
 @PAUSE
 
 C:\mingw64\bin\mingw32-make -f ..\MakeWindows64 clean
