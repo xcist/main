@@ -1,10 +1,10 @@
 import numpy as np
 from scipy.io import loadmat
 
-inppath = 'xcist_kVp80_tar7_bin1.mat'
+inppath = 'xcist_kVp110_tar7_bin1.mat'
 inp = loadmat(inppath)
 Eng = inp['newE'][0]
-spec = inp['newI2'][0]
+spec = inp['newI'][0]
 
 with open(inppath.replace('mat','dat'), 'w') as f:
     f.write('\n')
