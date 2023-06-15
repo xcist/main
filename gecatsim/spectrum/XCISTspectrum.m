@@ -3,6 +3,7 @@ function [newE,newI] = XCISTspectrum(kVp, angle, dE)
   % ------------------------------------------------------------------------------
   % Created: B. De Man, August 27, 2020, 2020 - GE Research, Niskayuna, NY 12065, USA
   % Last modified: B. De Man, August 27, 2020, 2020 - GE Research, Niskayuna, NY 12065, USA
+  % modified by Jiayong Zhang at June 2023: added the correct scaling factor for spectrum
   %
   % Copyright 2020, General Electric Company
   % Code Developed Using US Government Funding via National Cancer Institute Grant 1U01CA231860-01A1 (ITCR)
@@ -35,7 +36,6 @@ function [newE,newI] = XCISTspectrum(kVp, angle, dE)
   %    figure; plot(E,I); grid on;
   %
   % Limitations
-  %    Only produces normalized spectra. Users should scale the output to the desired total number of photons.
   %    Only valid for Tungsten targets
   %    Input parameter space is limited to 80-140 kVp and 5-9 degrees
   %    Does not include any inherent tube filtration.
@@ -85,6 +85,7 @@ function [newE,newI] = XCISTspectrum(kVp, angle, dE)
 	 67.8298   73.3348   74.9963
 	 18.4094   20.5120   19.9288
          0         0         0];
+  allparams(:,:,1) = allparams(:,:,1).*8583;
 
   allparams(:,:,2)=...
   [ 0         0         0
@@ -106,6 +107,7 @@ function [newE,newI] = XCISTspectrum(kVp, angle, dE)
     197.4694  210.8765  219.0544
     73.0435   77.4888   79.7090
     15.6381   16.5770   17.0522];
+  allparams(:,:,2) = allparams(:,:,2).*17305;
 
   allparams(:,:,3)=...
   [0         0         0
@@ -127,6 +129,7 @@ function [newE,newI] = XCISTspectrum(kVp, angle, dE)
    256.7763  270.3153  282.1586
    97.3396  101.9380  105.2753
    22.1465   23.1369   23.7903];
+  allparams(:,:,3) = allparams(:,:,3).*28831;
 
   allparams(:,:,4)=...
   [0         0         0
@@ -148,6 +151,7 @@ function [newE,newI] = XCISTspectrum(kVp, angle, dE)
    284.6359  296.0568  311.1753
    109.3829  113.3104  117.3900
    25.3486   26.1938   26.9541];
+  allparams(:,:,4) = allparams(:,:,4).*41003;
 
   %-------------------------------------------------------------------
   % Interpolate in angle
@@ -218,6 +222,7 @@ function [newE,newI] = XCISTspectrum(kVp, angle, dE)
 
   % Stack left and right sides together
   newI=max([yy,yy2],0);
+  
 
   % Add counts for characteristic peak #1
   index=find(newE>eek(1));indexh=index(1); indexl=indexh-1; %find coords that straddle the peak
@@ -243,8 +248,6 @@ function [newE,newI] = XCISTspectrum(kVp, angle, dE)
   newI(indexl)=newI(indexl)+iik(4)*(newE(indexh)-eek(4))/dxx;
   newI(indexh)=newI(indexh)+iik(4)*(eek(4)-newE(indexl))/dxx;
 
-  % added by Jiayong Zhang
   %outvar = [newE, newI];
-  %keyboard
   outname = strcat('xcist_kVp', num2str(kVp), '_tar', num2str(angle), '_bin', num2str(dE), '.mat');
   save(outname,'newE','newI');
