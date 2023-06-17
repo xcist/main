@@ -31,6 +31,9 @@ def Phantom_Voxelized(cfg):
         
         volumePathName = cfg.phantom.filename.replace(vpFilename, vp['volumefractionmap_filename'][i])
         volumeData = rawread(volumePathName, [], vp['volumefractionmap_datatype'][i])
+        # if density_scale is set
+        if 'density_scale' in vp:
+            volumeData *= vp['density_scale'][i]
         
         '''
         Offsets in .vp file indicate the index coordinate of the scanner origin (isocenter) relative to the edge of the phantom.
