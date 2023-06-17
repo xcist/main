@@ -55,7 +55,7 @@
 import os
 import copy
 import shutil
-import catsim.pyfiles as catsim
+import gecatsim.pyfiles as catsim
 from my_commonTools import *
 
 def setExperimentParameters(cfg):

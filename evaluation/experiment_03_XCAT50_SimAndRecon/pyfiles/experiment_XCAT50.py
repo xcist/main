@@ -38,7 +38,7 @@
 # parameters such as window/level and titles.
 
 import os
-import catsim.pyfiles as catsim
+import gecatsim.pyfiles as catsim
 from my_commonTools import *
 
 
