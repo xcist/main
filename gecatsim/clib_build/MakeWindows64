@@ -1,0 +1,42 @@
+# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+
+include ..\MakeVariables_1
+
+include ..\MakeVariables_3
+
+CXXFLAGS = -O3 -Wall
+CFLAGS = -O3
+
++LFLAGS = -LC:\mingw64\lib -LC:\Users\212569890\official\catsim\code\CatSim\gecatsim\lib\Pre-built.2\dll\x86 -lpthreadGC2
++IFLAGS = -IC:\mingw64\include -IC:\Users\212569890\official\catsim\code\CatSim\gecatsim\lib\Pre-built.2\include
+
+Library = libcatsim64.dll
+
+Library: $(OBJECTS)
+	@echo ............................................
+	@echo .
+	@echo . Building Windows library ...
+	@echo .
+	@echo .
+	$(CXX) -static -static-libgcc -static-libstdc++ -o $(Library) -shared $(OBJECTS) $(LFLAGS) $(IFLAGS)
+	@echo .
+	@echo .
+	@echo .
+	@echo . Done building Windows library.
+	@echo .
+	@echo ............................................
+
+clean:
+	@echo ............................................
+	@echo .
+	@echo . Cleaning ...
+	@echo .
+	@echo .
+	rm -f *.o
+	@echo .
+	@echo .
+	@echo . Done cleaning.
+	@echo .
+	@echo ............................................
+
+# DO NOT DELETE
