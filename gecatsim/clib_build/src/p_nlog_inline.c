@@ -3,6 +3,9 @@
 // only reference in the asm block.  There is probably a way around this (other than a
 // gratuitous use of the variables), but I'm sure not how.
 #include "p_nlog_inline.h"
+#ifdef WIN32
+#define posix_memalign(p, a, s) (((*(p)) = _aligned_malloc((s), (a))), *(p) ?0 :errno)
+#endif
 
 void p_nlog_inline(float *dest, float *src, int len)
 {

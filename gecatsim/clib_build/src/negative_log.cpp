@@ -2,7 +2,13 @@
 #include <cmath>
 #include <string.h>
 #include <stdlib.h>
+#ifdef WIN32
+#define DLLEXPORT __declspec(dllexport)
+//https://stackoverflow.com/questions/33696092/whats-the-correct-replacement-for-posix-memalign-in-window
+#define posix_memalign(p, a, s) (((*(p)) = _aligned_malloc((s), (a))), *(p) ?0 :errno)
+#else
 #define DLLEXPORT
+#endif
 //#include "p_nlog_inline.h"
 
 #define NLOG_ZERO_REPLACEMENT     1.175494351E-38F

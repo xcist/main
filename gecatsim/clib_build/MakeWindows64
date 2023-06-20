@@ -1,4 +1,5 @@
-# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+
+all: libcatsim64.dll
 
 include ..\MakeVariables_1
 
@@ -7,18 +8,22 @@ include ..\MakeVariables_3
 CXXFLAGS = -O3 -Wall
 CFLAGS = -O3
 
-+LFLAGS = -LC:\mingw64\lib -LC:\Users\212569890\official\catsim\code\CatSim\gecatsim\lib\Pre-built.2\dll\x86 -lpthreadGC2
-+IFLAGS = -IC:\mingw64\include -IC:\Users\212569890\official\catsim\code\CatSim\gecatsim\lib\Pre-built.2\include
+#+LFLAGS = -LC:\mingw64\lib -LC:\Users\223058565\software\xcist-20230620\main-master\gecatsim\lib\Pre-built.2\dll\x64 -lpthreadGC2
+#+IFLAGS = -IC:\mingw64\include -IC:\Users\223058565\software\xcist-20230620\main-master\gecatsim\lib\Pre-built.2\include
+LFLAGS = -LC:\mingw64\lib -LC:\Users\223058565\software\main-master\catsim\lib\pthread_build\dll\x64 -lpthreadGC2
+IFLAGS = -IC:\mingw64\include -IC:\Users\223058565\software\main-master\catsim\lib\pthread_build\include
 
-Library = libcatsim64.dll
+p_nlog_inline.o: p_nlog_inline.c
+	gcc -O0 -g -Wall -msse -fPIC -c p_nlog_inline.c $(LFLAGS) $(IFLAGS)
 
-Library: $(OBJECTS)
+
+libcatsim64.dll: $(OBJECTS)
 	@echo ............................................
 	@echo .
 	@echo . Building Windows library ...
 	@echo .
 	@echo .
-	$(CXX) -static -static-libgcc -static-libstdc++ -o $(Library) -shared $(OBJECTS) $(LFLAGS) $(IFLAGS)
+	$(CXX) -static-libgcc -static-libstdc++ -o libcatsim64.dll -shared $(OBJECTS) $(LFLAGS) $(IFLAGS)
 	@echo .
 	@echo .
 	@echo .
