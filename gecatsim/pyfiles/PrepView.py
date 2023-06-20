@@ -2,6 +2,7 @@
 
 import numpy.matlib as nm
 from gecatsim.pyfiles.CommonTools import *
+from gecatsim.pyfiles.LowSignalCorr import LowSignalCorr
 
 def prep_view(cfg):
     
@@ -24,9 +25,10 @@ def prep_view(cfg):
     if cfg.protocol.offsetViewCount==1:
         offsetScan = nm.repmat(offsetScan, cfg.protocol.viewCount, 1)
     prep = (phantomScan-offsetScan)/(airscan-offsetScan)
-    smallValue = 1e-12
-    prep[prep<smallValue] = smallValue
-    prep = -np.log(prep)
+    #smallValue = 1e-12
+    #prep[prep<smallValue] = smallValue
+    prep = LowSignalCorr(cfg, prep)
+    #prep = -np.log(prep)
     
     ###--------- post-log
 

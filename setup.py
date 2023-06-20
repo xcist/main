@@ -5,7 +5,7 @@
 
 from setuptools import setup
 
-setup(name='catsim-xcist',
+setup(name='gecatsim',
       version='1.0.0',
       description='Simulation toolkit for X-ray based cancer imaging',
       url='https://github.com/xcist',

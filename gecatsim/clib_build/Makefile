@@ -1,4 +1,4 @@
-# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+all: libcatsim.so
 
 include ../MakeVariables_1
 include ../MakeVariables_2
@@ -9,17 +9,19 @@ CXXFLAGS = -Wall -fPIC -O3
 
 LDFLAGS = -fPIC -lpthread
 
+p_nlog_inline.o: p_nlog_inline.c
+	gcc -O0 -g -Wall -msse -fPIC -c p_nlog_inline.c
 
 64bitLibrary = libcatsim.so
 
-$(64bitLibrary): $(OBJECTS)
+libcatsim.so: $(OBJECTS)
 	@echo ............................................
 	@echo .
 	@echo . Building system-specific library ...
 	@echo .
 	@echo .
 	$(CXX) $(CXXFLAGS) -static-libgcc -static-libstdc++ -o $(64bitLibrary) -shared $(OBJECTS) $(LDFLAGS)
-	mv libcatsim.so ../../catsim/lib
+	mv libcatsim.so ../../lib/
 	@echo .
 	@echo .
 	@echo . Done building system-specific library.

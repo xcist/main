@@ -17,10 +17,12 @@ Phantom.cpp \
 DD3Proj.cpp \
 DD3Proj_roi_notrans_mm.cpp \
 voxelized_projector.cpp \
-getMemorySize.cpp
+getMemorySize.cpp \
+negative_log.cpp
 
 OBJECTS = $(patsubst %.cpp,%.o,$(CPPSOURCES))
 OBJECTS += $(patsubst %.c,%.o,$(CSOURCES))
+OBJECTS += p_nlog_inline.o
 
 CC = gcc
 CXX = g++
