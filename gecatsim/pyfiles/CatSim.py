@@ -26,7 +26,7 @@ class CatSim:
             cfg = self.phantom_scan(cfg)
         if all(scanTypes):
             cfg = self.prep_view(cfg)
-        print('Simulation is done')
+        print('Simulation is done.')
         return cfg
 
     def air_scan(self, *para):

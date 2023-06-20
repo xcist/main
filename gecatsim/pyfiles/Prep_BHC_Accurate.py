@@ -4,6 +4,8 @@ import numpy as np
 from gecatsim.pyfiles.CommonTools import rawread
 
 def Prep_BHC_Accurate(cfg, prep):
+    print("Applying Beam Hardening Correction (ACCURATE BHC)...\n", end='')
+    
     if hasattr(cfg.physics, "BHC_vec_fname"):
         if os.path.isfile(cfg.physics.BHC_vec_fname):
             poly_coef = np.load(cfg.physics.BHC_vec_fname)
@@ -20,6 +22,7 @@ def Prep_BHC_Accurate(cfg, prep):
 
         prep[viewId] = view_out
 
+    print("done.\n")
     return prep
 
 def gen_BHC_vec(cfg):

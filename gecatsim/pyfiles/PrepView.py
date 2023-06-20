@@ -15,6 +15,8 @@ def prep_view(cfg):
     phantomScan = rawread(cfg.resultsName+'.scan', [cfg.protocol.viewCount, totalNumCells], 'float')
 
     ###--------- pre-log
+    if hasattr(cfg.physics, "callback_pre_log") and cfg.physics.callback_pre_log:
+        airscan, offsetScan, phantomScan = feval(cfg.physics.callback_pre_log, cfg, airscan, offsetScan, phantomScan)
     
     ###--------- log
     if cfg.protocol.airViewCount==1:
@@ -29,11 +31,9 @@ def prep_view(cfg):
     ###--------- post-log
 
     # now perform BHC
-    if hasattr(cfg.physics, "callback_post_log") and cfg.physics.callback_post_log is not None:
-        print("Applying Beam Hardening Correction (ACCURATE BHC)...\n")
+    if hasattr(cfg.physics, "callback_post_log") and cfg.physics.callback_post_log:
         prep = feval(cfg.physics.callback_post_log, cfg, prep)
-        print("... done applying water BHC.\n")
-
+        
     # a simple low signal correction, further limiting mu values if desired
     if cfg.protocol.maxPrep>0:
         prep[prep>cfg.protocol.maxPrep] = cfg.protocol.maxPrep

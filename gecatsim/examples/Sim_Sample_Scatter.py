@@ -9,9 +9,11 @@ ct = xc.CatSim()  # initialization
 
 ##--------- Make changes to parameters (optional)
 ct.resultsName = "test_sc"
-ct.physics.scatterCallback = "Scatter_ConvolutionModel"
+ct.physics.scatterCallback = "Scatter_ConvolutionModel"  # scatter model
 ct.physics.scatterKernelCallback = ""  # using default
 ct.physics.scatterScaleFactor = 1
+
+ct.physics.callback_pre_log = "Scatter_Correction"  # scatter correction
 
 ct.protocol.viewsPerRotation = 1
 ct.protocol.viewCount = ct.protocol.viewsPerRotation
