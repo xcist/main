@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.io import loadmat
 
-inppath = 'xcist_kVp110_tar7_bin1.mat'
+inppath = 'xcist_kVp140_tar7_bin1.mat'
 inp = loadmat(inppath)
 Eng = inp['newE'][0]
 spec = inp['newI'][0]

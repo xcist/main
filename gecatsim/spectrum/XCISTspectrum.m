@@ -85,7 +85,7 @@ function [newE,newI] = XCISTspectrum(kVp, angle, dE)
 	 67.8298   73.3348   74.9963
 	 18.4094   20.5120   19.9288
          0         0         0];
-  allparams(:,:,1) = allparams(:,:,1).*8583;
+  allparams(:,:,1) = allparams(:,:,1).*8454;
 
   allparams(:,:,2)=...
   [ 0         0         0
@@ -107,7 +107,7 @@ function [newE,newI] = XCISTspectrum(kVp, angle, dE)
     197.4694  210.8765  219.0544
     73.0435   77.4888   79.7090
     15.6381   16.5770   17.0522];
-  allparams(:,:,2) = allparams(:,:,2).*17305;
+  allparams(:,:,2) = allparams(:,:,2).*17378;
 
   allparams(:,:,3)=...
   [0         0         0
@@ -129,7 +129,7 @@ function [newE,newI] = XCISTspectrum(kVp, angle, dE)
    256.7763  270.3153  282.1586
    97.3396  101.9380  105.2753
    22.1465   23.1369   23.7903];
-  allparams(:,:,3) = allparams(:,:,3).*28831;
+  allparams(:,:,3) = allparams(:,:,3).*28571;
 
   allparams(:,:,4)=...
   [0         0         0
@@ -151,7 +151,7 @@ function [newE,newI] = XCISTspectrum(kVp, angle, dE)
    284.6359  296.0568  311.1753
    109.3829  113.3104  117.3900
    25.3486   26.1938   26.9541];
-  allparams(:,:,4) = allparams(:,:,4).*41003;
+  allparams(:,:,4) = allparams(:,:,4).*40459;
 
   %-------------------------------------------------------------------
   % Interpolate in angle
