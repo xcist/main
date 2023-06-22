@@ -80,7 +80,8 @@ def SetFocalspot(cfg):
     # if shape and data is not defined, defaults to Uniform; 
     if (not hasattr(cfg.scanner, "focalspotShape")) and (not hasattr(cfg.scanner, "focalspotData")):
         cfg.scanner.focalspotShape = "Uniform"
-    elif hasattr(cfg.scanner, "focalspotShape") and hasattr(cfg.scanner, "focalspotData"):
+    #elif hasattr(cfg.scanner, "focalspotShape") and hasattr(cfg.scanner, "focalspotData"):
+    elif cfg.scanner.focalspotShape and hasattr(cfg.scanner, "focalspotData"):
         print("Warning: Both shape and data are provided in focal spot, only data will be used.")
         delattr(cfg.scanner, "focalspotShape")
         #sys.exit()
@@ -90,6 +91,7 @@ def SetFocalspot(cfg):
 
     # load npz focus spot image, the measured intensity will always be in the xz plane
     if hasattr(cfg.scanner, "focalspotData"):
+        cfg.scanner.focalspotData = my_path.find("focal_spot", cfg.scanner.focalspotData, '')
         I, pixsize_x, pixsize_z, xstart, zstart = ParseFocalspotData(cfg.scanner.focalspotData)
         cfg.scanner.focalspotPixSizeX = pixsize_x
         cfg.scanner.focalspotPixSizeZ = pixsize_z
@@ -125,7 +127,8 @@ def SetFocalspot(cfg):
     fs_pos_z -= np.average(fs_pos_z[_idx_z_min:_idx_z_max], weights=np.sum(I[_idx_x_min:_idx_x_max, _idx_z_min:_idx_z_max], axis=0))
     
     # rescale
-    if not hasattr(cfg.scanner, 'focalspotShape') or cfg.scanner.focalspotShape.lower() != 'uniform':
+    #if not hasattr(cfg.scanner, 'focalspotShape') or cfg.scanner.focalspotShape.lower() != 'uniform':
+    if not cfg.scanner.focalspotShape or cfg.scanner.focalspotShape.lower() != 'uniform':
         Ix = np.sum(I, axis=1) # xis along the vertical axis (axis0), so we need to sum along axis 1
         Ix /= np.max(Ix)
         max_idx = np.argmax(Ix)
@@ -163,7 +166,8 @@ def SetFocalspot(cfg):
         return new_begin, new_end
 
     # clever way of sampling
-    if not hasattr(cfg.scanner, 'focalspotShape') or cfg.scanner.focalspotShape.lower() != 'uniform':
+    #if not hasattr(cfg.scanner, 'focalspotShape') or cfg.scanner.focalspotShape.lower() != 'uniform':
+    if not cfg.scanner.focalspotShape or cfg.scanner.focalspotShape.lower() != 'uniform':
         os_range_x = GetRange(fs_pos_x, np.sum(I, axis=1), 0.02)
         os_range_z = GetRange(fs_pos_z, np.sum(I, axis=0), 0.02)
         os_dx = (os_range_x[1] - os_range_x[0])/os_nx

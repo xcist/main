@@ -15,7 +15,7 @@ def recon(cfg):
 
         # The following line doesn't work - need to fix it when new recons are added.
         # imageVolume3D = feval("reconstruction." + cfg.recon.reconType, cfg, prep)
-        imageVolume3D = feval("reconstruction.pyfiles." + cfg.recon.reconType, cfg, prep)
+        imageVolume3D = feval("gecatsim.reconstruction.pyfiles." + cfg.recon.reconType, cfg, prep)
 
         # A hack until the previous line is fixed.
         #imageVolume3D = fdk_equiAngle(cfg, prep)

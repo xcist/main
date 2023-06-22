@@ -78,6 +78,7 @@ class PathHelper:
         self.paths["scatter"] = os.path.join(self.paths["top"], 'scatter')
         self.paths["spectrum"] = os.path.join(self.paths["top"], 'spectrum')
         self.paths["dose_data"] = os.path.join(self.paths["top"], 'dose_data')
+        self.paths["focal_spot"] = os.path.join(self.paths["top"], 'focal_spot')
         self.extra_search_paths = []
         self.read_catsim_init()
 
