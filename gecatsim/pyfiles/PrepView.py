@@ -15,15 +15,15 @@ def prep_view(cfg):
     offsetScan = rawread(cfg.resultsName+'.offset', [cfg.protocol.offsetViewCount, totalNumCells], 'float')
     phantomScan = rawread(cfg.resultsName+'.scan', [cfg.protocol.viewCount, totalNumCells], 'float')
 
+    if cfg.protocol.airViewCount==1:
+        airscan = nm.repmat(airscan, cfg.protocol.viewCount, 1)
+    if cfg.protocol.offsetViewCount==1:
+        offsetScan = nm.repmat(offsetScan, cfg.protocol.viewCount, 1)
     ###--------- pre-log
     if hasattr(cfg.physics, "callback_pre_log") and cfg.physics.callback_pre_log:
         airscan, offsetScan, phantomScan = feval(cfg.physics.callback_pre_log, cfg, airscan, offsetScan, phantomScan)
     
     ###--------- log
-    if cfg.protocol.airViewCount==1:
-        airscan = nm.repmat(airscan, cfg.protocol.viewCount, 1)
-    if cfg.protocol.offsetViewCount==1:
-        offsetScan = nm.repmat(offsetScan, cfg.protocol.viewCount, 1)
     prep = (phantomScan-offsetScan)/(airscan-offsetScan)
     #smallValue = 1e-12
     #prep[prep<smallValue] = smallValue

@@ -3,6 +3,7 @@
 import numpy.matlib as nm
 from gecatsim.pyfiles.CommonTools import *
 from gecatsim.pyfiles.Scatter_ConvolutionModel import get_scatter_kernel
+from tqdm import tqdm
 
 # This is a simplified kernel based scatter correction algorithm.
 def Scatter_Correction(cfg, airscan, offsetScan, phantomScan):
@@ -15,16 +16,16 @@ def Scatter_Correction(cfg, airscan, offsetScan, phantomScan):
         cfg.scatter_kernel = get_scatter_kernel()
             
     ###--------- log
-    if cfg.protocol.airViewCount==1:
-        airscan = nm.repmat(airscan, cfg.protocol.viewCount, 1)
-    if cfg.protocol.offsetViewCount==1:
-        offsetScan = nm.repmat(offsetScan, cfg.protocol.viewCount, 1)
+    #if cfg.protocol.airViewCount==1:
+    #    airscan = nm.repmat(airscan, cfg.protocol.viewCount, 1)
+    #if cfg.protocol.offsetViewCount==1:
+    #    offsetScan = nm.repmat(offsetScan, cfg.protocol.viewCount, 1)
     prep = (phantomScan-offsetScan)/(airscan-offsetScan)
     smallValue = 1.E-10
     prep[prep<smallValue] = smallValue
     prep = -np.log(prep)
 
-    for viewId in range(cfg.protocol.viewCount):
+    for viewId in tqdm(range(cfg.protocol.viewCount)):
         if not hasattr(cfg.physics, "scatterScaleFactor"):
             cfg.physics.scatterScaleFactor = 1
         sc_preConv = phantomScan[viewId,:]*prep[viewId,:]*0.025*cfg.physics.scatterScaleFactor
