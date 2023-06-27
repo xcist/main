@@ -1,10 +1,10 @@
 import ctypes as ct
 import numpy as np
 import math
-from CreateHSP import CreateHSP
+from gecatsim.reconstruction.pyfiles.createHSP import createHSP
 import scipy.io as scio
 import matplotlib.pyplot as plt
-from mapConfigVariablesToHelical import mapConfigVariablesToHelical
+from gecatsim.reconstruction.pyfiles.mapConfigVariablesToHelical import mapConfigVariablesToHelical
 import os
 
 # Init ctypes types
@@ -90,9 +90,9 @@ def load_C_recon_lib():
     # load C/C++ lib
     ll = ct.cdll.LoadLibrary
     if os.name == "nt":
-        lib_file = "fdk_equiAngle.dll"
+        lib_file = "helicalrecon.dll"
     else:
-        lib_file = "fdk_equiAngle.so"
+        lib_file = "helicalrecon.so"
     clib = ll(os.path.join(recon_lib, lib_file))
 
     return clib
@@ -176,14 +176,14 @@ def helical_equiAngle(cfg, prep):
 
     Proj = PProj.transpose(1,2,0)
 
-    scio.savemat('testrebin.mat', {'rebin': PProj})
+    #scio.savemat('testrebin.mat', {'rebin': PProj})
 
     #Perform Ramp filtering
     print("* Applying the filter...")
     Dg=Proj
     nn = int(math.pow(2, (math.ceil(math.log2(abs(YL))) + 1)))
     nn2 = nn*2
-    FFT_F = CreateHSP(nn, kernelType)
+    FFT_F = createHSP(nn, kernelType)
 
     GF = Proj
     
@@ -200,7 +200,7 @@ def helical_equiAngle(cfg, prep):
 
     #Backproject the filtered data into the 3D space
     # Load the compiled library
-    recon = ct.CDLL("./helicalrecon.dll")
+    recon = load_C_recon_lib()
     # Define arguments of the C function
     recon.fbp.argtypes = [ct.POINTER(TestStruct)]
     # Define the return type of the C function

@@ -31,7 +31,7 @@ def mapConfigVariablesToHelical(cfg):
     sliceThickness = cfg.recon.sliceThickness # float in mm
     objR =0.5* cfg.recon.fov #FOV in mm
 
-    kernelType = 'SL'
+    kernelType = cfg.recon.kernelType
     centerOffset = [0,0,0]
     # kernelType = cfg.recon.kernelType
     # centerOffset = deepcopy(cfg.recon.centerOffset)
