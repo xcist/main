@@ -41,3 +41,96 @@ def test_vector_norm():
     assert result is not None
     print(result)
     assert abs(result[0][0]-1.7320508) < 1e-5
+
+def test_feval():
+    cfg = c.CFG()
+    assert len(vars(cfg.det)) == 0
+    c.feval('Detector_ThirdgenCurved', cfg);
+    assert len(vars(cfg.det)) == 16
+
+    assert cfg.det.nCells is not None
+    assert cfg.det.cellCoords  is not None
+    assert cfg.det.nSamples  is not None
+    assert cfg.det.sampleCoords  is not None
+    assert cfg.det.weights is not None
+    assert cfg.det.activeArea  is not None
+    assert cfg.det.nMod  is not None
+    assert cfg.det.modCoords  is not None
+    assert cfg.det.uvecs  is not None
+    assert cfg.det.vvecs  is not None
+    assert cfg.det.totalNumCells  is not None
+    assert cfg.det.startIndices  is not None
+    assert cfg.det.nModDefs  is not None
+    assert cfg.det.modTypes  is not None
+    assert cfg.det.width  is not None
+    assert cfg.det.height  is not None
+
+def test_feval_invalid_funcname():
+    cfg = c.CFG()
+    try:
+        c.feval('invalid_funcname', cfg);
+        assert False
+    except:
+        assert True
+
+def test_feval_invalid_config():
+    cfg = c.emptyCFG()
+    try:
+        c.feval('invalid_funcname', cfg);
+        assert False
+    except:
+        assert True
+
+def test_path_helper_load():
+    #.gecatsim may not be always availablem so not testing the file loading
+    pathhelper = c.PathHelper();
+    assert len(pathhelper.paths) == 10
+
+    assert pathhelper.paths["main"] is not None
+    assert pathhelper.paths["top"] is not None
+    assert pathhelper.paths["cfg"].endswith('cfg')
+    assert pathhelper.paths["lib"].endswith('lib')
+    assert pathhelper.paths["bowtie"].endswith('bowtie')
+    assert pathhelper.paths["material"].endswith('material')
+    assert pathhelper.paths["phantom"].endswith('phantom')
+    assert pathhelper.paths["scatter"].endswith('scatter')
+    assert pathhelper.paths["spectrum"].endswith('spectrum')
+    assert pathhelper.paths["dose_data"].endswith('dose_data')
+
+def test_find_unavailable_file():
+    try:
+        found_path = c.my_path.find('phantom', 'temp_phantom', '.cfg')
+        assert False
+    except:
+        assert True
+
+def test_add_dir_to_path():
+    tmpdirname = tempfile.TemporaryDirectory().name
+    c.PathHelper().add_dir_to_path(tmpdirname)
+    assert os.environ["PATH"].find(tmpdirname) != -1
+    assert os.environ["PATH"].find(tempfile.TemporaryDirectory().name) == -1
+
+def test_linux_style_path():
+    linux_style_path = c.PathHelper().linux_style_path("C:\\Users\\username\\Desktop\\cert.crt");
+    assert linux_style_path == "C:/Users/username/Desktop/cert.crt"
+
+def test_cfg():
+    cfg = c.CFG("../examples/cfg/Phantom_Sample", "../examples/cfg/Scanner_Sample_generic", "../examples/cfg/Protocol_Sample_axial")
+    assert len(vars(cfg)) == 14
+
+    assert cfg.clib is not None
+    assert cfg.det is not None
+    assert cfg.detNew is not None
+    assert cfg.dose is not None
+    assert cfg.phantom is not None
+    assert cfg.physics is not None
+    assert cfg.protocol is not None
+    assert cfg.recon is not None
+    assert cfg.resultsName is not None
+    assert cfg.scanner is not None
+    assert cfg.sim is not None
+    assert cfg.spec is not None
+    assert cfg.src is not None
+    assert cfg.srcNew is not None
+
+
