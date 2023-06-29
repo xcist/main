@@ -1,5 +1,5 @@
 from math import ceil
-# from copy import deepcopy
+from copy import deepcopy
 
 
 def mapConfigVariablesToHelical(cfg):
@@ -32,7 +32,11 @@ def mapConfigVariablesToHelical(cfg):
     objR =0.5* cfg.recon.fov #FOV in mm
 
     kernelType = cfg.recon.kernelType
-    centerOffset = [0,0,0]
+    centerOffset = deepcopy(cfg.recon.centerOffset)
+    # Pass desired X as Y
+    centerOffset[1] = deepcopy(cfg.recon.centerOffset[0])
+    # Pass desired Y as X
+    centerOffset[0] = deepcopy(cfg.recon.centerOffset[1])
     # kernelType = cfg.recon.kernelType
     # centerOffset = deepcopy(cfg.recon.centerOffset)
     # # Pass desired X as Y

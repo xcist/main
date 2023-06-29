@@ -82,7 +82,7 @@ def SetFocalspot(cfg):
         cfg.scanner.focalspotShape = "Uniform"
     elif hasattr(cfg.scanner, "focalspotShape") and hasattr(cfg.scanner, "focalspotData"):
     #elif cfg.scanner.focalspotShape and hasattr(cfg.scanner, "focalspotData"):
-        print("Warning: Both shape and data are provided in focal spot, only data will be used.")
+        print("Focal spot: FocalspotData is set and will override FocalspotShape.")
         delattr(cfg.scanner, "focalspotShape")
         #sys.exit()
     # load default width and length

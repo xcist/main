@@ -75,9 +75,9 @@ extern void fbp(TestStruct *t) {
     dectorYoffset = t->dectorYoffset;
 //    dectorZoffset = t->dectorZoffset;
 //    startangle = t->startangle;
-//    XOffSet = t->XOffSet;
-//    YOffSet = t->YOffSet;
-//    ZOffSet = t->ZOffSet;
+    XOffSet = t->XOffSet;
+    YOffSet = t->YOffSet;
+    ZOffSet = t->ZOffSet;
     XN = RecSize;
     XNC = (XN-1)*0.5;
     YN = RecSize;
@@ -108,8 +108,9 @@ extern void fbp(TestStruct *t) {
 
 	 for(zi = 0; zi<ZN; zi++)  // create two slices for testing
 	 {
+         printf("   recon slice %d/%d...\n", zi, ZN);
 		 ///compute the projection position for every grid on the image plane
-         z = (zi-ZNC) * dz;
+         z = (zi-ZNC) * dz+ZOffSet;
          Beta0 = 2 * pi * z / h;
          s0 = ceil((Beta0-BetaS) / DeltaFai-0.5);
          s1 = s0-ceil(N_pi*HSCoef);       //s1 = ceil((Beta0 + N_Circle * pi - pi ) /DeltaFai);
@@ -160,11 +161,11 @@ extern void fbp(TestStruct *t) {
 
              for(yi=0;yi<YN;yi++)
              {
-                 y = -(yi-YNC)*dy;
+                 y = -(yi-YNC)*dy-YOffSet;
                  #pragma omp parallel for private(xi,x, UU, Yr, Zr, U1, U,V1,V, Dey,Dez,touying,weight1,weight2,Gama,Gama_C,m1,m2,weight)
                  for(xi=0;xi<XN;xi++)
                  {
-                    x  = -(xi-XNC)*dx;
+                    x  = -(xi-XNC)*dx-XOffSet;
                     UU = -x*cos(View)-y*sin(View);
 				    Yr = -x*sin(View)+y*cos(View);
                     Zr = (z-h*(View+asin(Yr/ScanR))/(2.0*pi))*(DistD)/(sqrt(ScanR*ScanR-Yr*Yr)+UU);///03/05/23 Yu

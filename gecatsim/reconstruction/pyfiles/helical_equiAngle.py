@@ -276,5 +276,7 @@ def helical_equiAngle(cfg, prep):
     # Convert ctypes 3D arrays to numpy arrays
     print("* Converting the recon results from a C array to a numpy array...")
     rec = double3dpointer2array(RecIm_ptr, *RecIm.shape)
+    rec = rec.transpose(1,0,2).astype(np.float32)
+    rec = rec[::-1,::-1]
 
     return rec
