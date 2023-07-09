@@ -1,13 +1,16 @@
 from tkinter import *
 from tkinter import ttk
 from colors import *
+from PIL import Image, ImageTk
+from skimage.transform import resize
+import matplotlib.pyplot as plt
 
 
 def XcistLabel(parent, text):
     return Label(parent, text=text, bg=BG_PRIMARY, fg=FG_PRIMARY, font=('Arial 10 bold'))
 
 def XcistNameLabel(parent, text):
-    return Label(parent, text=text, bg=BG_PRIMARY, fg=FG_SECONDARY, font=('Arial 10'))
+    return Label(parent, anchor='w', text=text, bg=BG_PRIMARY, fg=FG_SECONDARY, font=('Arial 10'))
 
 class XcistFrame:
     def __init__(self, window, title, width, height):
@@ -27,13 +30,23 @@ class XcistFrame:
 class XcistImage:
     def __init__(self, parent, title):
         self.frame = Frame(parent, bg=BG_PRIMARY)
-        self.title = Button(self.frame, text=title)
+        self.title = Button(self.frame, text=title, command=self.expand_image)
         self.title.grid(sticky='WE', column=0, row=0)
-        self.image_frame = Frame(self.frame, bg=BG_PRIMARY, width=120, height=160)
-        self.image_frame.grid(column=0, row=1)
-        self.image_frame.pack_propagate(0)
-        self.image = Label(self.image_frame, bg='gray')
-        self.image.pack(fill=BOTH, expand=True)
-        self.progress_bar = ttk.Progressbar(self.frame, length=100, mode='determinate')
+        self.canvas = Canvas(self.frame, width=120, height=160, bd=0, highlightthickness=0)
+        self.canvas.grid(column=0, row=1)
+        self.image_container = self.canvas.create_image(60, 0, anchor="n",image=[])
+        self.progress_bar = ttk.Progressbar(self.frame, length=100, mode='indeterminate')
         self.progress_bar.grid(column=0, row=2, pady=(10,0))
-        self.progress_bar.start()
+    
+    def set_image(self, image):
+        self.image = image
+        image = resize(image, (160, 160*image.shape[1]//image.shape[0]))
+        image = image - image.min()
+        image = image * 255 / image.max()
+        photo_image = ImageTk.PhotoImage(image=Image.fromarray(image))
+        self.photo_image = photo_image
+        self.canvas.itemconfig(self.image_container, image=self.photo_image)
+
+    def expand_image(self):
+        plt.imshow(self.image, cmap='gray')
+        plt.show()
