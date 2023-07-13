@@ -3,8 +3,10 @@ import gecatsim.pyfiles.CommonTools as c
 import numpy as np
 import tempfile
 import os
+from unittest.mock import MagicMock
+from unittest.mock import patch,  Mock, call
 import numpy.matlib as nm
-
+from io import BytesIO, StringIO
 
 def test_make_col():
     row = 3
@@ -133,4 +135,70 @@ def test_cfg():
     assert cfg.src is not None
     assert cfg.srcNew is not None
 
+def test_overlap_no_intersection_x0_lesser():
+    x0 = np.array([0.5, 1.0, 1.5, 2.0, 2.5, 3.0])
+    x1 = np.array([ 5.0 ,5.5, 6.0, 6.5])
+    y0 = np.array([0.5, 1.0, 1.5, 2.0, 2.5, 3.0])
+    y1 = np.array([0.0, 0.0, 0.0, 0.0])
+
+    result = c.overlap(x0, y0, x1)
+
+    assert np.array_equal(result, y1)
+
+def test_overlap_no_intersection_x0_higher():
+    x0 = np.array([ 5.0 ,5.5, 6.0, 6.5, 7.0, 7.5])
+    x1 = np.array([0.5, 1.0, 1.5, 2.0, 2.5, 3.0])
+    y0 = np.array([0.5, 1.0, 1.5, 2.0, 2.5, 3.0])
+    y1 = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+
+    result = c.overlap(x0, y0, x1)
+
+    assert np.array_equal(result, y1)
+
+def test_overlap_no_intersection():
+    x0 = np.array([0.5, 1.0, 1.5, 2.0, 2.5, 3.0])
+    x1 = np.array([1.5, 2.0, 2.5, 3.0, 3.5, 4.0])
+    y0 = np.array([0.5, 1.0, 1.5, 2.0, 2.5, 3.0])
+    y1 = np.array([1.5, 2.0, 2.5, 3.0, 0.0, 0.0])
+
+    result = c.overlap(x0, y0, x1)
+
+    assert np.array_equal(result, y1)
+
+def test_get_vector_boundaries():
+    x = np.array([0.5, 1.0, 1.5, 2.0, 2.5, 3.0])
+    expected = np.array([0.25, 0.75, 1.25, 1.75, 2.25, 2.75, 3.25])
+
+    result = c.get_vector_boundaries(x)
+
+    assert np.array_equal(result, expected)
+
+def test_get_vector_boundaries_single_val():
+    x = np.array([1.0])
+    expected = np.array([[0.999999], [1.000001]])
+
+    result = c.get_vector_boundaries(x)
+
+    assert np.array_equal(result, expected)
+
+@patch("builtins.open", create=True)
+def test_rawread(file_Reader_mock):
+    file_mock = BytesIO(b'\x00\x01\x00\x01\x00\x01\x00\x01')
+    file_Reader_mock.return_value = file_mock
+
+    c.rawread("samplefile.img", [], 'float')
+    assert file_Reader_mock.call_count == 1
+
+
+@patch("builtins.open", create=True)
+def test_rawwrite(file_mock):
+    sample_file = CustomStringIO();
+    file_mock.return_value = sample_file
+    c.rawwrite("sample.txt", "sample_data");
+
+    assert sample_file.getvalue() == "sample_data"
+
+class CustomStringIO(StringIO):
+    def close(self):
+        pass
 
