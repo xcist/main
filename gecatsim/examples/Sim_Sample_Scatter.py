@@ -14,6 +14,7 @@ ct.physics.scatterKernelCallback = ""  # using default
 ct.physics.scatterScaleFactor = 1
 
 ct.physics.callback_pre_log = "Scatter_Correction"  # scatter correction
+ct.physics.scatterCorrectionScaleFactor = 1
 
 ct.protocol.viewsPerRotation = 1
 ct.protocol.viewCount = ct.protocol.viewsPerRotation

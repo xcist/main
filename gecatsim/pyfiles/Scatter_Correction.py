@@ -26,9 +26,9 @@ def Scatter_Correction(cfg, airscan, offsetScan, phantomScan):
     prep = -np.log(prep)
 
     for viewId in tqdm(range(cfg.protocol.viewCount)):
-        if not hasattr(cfg.physics, "scatterScaleFactor"):
-            cfg.physics.scatterScaleFactor = 1
-        sc_preConv = phantomScan[viewId,:]*prep[viewId,:]*0.025*cfg.physics.scatterScaleFactor
+        if not hasattr(cfg.physics, "scatterCorrectionScaleFactor"):
+            cfg.physics.scatterCorrectionScaleFactor = 1
+        sc_preConv = phantomScan[viewId,:]*prep[viewId,:]*0.025*cfg.physics.scatterCorrectionScaleFactor
         sc_preConv = sc_preConv.reshape(cfg.scanner.detectorRowCount, cfg.scanner.detectorColCount)
         sc_conv = conv2(sc_preConv, cfg.scatter_kernel, 'same')
         sc_conv = sc_conv.ravel()
