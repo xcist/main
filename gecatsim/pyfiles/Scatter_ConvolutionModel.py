@@ -38,7 +38,7 @@ def Scatter_ConvolutionModel(cfg, viewId, subViewId):
 
 def get_scatter_kernel():
     scatterDataFile = my_path.find("scatter", "scatter_kernel.dat", "")
-    h = rawread(scatterDataFile, [49,65], 'float');
+    h = rawread(scatterDataFile, [49,65], 'float')
     h = h/np.sum(h)    
     return h
     
