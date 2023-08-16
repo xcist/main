@@ -1,0 +1,22 @@
+materialList = {'plexi' 'water' };
+
+object.center(1,:) = [0.000000 0.000000 0.000000];
+object.half_axes(1,:) = [156.500000 156.500000 50.000000];
+object.euler_angs(1,:) = [90.000000 0.000000 0.000000];
+object.density(1) = 1.000000;
+object.type(1) = 2;
+object.material(1) = 1;
+object.axial_lims(1,:) = [0 0];
+object.shape(1) = 0;
+object.clip{1} = [];
+
+object.center(2,:) = [0.000000 0.000000 0.000000];
+object.half_axes(2,:) = [150.000000 150.000000 50.000000];
+object.euler_angs(2,:) = [90.000000 0.000000 0.000000];
+object.density(2) = 1.000000;
+object.type(2) = 2;
+object.material(2) = 2;
+object.axial_lims(2,:) = [0 0];
+object.shape(2) = 0;
+object.clip{2} = [];
+
