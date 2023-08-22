@@ -85,7 +85,6 @@ function [newE,newI] = XCISTspectrum(kVp, angle, dE)
 	 67.8298   73.3348   74.9963
 	 18.4094   20.5120   19.9288
          0         0         0];
-  allparams(:,:,1) = allparams(:,:,1).*8454;
 
   allparams(:,:,2)=...
   [ 0         0         0
@@ -107,7 +106,6 @@ function [newE,newI] = XCISTspectrum(kVp, angle, dE)
     197.4694  210.8765  219.0544
     73.0435   77.4888   79.7090
     15.6381   16.5770   17.0522];
-  allparams(:,:,2) = allparams(:,:,2).*17378;
 
   allparams(:,:,3)=...
   [0         0         0
@@ -129,7 +127,6 @@ function [newE,newI] = XCISTspectrum(kVp, angle, dE)
    256.7763  270.3153  282.1586
    97.3396  101.9380  105.2753
    22.1465   23.1369   23.7903];
-  allparams(:,:,3) = allparams(:,:,3).*28571;
 
   allparams(:,:,4)=...
   [0         0         0
@@ -151,7 +148,6 @@ function [newE,newI] = XCISTspectrum(kVp, angle, dE)
    284.6359  296.0568  311.1753
    109.3829  113.3104  117.3900
    25.3486   26.1938   26.9541];
-  allparams(:,:,4) = allparams(:,:,4).*40459;
 
   %-------------------------------------------------------------------
   % Interpolate in angle
@@ -163,6 +159,18 @@ function [newE,newI] = XCISTspectrum(kVp, angle, dE)
       angleparams(i,j)=(polyval(pp,angle));
     end
   end
+  % interpolate between angle and kVp
+  group_ang = 8.73:-0.495:5.26;
+  rescale = 0.01.*[ %0.01 is due to the spectrum unit used in testing was cm^2
+  11681 11135   10812   11722   11672   10199   10152   10263
+  22428 21704   21307   22676   22581   19954   19581   19226
+  36252 35615   34373   36867   36385   32570   31924   31214
+  51002 49395   48234   51116   50536   45081   44094   41995];
+  % http://www.ece.northwestern.edu/local-apps/matlabhelp/techdoc/ref/interp2.html
+  allkVp = 80:20:140;
+  allangle = group_ang;
+  valid_idx = [1 2 3 6 7 8]; % note the center two 8-row groups are not used because abnormal photons/mA
+  thisrescale = interp2(allangle(valid_idx), allkVp, rescale(:, valid_idx), angle, kVp, 'spline');
   
   %-------------------------------------------------------------------
   % Interpolate in tube voltage
@@ -247,6 +255,7 @@ function [newE,newI] = XCISTspectrum(kVp, angle, dE)
   dxx=newE(indexh)-newE(indexl);
   newI(indexl)=newI(indexl)+iik(4)*(newE(indexh)-eek(4))/dxx;
   newI(indexh)=newI(indexh)+iik(4)*(eek(4)-newE(indexl))/dxx;
+  newI = newI.*thisrescale;
 
   %outvar = [newE, newI];
   outname = strcat('xcist_kVp', num2str(kVp), '_tar', num2str(angle), '_bin', num2str(dE), '.mat');
