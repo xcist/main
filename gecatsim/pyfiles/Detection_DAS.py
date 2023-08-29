@@ -5,7 +5,7 @@ from gecatsim.pyfiles.CommonTools import *
 import sys
 #from catsim.pyfiles.Detection_Lag import Detection_Lag
 
-def Detection_DAS_gain(viewIn, viewId, cfg):
+def Detection_DAS(viewIn, viewId, cfg):
 
     if hasattr(cfg.scanner.detectionGain, "__len__"):
         if len(cfg.scanner.detectionGain) != cfg.scanner.detectorRowCount:
