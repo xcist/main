@@ -41,3 +41,21 @@ class test_randpf(unittest.TestCase):
         )).any()
         check_value(out_array2)
 
+    def test3_randpf(self):
+        input_array3 = np.float32([[77.60277,   70.674126,  28.36824,   59.245857 ],
+                        [18.446276,  18.401636,  45.93234,   20.344593 ],
+                        [84.89199,   69.48412,   24.458265,  55.101936 ],
+                        [ 3.5849595, 24.861238,   5.987396,  13.479603 ],
+                        [86.30522,   4.846194,  74.6355,    33.699875 ]]
+                                  )
+       # input_array3 = np.float32(input_array3)
+        input_array3[1:4, 1:3] = 0
+        out_array3 = randpf(input_array3)
+        assert (out_array3 == [[73., 80., 22., 55.],
+                               [17.,  0.,  0., 24.],
+                               [89.,  0.,  0., 64.],
+                               [ 4.,  0.,  0., 11.],
+                               [91.,  4., 76., 48.]]
+
+                ).any()
+        check_value(out_array3)
