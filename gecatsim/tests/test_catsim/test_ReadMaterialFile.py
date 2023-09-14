@@ -2,7 +2,7 @@ from gecatsim.pyfiles.CommonTools import *
 from gecatsim.pyfiles.ReadMaterialFile import ReadMaterialFile
 import unittest.mock
 
-class test_ReadMaterialFile(unittest.TestCase):
+class Test_ReadMaterialFile(unittest.TestCase):
     def test_ReadMaterialFile(self):
         (numberOfElements, density, atomicNumbers, massFractions) = ReadMaterialFile('../../material/water')
 

@@ -3,7 +3,7 @@ import unittest.mock
 from gecatsim.pyfiles import CommonTools
 from gecatsim.pyfiles.Xray_Filter import Xray_Filter
 
-class test_Xray_Filter(unittest.TestCase):
+class Test_Xray_Filter(unittest.TestCase):
 
     def test_Xray_Filter(self):
         cfg = CommonTools.CFG("../examples/cfg/Phantom_Sample", "../examples/cfg/Scanner_Sample_generic",
@@ -22,7 +22,9 @@ class test_Xray_Filter(unittest.TestCase):
         cfg.sim.subViewCount = 1
 
         print(trans.max())
+
         #assert trans.max() == 0.92675716
+        # assert (trans == 0.22895).any()
+
         assert (trans == 0.92675716).any()
-        #assert (trans == 0.22895).any()
         assert trans is not None

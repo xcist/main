@@ -3,7 +3,7 @@ import unittest.mock
 from gecatsim.pyfiles import CommonTools
 from gecatsim.pyfiles.Spectrum import Spectrum
 
-class test_Spectrum(unittest.TestCase):
+class Test_Spectrum(unittest.TestCase):
     def test1_Spectrum(self):
         cfg = CommonTools.CFG("../examples/cfg/Phantom_Sample", "../examples/cfg/Scanner_Sample_generic",
                               "../examples/cfg/Protocol_Sample_axial")

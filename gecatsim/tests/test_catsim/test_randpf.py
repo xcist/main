@@ -2,7 +2,7 @@ from gecatsim.pyfiles.CommonTools import *
 from gecatsim.pyfiles.randpf import randpf
 import unittest.mock
 
-class test_randpf(unittest.TestCase):
+class Test_randpf(unittest.TestCase):
     def test_randpf1(self):
         input_array1 = np.float32([[30., 28., 10., 4.],
                            [11., 0., 0., 37.],

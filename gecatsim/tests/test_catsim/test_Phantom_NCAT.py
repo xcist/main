@@ -9,7 +9,7 @@ from unittest.mock import patch, MagicMock
 #Getting 'allocation error in cp_matrix'
 
 
-class test_Phantom_NCAT(unittest.TestCase):
+class Test_Phantom_NCAT(unittest.TestCase):
     def test_Phantom_NCAT(self):
         cfg = CommonTools.CFG("../examples/cfg/Phantom_Sample", "../examples/cfg/Scanner_Sample_generic",
                               "../examples/cfg/Protocol_Sample_axial")

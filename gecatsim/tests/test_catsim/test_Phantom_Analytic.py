@@ -8,7 +8,7 @@ from unittest.mock import patch, MagicMock
 ## Getting 'UnboundLocalError: local variable 'ppmPhantomFilename' referenced before assignment
 
 
-class test_Phantom_Analytic(unittest.TestCase):
+class Test_Phantom_Analytic(unittest.TestCase):
     def test_Phantom_Analytic(self):
         cfg = CommonTools.CFG("../examples/cfg/Phantom_Sample", "../examples/cfg/Scanner_Sample_generic",
                               "../examples/cfg/Protocol_Sample_axial")
