@@ -3,7 +3,7 @@ from gecatsim.pyfiles.randpf import randpf
 import unittest.mock
 
 class test_randpf(unittest.TestCase):
-    def test1_randpf(self):
+    def test_randpf1(self):
         input_array1 = np.float32([[30., 28., 10., 4.],
                            [11., 0., 0., 37.],
                            [79., 0., 0., 82.],
@@ -22,7 +22,7 @@ class test_randpf(unittest.TestCase):
         )).any()
 
         check_value(out_array1)
-    def test2_randpf(self):
+    def test_randpf2(self):
         input_array2 = np.float32([[12.244902, 43.070995, 1.0779757, 63.588734],
                                        [20.174131, 0., 0., 93.01599],
                                        [75.9809, 0., 0., 28.409391],
@@ -41,7 +41,7 @@ class test_randpf(unittest.TestCase):
         )).any()
         check_value(out_array2)
 
-    def test3_randpf(self):
+    def test_randpf3(self):
         input_array3 = np.float32([[77.60277,   70.674126,  28.36824,   59.245857 ],
                         [18.446276,  18.401636,  45.93234,   20.344593 ],
                         [84.89199,   69.48412,   24.458265,  55.101936 ],
