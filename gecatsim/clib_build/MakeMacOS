@@ -10,7 +10,7 @@ CXXFLAGS = -Wall -fPIC -O3
 LDFLAGS = -fPIC
 
 p_nlog_inline.o: p_nlog_inline.c
-	gcc -O0 -g -Wall -static -msse -fPIC -c p_nlog_inline.c
+	gcc -O0 -g -Wall -static -msse -masm=intel -fPIC -c p_nlog_inline.c
 
 64bitLibrary = libcatsim_macos.so
 
@@ -20,7 +20,7 @@ $(64bitLibrary): $(OBJECTS)
 	@echo . Building system-specific library ...
 	@echo .
 	@echo .
-	$(CXX) $(CXXFLAGS) -static-libstdc++ -o $(64bitLibrary) -shared $(OBJECTS) $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) -stdlib=libc++ -o $(64bitLibrary) -shared $(OBJECTS) $(LDFLAGS)
 	mv libcatsim_macos.so ../../lib
 	@echo .
 	@echo .

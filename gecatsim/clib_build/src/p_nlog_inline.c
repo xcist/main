@@ -19,7 +19,11 @@ void p_nlog_inline(float *dest, float *src, int len)
     // stores, so if efficiency is required, then aligned can be required and the
     // two movups instructions can be changed to movaps.
     // We use the rip to generate position independent code on x86_64.
+#ifndef __APPLE__
     __asm__( ".intel_syntax noprefix\n\t"
+#elif defined __APPLE__
+    __asm__( 
+#endif
          "sar          %0,2\n\t"
 #ifdef __i386__
          "movaps       xmm3,[or_mask]\n\t"
@@ -52,7 +56,7 @@ void p_nlog_inline(float *dest, float *src, int len)
          "addps        xmm2,xmm7\n\t"
          "mulps        xmm2,xmm1\n\t"
          "addps        xmm2,[coeff1]\n\t"
-#elif __x86_64__
+#elif __x86_64__  &&  !defined __APPLE__
          "movaps       xmm3,[rip+or_mask]\n\t"
          "movaps       xmm4,[rip+coeff6]\n\t"
          "movaps       xmm5,[rip+coeff5]\n\t"
@@ -83,6 +87,37 @@ void p_nlog_inline(float *dest, float *src, int len)
          "addps        xmm2,xmm7\n\t"
          "mulps        xmm2,xmm1\n\t"
          "addps        xmm2,[rip+coeff1]\n\t"
+#elif __x86_64__ && defined __APPLE__
+         "movaps       xmm3,[rip+_or_mask]\n\t"
+         "movaps       xmm4,[rip+_coeff6]\n\t"
+         "movaps       xmm5,[rip+_coeff5]\n\t"
+         "movaps       xmm6,[rip+_coeff4]\n\t"
+         "movaps       xmm7,[rip+_coeff2]\n\t"
+         "repeat:\n\t"
+         "movups       xmm1,[%1]\n\t"
+         "movaps       xmm0,xmm1\n\t"
+         "andps        xmm1,[rip+_and_mask]\n\t"
+         "orps         xmm1,xmm3\n\t"
+         "movaps       xmm2,[rip+_coeff8]\n\t"
+         "subps        xmm1,xmm3\n\t"
+         "mulps        xmm2,xmm1\n\t"
+         "addps        xmm2,[rip+_coeff7]\n\t"
+         "psrld        xmm0,23\n\t"
+         "mulps        xmm2,xmm1\n\t"
+         "psubd        xmm0,[rip+_exp_sub]\n\t"
+         "addps        xmm2,xmm4\n\t"
+         "cvtdq2ps     xmm0,xmm0\n\t"
+         "mulps        xmm2,xmm1\n\t"
+         "mulps        xmm0,[rip+_exp_mult]\n\t"
+         "addps        xmm2,xmm5\n\t"
+         "mulps        xmm2,xmm1\n\t"
+         "addps        xmm2,xmm6\n\t"
+         "mulps        xmm2,xmm1\n\t"
+         "addps        xmm2,[rip+_coeff3]\n\t"
+         "mulps        xmm2,xmm1\n\t"
+         "addps        xmm2,xmm7\n\t"
+         "mulps        xmm2,xmm1\n\t"
+         "addps        xmm2,[rip+_coeff1]\n\t"
 #endif
          "mulps        xmm2,xmm1\n\t"
          "add          %1,16\n\t"
