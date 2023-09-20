@@ -1,5 +1,4 @@
-#import pytest
-import importlib.util
+# import pytest
 from gecatsim.pyfiles.CheckModules import check_module, import_module_from_spec
 
 

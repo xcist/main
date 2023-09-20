@@ -1,21 +1,25 @@
-from unittest.mock import MagicMock
-from unittest.mock import patch,  Mock, call
 import unittest.mock
+from unittest.mock import patch, call
+
 import gecatsim.pyfiles.OneScan as o
 from gecatsim.pyfiles import CommonTools
-from gecatsim.pyfiles.CommonTools import emptyCFG
+
 
 class TestOneScan(unittest.TestCase):
 
     @patch('gecatsim.pyfiles.OneScan.feval', create=True)
     def test_air_scan(self, faval_mock):
         cfg = CommonTools.CFG("../examples/cfg/Phantom_Sample", "../examples/cfg/Scanner_Sample_generic",
-                    "../examples/cfg/Protocol_Sample_axial")
+                              "../examples/cfg/Protocol_Sample_axial")
+
         cfg.sim.thisScanType = [1, 0, 0]
-        #dummy values for the test to continue without failures
-        cfg.detFlux = [[[1, 0, 0]],[[1, 0, 0]],[[1, 0, 0]]]
+
+        # dummy values for the test to continue without failures
+        cfg.detFlux = [[[1, 0, 0]], [[1, 0, 0]], [[1, 0, 0]]]
         faval_mock.return_value = cfg
+
         o.one_scan(cfg)
+
         expected = [call(cfg.scanner.detectorCallback, cfg), call(cfg.scanner.focalspotCallback, cfg),
                     call(cfg.physics.rayAngleCallback, cfg), call(cfg.protocol.spectrumCallback, cfg),
                     call(cfg.protocol.filterCallback, cfg), call(cfg.physics.fluxCallback, cfg),
@@ -30,7 +34,9 @@ class TestOneScan(unittest.TestCase):
         # dummy values for the test to continue without failures
         cfg.detFlux = [[[1, 0, 0]], [[1, 0, 0]], [[1, 0, 0]]]
         faval_mock.return_value = cfg
+
         o.one_scan(cfg)
+
         expected = [call(cfg.scanner.detectorCallback, cfg), call(cfg.scanner.focalspotCallback, cfg),
                     call(cfg.physics.rayAngleCallback, cfg), call(cfg.protocol.spectrumCallback, cfg),
                     call(cfg.protocol.filterCallback, cfg), call(cfg.physics.fluxCallback, cfg),
@@ -42,7 +48,7 @@ class TestOneScan(unittest.TestCase):
         cfg = CommonTools.CFG("../examples/cfg/Phantom_Sample", "../examples/cfg/Scanner_Sample_generic",
                               "../examples/cfg/Protocol_Sample_axial")
         cfg.sim.thisScanType = [0, 0, 1]
-        #set this a lesser value
+        # set this a lesser value
         cfg.protocol.stopViewId = 5
         # dummy values for the test to continue without failures
         cfg.detFlux = [[[1, 0, 0]], [[1, 0, 0]], [[1, 0, 0]]]
@@ -58,7 +64,7 @@ class TestOneScan(unittest.TestCase):
                     call(cfg.protocol.filterCallback, cfg),
                     call(cfg.physics.fluxCallback, cfg)]
 
-        for viewId in range( cfg.protocol.stopViewId + 1):
+        for viewId in range(cfg.protocol.stopViewId + 1):
             for subViewId in range(2):
                 expected.append(call(cfg.protocol.scanTrajectory, cfg, viewId))
                 expected.append(call(cfg.phantom.projectorCallback, cfg, viewId, subViewId))
@@ -89,4 +95,3 @@ class TestOneScan(unittest.TestCase):
         o.update_scan_time(cfg, 10)
 
         assert cfg.time == 162.5
-

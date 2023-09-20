@@ -1,18 +1,21 @@
-from gecatsim.pyfiles.Detection_EI import Detection_EI
 import unittest.mock
+
 from gecatsim.pyfiles.CommonTools import *
-import numpy as np
+from gecatsim.pyfiles.Detection_EI import Detection_EI
 
-class test_Detection_EI(unittest.TestCase):
 
-    def test_Detection_EI(self, signal_mock):
+class TestDetection_EI(unittest.TestCase):
+
+    def test_Detection_EI(self):
         cfg = CFG("../examples/cfg/Phantom_Sample", "../examples/cfg/Scanner_Sample_generic",
-                    "../examples/cfg/Protocol_Sample_axial")
+                  "../examples/cfg/Protocol_Sample_axial")
+
+        cfg.sim.enableQuantumNoise = 1
 
         cfg.sim.startViewId = 0
         cfg.sim.stopViewId = 2
-        cfg.sim.enableQuantumNoise = 1
         cfg.sim.subViewCount = 1
+
         cfg.det.totalNumCells = 5
         cfg.det.cosBetas = np.ones([cfg.det.totalNumCells, 1], dtype=np.single)
 
@@ -20,6 +23,7 @@ class test_Detection_EI(unittest.TestCase):
 
         cfg.thisSubView = np.float32(np.random.random([cfg.det.totalNumCells, cfg.sim.Evec.size]) * 100)
         cfg.thisSubView[1:4, 3:5] = 0
+
         viewId = 0
         subViewId = 0
         cfg.sim.eNoise = 3500
