@@ -14,6 +14,7 @@ void p_nlog_inline(float *dest, float *src, int len)
     // worry about it.
     assert( (len & 0x3) == 0 );
 
+/*
     // We use unaligned loads and stores, so it is not necessary to enforce alignment
     // on the input and output.  It should be more efficient to use aligned loads and
     // stores, so if efficiency is required, then aligned can be required and the
@@ -129,8 +130,9 @@ void p_nlog_inline(float *dest, float *src, int len)
          "dec          %0\n\t"
          "jnz          repeat\n\t"
          ".att_syntax\n\t"
-         : /* no output registers */
-         : "r" (len), "r" (src), "r" (dest) : "memory" /* %0 == len, %1 == src, %2 == dest */  );
+*/
+         //: /* no output registers */
+         //: "r" (len), "r" (src), "r" (dest) : "memory" /* %0 == len, %1 == src, %2 == dest */  );
 }
 
 // The following is some code to test the p_nlog_inline function versus p_nlog.  It
