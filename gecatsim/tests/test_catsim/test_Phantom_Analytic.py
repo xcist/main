@@ -4,7 +4,7 @@ from gecatsim.pyfiles import CommonTools
 from gecatsim.pyfiles.Phantom_Analytic import Phantom_Analytic
 from unittest.mock import patch, MagicMock
 
-## Not Fixed
+#FIXME: need to fix this
 ## Getting 'UnboundLocalError: local variable 'ppmPhantomFilename' referenced before assignment
 
 

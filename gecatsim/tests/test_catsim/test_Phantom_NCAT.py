@@ -4,7 +4,7 @@ from gecatsim.pyfiles import CommonTools
 from gecatsim.pyfiles.Phantom_NCAT import Phantom_NCAT
 from unittest.mock import patch, MagicMock
 
-#not fixed
+#FIXME: need to fix this
 
 #Getting 'allocation error in cp_matrix'
 
