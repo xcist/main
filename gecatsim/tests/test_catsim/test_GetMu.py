@@ -10,7 +10,7 @@ from gecatsim.pyfiles.GetMu import GetMu
 class TestGetMu(unittest.TestCase):
 
     def test_get_mu_precalculated_values(self):
-        Evec = range(10, 70, 10
+        Evec = range(10, 70, 10)
 
         mu = GetMu('water', Evec)
 
