@@ -1,5 +1,4 @@
-#import pytest
-import importlib.util
+# import pytest
 from gecatsim.pyfiles.CheckModules import check_module, import_module_from_spec
 
 
@@ -19,7 +18,7 @@ def test_collections_module():
 
 
 def test_catsim_module():
-    module_spec = check_module('catsim')
+    module_spec = check_module('gecatsim')
     assert module_spec is not None
     if module_spec:
         module = import_module_from_spec(module_spec)
@@ -47,7 +46,7 @@ def test_reconstruction_module():
         module = import_module_from_spec(module_spec)
         print(dir(module))
 
-    module_spec = check_module('reconstruction.pyfiles.fdk_equiAngle')
+    module_spec = check_module('gecatsim.reconstruction.pyfiles.fdk_equiAngle')
     assert module_spec is not None
     if module_spec:
         module = import_module_from_spec(module_spec)
