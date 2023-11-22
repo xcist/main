@@ -33,7 +33,7 @@ def test_catsim_module():
 
 
 def test_reconstruction_module():
-    module_spec = check_module('reconstruction')
+    module_spec = check_module('gecatsim.reconstruction')
     assert module_spec is not None
     if module_spec:
         module = import_module_from_spec(module_spec)
