@@ -57,7 +57,7 @@ def test_reconstruction_module():
         assert 'PathHelper' in dir_recon_fdk_equi
         assert 'mapConfigVariablesToFDK' in dir_recon_fdk_equi
 
-    module_spec = check_module('reconstruction.pyfiles')
+    module_spec = check_module('gecatsim.reconstruction.pyfiles')
     assert module_spec is not None
     if module_spec:
         module = import_module_from_spec(module_spec)
