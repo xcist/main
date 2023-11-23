@@ -15,6 +15,7 @@ class Test_Xray_Filter(unittest.TestCase):
 
         cfg.protocol.bowtie = 'medium'
         cfg.protocol.flatFilter = ['al', 0.1, 'water', 2]
+        cfg.sim.subViewCount = 1
 
         cfg = Xray_Filter(cfg)
         trans = cfg.src.filterTrans.reshape(cfg.scanner.detectorColCount, cfg.scanner.detectorRowCount, cfg.spec.nEbin)

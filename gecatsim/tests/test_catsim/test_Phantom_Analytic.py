@@ -14,6 +14,7 @@ class Test_Phantom_Analytic(unittest.TestCase):
                               "../examples/cfg/Protocol_Sample_axial")
 
         cfg.phantom.filename = '../phantom/CatSimLogo_1024/CatSim_logo_1024.json'
+        cfg.sim.subViewCount = 1
 
         cfg = feval(cfg.scanner.detectorCallback, cfg)
         cfg = feval(cfg.scanner.focalspotCallback, cfg)
