@@ -5,7 +5,10 @@ import unittest.mock
 
 class Test_ReadMaterialFile(unittest.TestCase):
     def test_ReadMaterialFile(self):
-        (numberOfElements, density, atomicNumbers, massFractions) = ReadMaterialFile('../material/water')
+        print("/n")
+        print(os.path.exists('../../material/water'))
+
+        (numberOfElements, density, atomicNumbers, massFractions) = ReadMaterialFile('../../material/water')
 
         assert numberOfElements == 2
         assert density == 1.0
