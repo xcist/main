@@ -97,7 +97,7 @@ def test_feval_invalid_config():
 def test_path_helper_load():
     # .gecatsim may not be always availablem so not testing the file loading
     pathhelper = c.PathHelper();
-    assert len(pathhelper.paths) == 11
+    assert len(pathhelper.paths) == 10
 
     assert pathhelper.paths["main"] is not None
     assert pathhelper.paths["top"] is not None
