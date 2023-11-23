@@ -9,7 +9,7 @@ class Test_ReadMaterialFile(unittest.TestCase):
         # print("/n")
         # print(os.path.exists('../../material/water'))
 
-        (numberOfElements, density, atomicNumbers, massFractions) = ReadMaterialFile('gecatsim.material.water')
+        (numberOfElements, density, atomicNumbers, massFractions) = ReadMaterialFile('gecatsim/material/water')
 
         assert numberOfElements == 2
         assert density == 1.0
