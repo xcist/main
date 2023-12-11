@@ -7,7 +7,7 @@ def C_Source_Voxelized_Set(cfg, SourceWeights = None,NumberOfSubSources = None):
     #cfgnew = cfg.get_current_cfg();
     func = cfg.clib.set_src_info_vox
     sourceWeights = np.copy(cfg.src.weights.astype(np.double), order='C')
-    #NumberOfSubSources = 
+
     NumberOfSubSources = np.int32(NumberOfSubSources)
     func.argtypes = [ndpointer(c_double), c_int]
     func.restype = None
