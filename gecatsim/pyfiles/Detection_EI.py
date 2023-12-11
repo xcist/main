@@ -57,7 +57,7 @@ def Detection_EI(cfg, viewId, subViewId):
 
 if __name__ == "__main__":
 
-    cfg = source_cfg("../cfg/Physics_Default.cfg")
+    cfg = source_cfg("./cfg/default.cfg")
     
     cfg.sim.startViewId = 0
     cfg.sim.stopViewId = 2
