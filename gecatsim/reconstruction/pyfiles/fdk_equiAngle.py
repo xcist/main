@@ -89,6 +89,8 @@ def load_C_recon_lib():
     ll = ct.cdll.LoadLibrary
     if os.name == "nt":
         lib_file = "fdk_equiAngle.dll"
+    elif os.uname().sysname == 'Darwin':
+        lib_file = "fdk_equiAngle_macos.so"
     else:
         lib_file = "fdk_equiAngle.so"
     clib = ll(os.path.join(recon_lib, lib_file))
