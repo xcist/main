@@ -8,17 +8,13 @@ import numpy as np
 
 
 def recon(cfg):
-
     # If doing the recon, load the projection data, do the recon, and save the resulting image volume.
     if cfg.do_Recon:
         prep = load_prep(cfg)
 
-        # The following line doesn't work - need to fix it when new recons are added.
-        # imageVolume3D = feval("reconstruction." + cfg.recon.reconType, cfg, prep)
+        # cfg.recon.reconType is the recon function's name
         imageVolume3D = feval("gecatsim.reconstruction.pyfiles." + cfg.recon.reconType, cfg, prep)
 
-        # A hack until the previous line is fixed.
-        #imageVolume3D = fdk_equiAngle(cfg, prep)
         imageVolume3D = scaleReconData(cfg, imageVolume3D)
 
         if cfg.recon.saveImageVolume:
