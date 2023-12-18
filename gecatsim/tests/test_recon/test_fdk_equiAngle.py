@@ -27,7 +27,7 @@ class Test_fdk_equiAngle(unittest.TestCase):
         cfg.recon.sliceThickness = 0.568  # reconstruction inter-slice interval (in mm)
 
         ##--------- Run simulation
-        #cfg.run_all()  # run the scans defined by protocol.scanTypes
+        cfg.run_all()  # run the scans defined by protocol.scanTypes
 
         ##--------- Reconstruction
         cfg.do_Recon = 1 
