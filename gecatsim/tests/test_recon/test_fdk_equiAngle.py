@@ -3,6 +3,7 @@ from gecatsim.pyfiles.CommonTools import *
 from gecatsim.reconstruction.pyfiles.recon import *
 from gecatsim.reconstruction.pyfiles.fdk_equiAngle import *
 import unittest.mock
+import sys
 
 class Test_fdk_equiAngle(unittest.TestCase):
     def test_fdk_equiAngle_1(self):
