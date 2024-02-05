@@ -9,7 +9,7 @@ from gecatsim.pyfiles.CommonTools import *
 
 # python conversion from C_Materials_Polygonal_Set.m
 def set_materials(cfg, materialList):
-    Evec = cfg.spec.Evec
+    Evec = np.array(cfg.spec.Evec)
     nMat = len(materialList)
     Mus = np.zeros([Evec.size, nMat], dtype=np.float64)
     for i in range(nMat):
