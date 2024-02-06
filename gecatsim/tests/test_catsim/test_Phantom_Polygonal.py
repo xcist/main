@@ -1,7 +1,10 @@
 from gecatsim.pyfiles.CommonTools import *
 import unittest.mock
 from gecatsim.pyfiles import CommonTools
-from gecatsim.pyfiles.Phantom_Polygonal import set_materials
+from gecatsim.pyfiles.Phantom_Polygonal import (
+    set_materials,
+    C_Phantom_Polygonal_Clear
+)
 from unittest.mock import patch, MagicMock
 from gecatsim.pyfiles.GetMu import GetMu
 from ctypes import *
@@ -58,3 +61,15 @@ class Test_Phantom_Polygonal_set_materials(unittest.TestCase):
         set_materials(cfg,materialList)
 
         assert cfg.clib.set_material_info.call_count == 1
+
+
+class Test_C_Phantom_Polygonal_Clear(unittest.TestCase):
+    def test_C_Phantom_Polygonal_Clear(self):
+        cfg = CommonTools.CFG("../examples/cfg/Phantom_Sample", "../examples/cfg/Scanner_Sample_generic",
+                    "../examples/cfg/Protocol_Sample_axial")
+
+        num_polygons = 5
+        cfg.clib.clear_polygonalized_phantom = MagicMock()
+        C_Phantom_Polygonal_Clear(cfg, num_polygons)
+
+        assert cfg.clib.clear_polygonalized_phantom.call_count == 1
