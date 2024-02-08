@@ -12,7 +12,7 @@ class CatSim:
     '''
     def __init__(self, *para):
         cfg = CFG(*para)
-        self.attrList = ['protocol', 'scanner', 'phantom', 'physics', 'recon', 'resultsName', 'dose']
+        self.attrList = ['protocol', 'scanner', 'phantom', 'physics', 'recon', 'resultsName', 'dose', 'do_prep', 'do_recon']
         self.cfg_to_self(cfg)
         
     def run_all(self, *para):
@@ -53,6 +53,8 @@ class CatSim:
     def prep_view(self, *para):
         import gecatsim.pyfiles.PrepView as PrepView
         cfg = self.get_current_cfg(*para)
+        if hasattr(cfg,"do_prep") and not cfg.do_prep:
+            return cfg
         print('Prep view')
         cfg = PrepView.prep_view(cfg)
         return cfg
@@ -74,11 +76,13 @@ class CatSim:
     def self_to_cfg(self):
         cfg = self.cfg
         for attr in self.attrList:
-            setattr(cfg, attr, getattr(self, attr))
+            if hasattr(self,attr):
+                setattr(cfg, attr, getattr(self, attr))
         return cfg
         
     def cfg_to_self(self, cfg):
         self.cfg = cfg
         for attr in self.attrList:
-            setattr(self, attr, getattr(cfg, attr))
+            if hasattr(cfg,attr):
+                setattr(self, attr, getattr(cfg, attr))
             

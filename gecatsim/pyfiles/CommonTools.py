@@ -79,6 +79,7 @@ class PathHelper:
         self.paths["spectrum"] = os.path.join(self.paths["top"], 'spectrum')
         self.paths["dose_data"] = os.path.join(self.paths["top"], 'dose_data')
         self.paths["focal_spot"] = os.path.join(self.paths["top"], 'focal_spot')
+        self.paths["response_matrix"] = os.path.join(self.paths["top"], 'response_matrix')
         self.extra_search_paths = []
         self.read_catsim_init()
 
@@ -269,17 +270,29 @@ def vectornorm(xyz):
         return norms
 
 
-def overlap(x0, y0, x1):
-    # length
-    n0 = len(x0)
-    n1 = len(x1)
+def overlap(x0, y0, x1, b0=None, b1=None):
+    if x0 is not None and len(x0)>0:
+        n0 = len(x0)  # length
+        b0 = get_vector_boundaries(x0)  # boundaries
+    elif b0 is not None and len(b0)>1:
+        n0 = len(b0)-1
+        if isinstance(b0,list):
+            b0 = np.array(b0)
+    else:
+        raise Exception("overlap arguments need either x0 or b0 (boundary)")
     
-    # boundaries
-    b0 = get_vector_boundaries(x0)
-    b1 = get_vector_boundaries(x1)
+    if x1 is not None and len(x1)>0:
+        n1 = len(x1)
+        b1 = get_vector_boundaries(x1)
+    elif b1 is not None and len(b1)>1:
+        n1 = len(b1)-1
+        if isinstance(b1,list):
+            b1 = np.array(b1)
+    else:
+        raise Exception("overlap arguments need either x1 or b1 (boundary)")
     
     # default
-    y1 = np.zeros(x1.shape)
+    y1 = np.zeros(b1[0:-1].shape)
     
     # pre-loop, find the start boundaries
     i = -1

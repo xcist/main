@@ -12,8 +12,12 @@ def WriteRawView(cfg, viewId):
     fname = cfg.resultsName + extName
     
     # Change the dim from row->col to col->row
-    dims = [cfg.scanner.detectorColCount, cfg.scanner.detectorRowCount]
-    thisView = cfg.thisView.reshape(dims).T.ravel()
+    if cfg.thisView.ndim==1:
+        dims = [cfg.scanner.detectorColCount, cfg.scanner.detectorRowCount]
+        thisView = cfg.thisView.reshape(dims).T.ravel()
+    else:
+        dims = [cfg.scanner.detectorColCount, cfg.scanner.detectorRowCount, cfg.thisView.shape[1]]  # [col,row,bin]
+        thisView = cfg.thisView.reshape(dims).transpose((1,0,2)).ravel()
     
     # access mode
     if viewId == cfg.sim.startViewId:
