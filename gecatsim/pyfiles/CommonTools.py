@@ -70,16 +70,16 @@ class PathHelper:
         self.paths = {}
         self.paths["main"] = os.path.dirname(os.path.abspath(__file__))
         self.paths["top"] = os.path.split(self.paths["main"])[0]
-        self.paths["cfg"] = os.path.join(self.paths["top"], 'cfg')
-        self.paths["lib"] = os.path.join(self.paths["top"], 'lib')
         self.paths["bowtie"] = os.path.join(self.paths["top"], 'bowtie')
+        self.paths["cfg"] = os.path.join(self.paths["top"], 'cfg')
+        self.paths["dose"] = os.path.join(self.paths["top"], 'dose', 'data')
+        self.paths["focal_spot"] = os.path.join(self.paths["top"], 'focal_spot')
+        self.paths["lib"] = os.path.join(self.paths["top"], 'lib')
         self.paths["material"] = os.path.join(self.paths["top"], 'material')
         self.paths["phantom"] = os.path.join(self.paths["top"], 'phantom')
+        self.paths["response_matrix"] = os.path.join(self.paths["top"], 'response_matrix')
         self.paths["scatter"] = os.path.join(self.paths["top"], 'scatter')
         self.paths["spectrum"] = os.path.join(self.paths["top"], 'spectrum')
-        self.paths["dose_data"] = os.path.join(self.paths["top"], 'dose_data')
-        self.paths["focal_spot"] = os.path.join(self.paths["top"], 'focal_spot')
-        self.paths["response_matrix"] = os.path.join(self.paths["top"], 'response_matrix')
         self.extra_search_paths = []
         self.read_catsim_init()
 

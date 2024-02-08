@@ -1,4 +1,4 @@
-# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/main/blob/master/license/LICENSE
 
 ###------------ import XCIST-CatSim
 import gecatsim as xc

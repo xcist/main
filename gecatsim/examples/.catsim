@@ -6,6 +6,6 @@
         "any path that does not exist will print a warning statement"
     ],
     "search_paths" : [
-        "d:\\catSim\\cathy-samplessss"
+        "d:\\gecatSim\\samples"
     ]
 }
