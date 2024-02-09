@@ -45,9 +45,11 @@ def load_catsim_lib():
 def catdoserecon(configfilename = None,cfg = None,adjust = None,preadjust = None,silent = None): 
     ## check arguments and load catsim lib, note this is not dose lib
     doselib = load_catsim_lib()
+    
     ## view angles
     dviewangle = 2 * np.pi / cfg.protocol.viewsPerRotation
     viewangles = (np.arange(cfg.protocol.startViewId, cfg.protocol.startViewId+cfg.protocol.viewCount)) * dviewangle * cfg.protocol.rotationDirection
+    
     ## detector geometry
     cfg = feval(cfg.scanner.detectorCallback,cfg)
     #cfg0 = copy.deepcopy(cfg)
@@ -71,16 +73,21 @@ def catdoserecon(configfilename = None,cfg = None,adjust = None,preadjust = None
     det_x = np.squeeze(det_xyz[0,int(np.ceil(nrdetrows / 2)),:])
     det_y = np.squeeze(det_xyz[1,int(np.ceil(nrdetrows / 2)),:])
     det_z = np.squeeze(det_xyz[2,:,int(np.ceil(nrdetcols / 2))])
+    
     ## X-ray source position
     cfg = feval(cfg.scanner.focalspotCallback,cfg)
     # source coordinate
     src_xyz = np.single(np.mean(cfg.src.samples,0))
+    
     ## ray angles
-    #cfg = Detector_RayAngles_2D(cfg, det0,src0)
     cfg = feval(cfg.physics.rayAngleCallback, cfg)
+    
     ## spectrum
+    cfg.sim.subViewCount = 1
+    cfg.sim.isOffsetScan = 0
     cfg = feval(cfg.protocol.spectrumCallback, cfg)
     #cfg.Evec = cfg.spec.Evec
+    
     ## X-ray flux for all cells and views
     sino = np.single(np.zeros((cfg.physics.energyCount, cfg.det.totalNumCells, cfg.protocol.viewCount)))
     ViewTime = cfg.protocol.rotationTime/cfg.protocol.viewsPerRotation
@@ -88,6 +95,7 @@ def catdoserecon(configfilename = None,cfg = None,adjust = None,preadjust = None
     # TODO: what is start time
     cfg.time = (cfg.protocol.startViewId - 0.5) * ViewTime + 0.5 * SubviewTime
     #cfg.time = cfg.start_time + (cfg.protocol.startViewId - 1.5) * ViewTime + 0.5 * SubviewTime
+    
     # TODO: what is this for 
     cfg.dose.doselib = load_C_lib()
     ViewIndex = 0
@@ -134,7 +142,7 @@ def catdoserecon(configfilename = None,cfg = None,adjust = None,preadjust = None
     mydc = myDC()
     if len(cfg.spec.Evec.shape) < 1: cfg.spec.Evec = np.expand_dims(cfg.spec.Evec,0)
     for EnergyIndex in np.arange(cfg.physics.energyCount):
-        print('Process Energy Bin # %d\r' % (EnergyIndex))
+        print('Process Energy Bin # %d/%d\r' % (EnergyIndex+1, cfg.physics.energyCount))
         ee = [cfg.spec.Evec[EnergyIndex]]
         mu_water = xc.GetMu('water',ee)
         this_dosevol = np.single(np.zeros((nrcols,nrrows,nrplanes)))
@@ -183,7 +191,7 @@ def catdoserecon(configfilename = None,cfg = None,adjust = None,preadjust = None
     return dosevol
     
 def WriteDoseFiles(cfg = None,ViewNumberString = None,DoseVolume = None,VerboseLocal = None): 
-    if not hasattr(cfg, 'dose.doseFileName') :
+    if not hasattr(cfg.dose, 'doseFileName') :
         cfg.dose.doseFileName = cfg.results_basename
     
     if hasattr(cfg.dose,'convertTomGy') and cfg.dose.convertTomGy == 1:

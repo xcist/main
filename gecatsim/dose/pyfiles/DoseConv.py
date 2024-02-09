@@ -1,12 +1,12 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/main/blob/master/license/LICENSE
 
 import numpy as np
-import catsim as xc
 from scipy import interpolate,io
-from catsim.pyfiles.CommonTools import *
-from .GetMuByProcess import GetMuByProcess
-from .get_voxel_stopping_power import get_voxel_stopping_power
-from .doseconvol import doseconvol
+import gecatsim as xc
+from gecatsim.pyfiles.CommonTools import *
+from gecatsim.dose.pyfiles.GetMuByProcess import GetMuByProcess
+from gecatsim.dose.pyfiles.get_voxel_stopping_power import get_voxel_stopping_power
+from gecatsim.dose.pyfiles.doseconvol import doseconvol
 
 def DoseConv(cfg = None, mydc=None, ee = None,dosevol_int = None,mu_vol = None,voxel_xy_size = None,mask_highZ = None): 
     mask_lowZ = 1 - mask_highZ

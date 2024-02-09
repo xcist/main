@@ -23,18 +23,8 @@ def C_DD3Dose(cfg,x0 = None,y0 = None,z0 = None,nrdetcols = None,nrdetrows = Non
     #zshifts = zshifts[None,:]
     #viewangles = viewangles[None,:]
     
-    if debug:
-        ll = cdll.LoadLibrary
-        lib_file = "Dose_Recon_Library_Linux64.so"
-        recon_lib = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../lib")
-        clib = ll(os.path.join(recon_lib, lib_file))
-        fun = clib.DD3Dose
-    else:
-        ###------- load C lib
-        cfgnew = cfg.get_current_cfg()
-    
-        ###------- C function and interface
-        fun = cfgnew.dose.doselib.DD3Dose
+    ###------- C function and interface
+    fun = cfg.dose.doselib.DD3Dose
 
     fun.argtypes = [c_float, c_float, c_float,
         c_int, c_int,

@@ -1,29 +1,37 @@
-import catsim as xc
-from reconstruction.pyfiles import recon
-import sys
-import os
+import sys, os
+import gecatsim as xc
+import gecatsim.reconstruction.pyfiles.recon as recon
+from gecatsim.dose.pyfiles.catdoserecon import catdoserecon
+
 
 doSim = True
 doRecon = True
 doDose = True
 
 ct = xc.CatSim("dose_physics", "dose_phantom", "dose_recon", "dose_scanner", "dose_protocol", "dose_doserecon")  # initialization
+
+# add any additional search directories
+my_path = xc.pyfiles.CommonTools.my_path
+my_path.add_search_path("my_data")
+
 ct.resultsName = "out" # for sim and recon
 
 if doSim:
     ct.run_all()  # run the scans defined by protocol.scanTypes
 
 if doRecon:
-    cfg = ct.get_current_cfg();
-    cfg.do_Recon = 1
-    cfg.waitForKeypress = 0
-    recon.recon(cfg)
+    ct.do_Recon = 1
+    recon.recon(ct)
 
 if doDose:
-    cfg = ct.get_current_cfg();
-    cfg.sim.isOffsetScan = 0
-    cfg.results_basename = "doserecon" # for doserecon
-    cfg.imageFileName = 'out';  #% name of recon image
-    #ct.doseFileName = 'doserecon';
-    from catsim.pyfiles.doserecon.pyfiles.catdoserecon import catdoserecon
-    dosevol = catdoserecon(cfg=cfg);
+    ct.dose.imageFileName = 'out_512x512x4.raw'    # name of recon image
+    ct.dose.doseFileName = 'dose'                  # for doserecon
+    cfg = ct.get_current_cfg()
+    dosevol = catdoserecon(cfg=cfg)
+
+## check results
+import matplotlib.pyplot as plt
+doseVolFname = "%s.mGy" %(ct.dose.doseFileName)
+img = xc.rawread(doseVolFname, [ct.recon.sliceCount, ct.dose.nVoxel, ct.dose.nVoxel], 'float')
+plt.imshow(img[0,:,:])
+plt.show()
