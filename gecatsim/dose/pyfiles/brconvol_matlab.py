@@ -56,16 +56,14 @@ def brconvol_matlab(data = None,sigma = None,dim = None):
 
 if __name__ == '__main__':
     from scipy import io as sio
-    mat_in = sio.loadmat("brconv_in.mat")
-    breakpoint()
+    mat_in = sio.loadmat("unittest/brconv_in.mat")
 
-    pyout = brconvol_matlab(mat_in['data'], mat_in['sigma'], mat_in['dim']-1)
+    py_out = brconvol_matlab(mat_in['data'], mat_in['sigma'], mat_in['dim']-1)
 
-    mat_out = sio.loadmat("brconv_out.mat")
+    mat_out = sio.loadmat("unittest/brconv_out.mat")
+    mat_out = mat_out['data']
 
-    breakpoint()
     try:
-        assert np.allclose(pydosevol, mat_out['dosevol'], atol=1.E-8), 'dosevol'
+        assert np.allclose(py_out, mat_out, atol=1.E-8), 'dosevol'
     except AssertionError as err:
         print(err)
-        breakpoint()

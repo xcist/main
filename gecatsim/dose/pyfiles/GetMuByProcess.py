@@ -34,7 +34,7 @@ def GetMuByProcess(cfg,MaterialName = None,Evec = None,ProcessName = None,PairPr
         #MAC = np.matlib.repmat(MAC,4,1)
         MAC = feval('C_Materials_CrossSectionMAC_ByProc_Get',cfg, AtomicNumbers,NormalizedMassFractions,Evec)
         # Because the mass fractions passed are normalized by Materials_ElementalComposition_Get,
-# units are cm^2/g of material (not per gram of element).
+        # units are cm^2/g of material (not per gram of element).
         # Convert MAC to mu for each element in the material.
         Mu = MAC * Density
         # Units are cm^-1 (cm^2/g * g/cm^3)

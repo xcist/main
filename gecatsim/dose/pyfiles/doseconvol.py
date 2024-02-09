@@ -26,23 +26,6 @@ def doseconvol(cfg = None,dosevol = None,vol = None,mu_water = None,voxel_xy_siz
     return dosevol_rt
 
 if __name__ == '__main__':
-    from scipy import io as sio
-    import matplotlib.pyplot as plt
-    matin = sio.loadmat("doseconv_in.mat")
-    breakpoint()
-    mydc = myDC()
-    pyout = doseconvol(mydc, matin['dosevol'], matin['vol'], matin['mu_water'], matin['voxel_xy_size'], matin['x'])
-
-    matout = sio.loadmat("doseconv_out.mat")
-    matout = matout['dosevol']
-
-    breakpoint()
-    try:
-        assert np.allclose(pyout, matout, atol=1.E-8), 'dosevol'
-    except AssertionError as err:
-        print(err)
-        breakpoint()
-
     # for persisten variables in 
     class myDC():
         def __init__(self):
@@ -51,3 +34,19 @@ if __name__ == '__main__':
             self.dosereconkernel = None
             self.ee_CdE = None
             self.ee_mE = None
+            
+    from scipy import io as sio
+    
+    matin = sio.loadmat("unittest/doseconv_in.mat")
+    
+    mydc = myDC()
+    pyout = doseconvol(mydc, matin['dosevol'], matin['vol'], matin['mu_water'], matin['voxel_xy_size'], matin['x'])
+
+    matout = sio.loadmat("unittest/doseconv_out.mat")
+    matout = matout['dosevol']
+
+    try:
+        assert np.allclose(pyout, matout, atol=1.E-8), 'dosevol'
+    except AssertionError as err:
+        print(err)
+

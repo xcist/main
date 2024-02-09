@@ -70,19 +70,18 @@ if __name__ == '__main__':
             self.ee_mE = None
     from scipy import io as sio
     import matplotlib.pyplot as plt
-    import catsim
-    matin = sio.loadmat("doseconpar_in.mat")
-    cfg=catsim.CatSim('../run/all_in_one')
+    from gecatsim.pyfiles.CommonTools import *
+    
+    matin = sio.loadmat("unittest/doseconpar_in.mat")
+    cfg = CFG()
     mydc = myDC()
-    breakpoint()
+    
     pyout = DoseConv(cfg, mydc, matin['ee'][0], matin['dosevol_int'], matin['mu_vol'], matin['voxel_xy_size'][0,0], matin['mask_highZ'])
 
-    matout = sio.loadmat("doseconpar_out.mat")
+    matout = sio.loadmat("unittest/doseconpar_out.mat")
     matout = matout['dosevol_final']
 
-    breakpoint()
     try:
         assert np.allclose(pyout, matout, atol=1.E-8), 'dosevol'
     except AssertionError as err:
         print(err)
-        breakpoint()

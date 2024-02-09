@@ -64,18 +64,21 @@ def C_DD3Dose(cfg,x0 = None,y0 = None,z0 = None,nrdetcols = None,nrdetrows = Non
     
 if __name__ == '__main__':
     from scipy import io as sio
-    mat_in = sio.loadmat("dd3dose_in.mat")
-    breakpoint()
+    from gecatsim.pyfiles.CommonTools import *
+    from gecatsim.dose.pyfiles.catdoserecon import load_C_lib
 
-    pydosevol, pysino = C_DD3Dose(None,mat_in['x0'][0,0], mat_in['y0'][0,0], mat_in['z0'][0,0], mat_in['nrdetcols'][0,0], mat_in['nrdetrows'][0,0], mat_in['xds'], mat_in['yds'], mat_in['zds'],
+    cfg = CFG()
+    cfg.dose.doselib = load_C_lib()
+    
+    mat_in = sio.loadmat("unittest/dd3dose_in.mat")
+
+    pydosevol, pysino = C_DD3Dose(cfg,mat_in['x0'][0,0], mat_in['y0'][0,0], mat_in['z0'][0,0], mat_in['nrdetcols'][0,0], mat_in['nrdetrows'][0,0], mat_in['xds'], mat_in['yds'], mat_in['zds'],
         mat_in['xoffset'][0,0], mat_in['yoffset'][0,0], mat_in['zoffset'][0,0], mat_in['viewangles'], mat_in['zshifts'], mat_in['nrviews'][0,0], mat_in['sino'], mat_in['nrcols'][0,0], mat_in['nrrows'][0,0], mat_in['nrplanes'][0,0],
         mat_in['vol'], mat_in['dosevol'], mat_in['vox_xy_size'][0,0], mat_in['vox_z_size'][0,0], debug=True)
 
-    mat_out = sio.loadmat("dd3dose_out.mat")
+    mat_out = sio.loadmat("unittest/dd3dose_out.mat")
 
-    breakpoint()
     try:
         assert np.allclose(pydosevol, mat_out['dosevol'], atol=1.E-8), 'dosevol'
     except AssertionError as err:
         print(err)
-        breakpoint()
