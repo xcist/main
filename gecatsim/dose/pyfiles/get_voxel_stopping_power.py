@@ -9,7 +9,7 @@ from gecatsim.dose.pyfiles.GetMuByProcess import GetMuByProcess
 def get_voxel_stopping_power(cfg, material = None,ee = None,voxel_size = None,dens = None): 
     # Geant4 results: 'Compton_ELoss_factor',ee=10:10:160
     #load scatter_E_loss_fraction.mat;
-    scat_dir = my_path.find("dose", 'scatter_E_loss_fraction.mat', '')
+    scat_dir = my_path.find("dose_data", 'scatter_E_loss_fraction.mat', '')
     scat_data = io.loadmat(scat_dir)
     data_Compt_dE_frac = np.squeeze(scat_data['Compton_ELoss_factor'])
     # interpolation to Evec

@@ -13,21 +13,21 @@ def DoseConv(cfg = None, mydc=None, ee = None,dosevol_int = None,mu_vol = None,v
     
     if mydc.data_Compt_dE_frac is None or mydc.data_E_scatter is None or mydc.dosereconkernel is None:
         # Geant4 results: 'Compton_ELoss_factor',ee=10:10:160
-        scat_dir = my_path.find("dose", 'scatter_E_loss_fraction.mat', '')
+        scat_dir = my_path.find("dose_data", 'scatter_E_loss_fraction.mat', '')
         scat_data = io.loadmat(scat_dir)
         mydc.data_Compt_dE_frac = np.squeeze(np.vstack(([[0]],scat_data['Compton_ELoss_factor'])))
         mydc.ee_CdE = np.array([0]+list(np.arange(10,160+10,10)))
         # mean scatter energy of monos, weighted by scatter spectrum, of multi-material
         # mean_E, mspr, Geant4 results,ee=10:10:160
         # load weighted_scatter_energy_by_spec.mat;
-        tmp_dir2 = my_path.find("dose", 'weighted_scatter_energy_by_spec.mat', '')
+        tmp_dir2 = my_path.find("dose_data", 'weighted_scatter_energy_by_spec.mat', '')
         tmpdata2 = io.loadmat(tmp_dir2)
         mydc.data_E_scatter = np.vstack(([0], np.mean(tmpdata2['mean_E'],1,keepdims=True)))
         mydc.ee_mE = np.array([0]+list(np.arange(10,160+10,10)))
         # convolution kernel
         #load dosereconkernel_mthd4.mat; # dosereconkernel
 
-        tmp_dir3 = my_path.find("dose", 'dosereconkernel_mthd4.mat', '')
+        tmp_dir3 = my_path.find("dose_data", 'dosereconkernel_mthd4.mat', '')
         tmpdata3 = io.loadmat(tmp_dir3)
         mydc.dosereconkernel = tmpdata3['dosereconkernel']
     
