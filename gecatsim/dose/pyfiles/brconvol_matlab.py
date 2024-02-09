@@ -43,10 +43,8 @@ def brconvol_matlab(data = None,sigma = None,dim = None):
             #k0 = k0 / np.sum(k0)
             #data = np.convolve(data,permute(k0,np.array([1,2,0])),'same')
             if data.shape[2]==1:
-                if hasattr(cfg, 'dose.method') and cfg.dose.method==1:
-                    k0 *= 5
-                else:
-                    k0*= 2
+                # k0 *= 5  # dose.method==1
+                k0 *= 2  # DoseRecon 2.0
             #for i in range(data.shape[0]):
             #    for j in range(data.shape[1]):
             #        data[i,j,:] = convolve(data[i,j,:], k0, 'same')
