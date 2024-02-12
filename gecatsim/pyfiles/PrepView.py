@@ -1,5 +1,7 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
+# This is raw-data prep for EICT or gray-scale CT only. Use other code to prep spectral CT / PCCT.
+
 import numpy.matlib as nm
 from gecatsim.pyfiles.CommonTools import *
 from gecatsim.pyfiles.LowSignalCorr import LowSignalCorr

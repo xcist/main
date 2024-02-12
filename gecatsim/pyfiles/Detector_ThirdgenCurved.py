@@ -95,17 +95,17 @@ if __name__ == "__main__":
 
     cfg = source_cfg("./cfg/default.cfg")
     
-    cfg.scanner.sid = 541
-    cfg.scanner.sdd = 949
+    cfg.scanner.sid = 540
+    cfg.scanner.sdd = 950
     cfg.scanner.detectorRowsPerMod = 16
     cfg.scanner.detectorColsPerMod = 16
     cfg.scanner.detectorColOffset = -1.25
     cfg.scanner.detectorRowOffset = 0
-    cfg.scanner.detectorColSize = 1.0239
-    cfg.scanner.detectorRowSize = 1.096349
+    cfg.scanner.detectorColSize = 1.0
+    cfg.scanner.detectorRowSize = 1.0
     cfg.scanner.detectorColFillFraction = 0.8
     cfg.scanner.detectorRowFillFraction = 0.8
-    cfg.scanner.detectorColCount = 880
+    cfg.scanner.detectorColCount = 900
     cfg.scanner.detectorRowCount = cfg.scanner.detectorRowsPerMod
     
     cfg.physics.colSampleCount = 4

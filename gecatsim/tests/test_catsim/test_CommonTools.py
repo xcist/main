@@ -97,18 +97,19 @@ def test_feval_invalid_config():
 def test_path_helper_load():
     # .gecatsim may not be always availablem so not testing the file loading
     pathhelper = c.PathHelper();
-    assert len(pathhelper.paths) == 11
 
     assert pathhelper.paths["main"] is not None
     assert pathhelper.paths["top"] is not None
-    assert pathhelper.paths["cfg"].endswith('cfg')
-    assert pathhelper.paths["lib"].endswith('lib')
     assert pathhelper.paths["bowtie"].endswith('bowtie')
+    assert pathhelper.paths["cfg"].endswith('cfg')
+    assert pathhelper.paths["dose"].endswith('dose')
+    assert pathhelper.paths["focal_spot"].endswith('focal_spot')
+    assert pathhelper.paths["lib"].endswith('lib')
     assert pathhelper.paths["material"].endswith('material')
     assert pathhelper.paths["phantom"].endswith('phantom')
+    assert pathhelper.paths["response_matrix"].endswith('response_matrix')
     assert pathhelper.paths["scatter"].endswith('scatter')
     assert pathhelper.paths["spectrum"].endswith('spectrum')
-    assert pathhelper.paths["dose_data"].endswith('dose_data')
 
 
 def test_find_unavailable_file():
