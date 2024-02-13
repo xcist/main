@@ -7,7 +7,7 @@ from numpy.ctypeslib import ndpointer
 
 # low signal correction
 def LowSignalCorr(cfg, prep):
-    print("In LSC...\n")
+    print("Applying LSC...", end="")
     inshape = prep.shape
     lsc_prep = prep.reshape(cfg.protocol.viewCount, cfg.scanner.detectorRowCount, cfg.scanner.detectorColCount)
     # find negative values and replace them with conv data
@@ -28,5 +28,5 @@ def LowSignalCorr(cfg, prep):
         func(lsc_prep.shape[1], lsc_prep.shape[2], thisview, thisviewout, 1)
         lsc_prep[i] = thisviewout
 
-    print("LSC Done...\n")
+    print("done.\n")
     return lsc_prep.reshape(inshape)
