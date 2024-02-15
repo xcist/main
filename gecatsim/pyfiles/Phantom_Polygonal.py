@@ -1,9 +1,10 @@
+# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+
 import numpy as np
 import os
 from gecatsim.pyfiles.Phantom_Analytic import parse_analytical_ppm
 from gecatsim.pyfiles.CommonTools import feval
 from gecatsim.pyfiles.CommonTools import *
-
 
 def phantom_polygonal(cfg):
     print('Starting to pass POLYGONAL phantom to C...')
@@ -39,16 +40,11 @@ def phantom_polygonal(cfg):
 
     print('... done with phantom.')
 
-
-import re
-import sys
 from ctypes import *
 from numpy.ctypeslib import ndpointer
 from gecatsim.pyfiles.GetMu import GetMu
 from gecatsim.pyfiles.CommonTools import *
 
-
-# python conversion from C_Materials_Polygonal_Set.m
 def set_materials(cfg, materialList):
     Evec = np.array(cfg.spec.Evec)
     nMat = len(materialList)
@@ -61,7 +57,6 @@ def set_materials(cfg, materialList):
     fun.argtypes = [c_int, c_int, ndpointer(c_double)]
     fun.restype = None
     fun(nMat, Evec.size, Mus)
-
 
 def C_Phantom_Polygonal_Clear(cfg, num_polygons=None):
     print('Clearing the POLYGONAL phantom in C global variables.')
