@@ -6,4 +6,6 @@ This toolkit includes software developed by Members of the Geant4 Collaboration 
 
 For more information such as installation, examples, please visit: https://github.com/xcist/documentation/wiki
 
-Please consider citing our paper if this package is useful to your research/work: https://iopscience.iop.org/article/10.1088/1361-6560/ac9174
+Please consider citing our papers if this package is useful to your research/work:
+* XCIST – An Open Access X-ray/CT Simulation Toolkit: https://iopscience.iop.org/article/10.1088/1361-6560/ac9174
+* Development and tuning of models for accurate simulation of CT spatial resolution using CatSim: https://iopscience.iop.org/article/10.1088/1361-6560/ad2122
