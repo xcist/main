@@ -35,7 +35,7 @@ if __name__ == "__main__":
     cfg = source_cfg("./cfg/default.cfg")
     
     cfg.sim.isOffsetScan = 0
-    
+    cfg.sim.subViewCount = 1
     cfg = feval(cfg.scanner.detectorCallback, cfg)
     cfg = feval(cfg.scanner.focalspotCallback, cfg)
     cfg = feval(cfg.physics.rayAngleCallback, cfg)
