@@ -10,7 +10,7 @@ def C_Phantom_Polygonal_SetPolygon(cfg, vertices = None, numTriangles = None, de
     print(f'Setting a polygon in C global variables; density = {density}; ID = {ID}.')
 
     func = cfg.clib.pass_polygon_to_c
-    cVertices = np.copy(vertices.astype(np.float), order='C')
+    cVertices = np.copy(vertices.astype(np.double), order='C')
     # Assuming vertices is a list of floats, and num_triangles and ID are integers.
     cfg.clib.pass_polygon_to_c.argtypes = [
         ctypes.POINTER(ctypes.c_double),  # vertices as a double pointer (C array of doubles)

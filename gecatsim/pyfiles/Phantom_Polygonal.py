@@ -1,24 +1,26 @@
 
 import numpy as np
 import os
-from Phantom_Analytic import parse_analytical_ppm
+from gecatsim.pyfiles.Phantom_Analytic import parse_analytical_ppm
 from gecatsim.pyfiles.CommonTools import feval
+from gecatsim.pyfiles.CommonTools import *
 
 
 def phantom_polygonal(cfg):
     print('Starting to pass POLYGONAL phantom to C...')
 
-    if os.path.exists(cfg.phantom_filename):
-        exec(open(cfg.phantom_filename).read())
+    cfg.phantom.filename = my_path.find('phantom', cfg.phantom.filename, '')
+    #if os.path.exists(cfg.phantom.filename):
+    #    exec(open(cfg.phantom.filename).read())
 
-    object = parse_analytical_ppm(cfg.phantom_filename)
+    object = parse_analytical_ppm(cfg.phantom.filename)
 
     numPoly = len(object['type'])
     feval('C_Phantom_Polygonal_Clear', numPoly)
     
     for index in range(numPoly):
         # rotate around y-axis
-        if 'phantom_rotation_y' in cfg and cfg['phantom_rotation_y'] != 0:
+        if hasattr(cfg.phantom, "phantomRotationY") and cfg.phantom.phantomRotationY != 0:
             ang = cfg['phantom_rotation_y']
             sina = np.sin(-ang / 180 * np.pi)
             cosa = np.cos(-ang / 180 * np.pi)
