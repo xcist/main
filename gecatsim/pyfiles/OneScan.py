@@ -70,7 +70,7 @@ def one_scan(cfg):
         # save cfg.thisView to file
         cfg = feval(cfg.physics.outputCallback, cfg, viewId)
         
-    print("Scan sim time: %.1f s" % (time.time()-cfg.sim.timer))
+    #print("Scan sim time: %.1f s" % (time.time()-cfg.sim.timer))
     
     return cfg
 

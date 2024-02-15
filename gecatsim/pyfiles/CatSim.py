@@ -29,9 +29,9 @@ class CatSim:
         print('Simulation is done.')
         return cfg
 
-    def air_scan(self, *para):
+    def air_scan(self, *para, doPrint=True):
         cfg = self.get_current_cfg(*para)
-        print('Airscan')
+        if doPrint: print('Airscan')
         cfg.sim.thisScanType = [1, 0, 0]
         cfg = one_scan(cfg)
         return cfg

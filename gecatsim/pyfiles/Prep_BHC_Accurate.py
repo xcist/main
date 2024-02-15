@@ -4,7 +4,7 @@ import numpy as np
 from gecatsim.pyfiles.CommonTools import rawread
 
 def Prep_BHC_Accurate(cfg, prep):
-    print("Applying Beam Hardening Correction (ACCURATE BHC)...\n", end='')
+    print("Applying Beam Hardening Correction (ACCURATE BHC)...", end='')
     
     if hasattr(cfg.physics, "BHC_vec_fname"):
         if os.path.isfile(cfg.physics.BHC_vec_fname):
@@ -54,7 +54,7 @@ def gen_BHC_vec(cfg):
         thick = (1+j)*length_step_mm
 
         ct.scanner.detectorPrefilter = orginal_prefilter + [mt, thick]
-        ct.air_scan()
+        ct.air_scan(doPrint=False)
         rawViews = rawread(ct.resultsName+".air", [ndet], 'float')
         sig[j] = -np.log(rawViews/I0)
 

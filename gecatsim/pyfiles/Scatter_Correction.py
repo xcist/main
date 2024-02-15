@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 # This is a simplified kernel based scatter correction algorithm.
 def Scatter_Correction(cfg, airscan, offsetScan, phantomScan):
-    print("Applying Scatter Correction ... ", end='')
+    print("Applying Scatter Correction...", end='')
 
     ###--------- Get scatter kernel
     if cfg.physics.scatterKernelCallback:
@@ -26,7 +26,7 @@ def Scatter_Correction(cfg, airscan, offsetScan, phantomScan):
     prep = -np.log(prep)
     prep[prep<smallValue] = smallValue
 
-    for viewId in tqdm(range(cfg.protocol.viewCount)):
+    for viewId in range(cfg.protocol.viewCount):
         if not hasattr(cfg.physics, "scatterCorrectionScaleFactor"):
             cfg.physics.scatterCorrectionScaleFactor = 1
         sc_preConv = phantomScan[viewId,:]*np.power(prep[viewId,:],0.9)*0.0268*cfg.physics.scatterCorrectionScaleFactor
@@ -43,7 +43,7 @@ def Scatter_Correction(cfg, airscan, offsetScan, phantomScan):
     print("done.\n")
     
     ###--------- save corrected scan
-    rawwrite(cfg.resultsName+'_SC.scan', phantomScan)
+    #rawwrite(cfg.resultsName+'_SC.scan', phantomScan)
     
     
     return airscan, offsetScan, phantomScan
