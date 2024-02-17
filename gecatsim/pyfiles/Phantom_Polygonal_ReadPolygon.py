@@ -12,58 +12,49 @@ def Phantom_Polygonal_ReadPolygon(Verts):
 
     return Vx,nV
 
-
-def extract_lesions(file_path):
-    lesions = []
+def extract_objects(file_path):
+    objects = []
     with open(file_path, 'r') as file:
         lines = file.readlines()
         index = 0
+        all_polygons = []
         while index < len(lines):
             if index + 4 >= len(lines):
                 break
-            name = lines[index + 1].strip()
+            object_name = lines[index + 1].strip()
             material_index_str = lines[index + 2].strip()
-            # try:
-            #     material_index_parts = list(map(int, material_index_str.split()))
-            # except ValueError:
-            #     print(f"Error: Material index format '{material_index_str}' is not supported. ")
-            #     return []
-            num_polygons = int(lines[index + 3])
-            line_vertices = []
-            for i in range(num_polygons):
-                polygon_line = lines[index + 4 + i].strip()
-                vertex = tuple(map(str, polygon_line.split()))
-                line_vertices.append(vertex)
+            material_index_parts = []
             try:
-                if len(line_vertices) != num_polygons:
-                    raise ValueError(f"Error: Number of polygons doesn't match the stated count in line {index +3}")
-            except ValueError as e:
-                print(f"Error: {e}")
-                return None
-            lesions.append({
-                'name': name,
-                'material_index': material_index_str,
-                'all_polygons' : line_vertices
+                material_index_parts = list(map(int, material_index_str.split()))
+            except ValueError:
+                print(f"Error: Material index format '{material_index_str}' is not supported. ")
+
+            try:
+                num_polygons = int(lines[index + 3])
+            except ValueError:
+                print(f"Error: Number of polygons doesn't match the stated count in line {index + 3}")
+                break
+
+            all_polygon_vertices = []
+
+            for i in range(num_polygons):
+                read_line_of_coordinates = lines[index + 4 + i].strip()
+                each_polygon_coordinates = tuple(map(str, read_line_of_coordinates.split()))
+                all_polygon_vertices.append(each_polygon_coordinates)
+            all_polygons.extend(all_polygon_vertices)
+
+            objects.append({
+                'object_name': object_name,
+                'material_index': material_index_parts,
+                'polygons_per_object' : all_polygon_vertices
             })
-            # move to next lesion
+            # move to next objects
             index += 4 + num_polygons
-    return lesions
 
-def extract_polygons(lesions):
-    total_polygon_count = 0
-    all_polygons_combined = []
-    for lesion in lesions:
-        each_lesion_polygons = lesion['all_polygons']
-        all_polygons_combined.extend(each_lesion_polygons)
-        total_polygon_count += len(each_lesion_polygons)
-
-        for i, polygon in enumerate(all_polygons_combined, start=1):
-            formed_polygon = " ".join([f"({point})" for point in polygon])
-            # print(f"Polygon {i}: ({formed_polygon})")
-    print(f"\nTotal polygons : {total_polygon_count}")
-
+    return objects, all_polygons
 
 
 file_path ="female_10yr_lung_lesions.nrb"
-lesions_ = extract_lesions(file_path)
-polygons = extract_polygons(lesions_)
+_objects, _all_polygons = extract_objects(file_path)
+print(f"\n Total number of extracted polygons: {len(_all_polygons)}")
+
