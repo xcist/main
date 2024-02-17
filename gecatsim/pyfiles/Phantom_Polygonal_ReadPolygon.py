@@ -12,12 +12,13 @@ def Phantom_Polygonal_ReadPolygon(Verts):
 
     return Vx,nV
 
+
 def extract_objects(file_path):
     objects = []
     with open(file_path, 'r') as file:
         lines = file.readlines()
         index = 0
-        all_polygons = []
+        combined_polygons = []
         while index < len(lines):
             if index + 4 >= len(lines):
                 break
@@ -41,20 +42,24 @@ def extract_objects(file_path):
                 read_line_of_coordinates = lines[index + 4 + i].strip()
                 each_polygon_coordinates = tuple(map(str, read_line_of_coordinates.split()))
                 all_polygon_vertices.append(each_polygon_coordinates)
-            all_polygons.extend(all_polygon_vertices)
+            combined_polygons.extend(all_polygon_vertices)
 
             objects.append({
                 'object_name': object_name,
                 'material_index': material_index_parts,
-                'polygons_per_object' : all_polygon_vertices
+                'number_of_polygons': len(all_polygon_vertices),
+                'polygons_per_object': all_polygon_vertices,
+                'combined_polygons': combined_polygons
             })
             # move to next objects
             index += 4 + num_polygons
 
-    return objects, all_polygons
+    return objects
 
 
 file_path ="female_10yr_lung_lesions.nrb"
-_objects, _all_polygons = extract_objects(file_path)
-print(f"\n Total number of extracted polygons: {len(_all_polygons)}")
+_objects = extract_objects(file_path)
+print(f"\nObject names: ")
+for obj in _objects:
+    print(obj['object_name'])
 
