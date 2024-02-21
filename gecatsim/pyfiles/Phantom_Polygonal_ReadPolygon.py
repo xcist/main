@@ -12,24 +12,17 @@ def Phantom_Polygonal_ReadPolygon(Verts):
 
     return Vx,nV
 
-
 def extract_polygonal_objects(file_path):
     objects = []
     with open(file_path, 'r') as file:
-        lines = file.readlines()
+        lines = [line.strip() for line in file.readlines()]
         index = 0
         combined_polygons = []
         while index < len(lines):
             if index + 4 >= len(lines):
                 break
-            object_name = lines[index + 1].strip()
-            material_index_str = lines[index + 2].strip()
-            material_index_parts = []
-            try:
-                material_index_parts = list(map(int, material_index_str.split()))
-            except ValueError:
-                print(f"Error: Material index format '{material_index_str}' is not supported. ")
-
+            object_name = lines[index + 1]
+            material_index = int(lines[index + 2])
             try:
                 num_polygons = int(lines[index + 3])
             except ValueError:
@@ -39,14 +32,14 @@ def extract_polygonal_objects(file_path):
             all_polygon_vertices = []
 
             for i in range(num_polygons):
-                read_line_of_coordinates = lines[index + 4 + i].strip()
-                each_polygon_coordinates = tuple(map(str, read_line_of_coordinates.split()))
+                read_line_of_coordinates = lines[index + 4 + i]
+                each_polygon_coordinates = [tuple(map(float, point.split(','))) for point in read_line_of_coordinates.split()]
                 all_polygon_vertices.append(each_polygon_coordinates)
             combined_polygons.extend(all_polygon_vertices)
 
             objects.append({
                 'object_name': object_name,
-                'material_index': material_index_parts,
+                'material_index': material_index,
                 'number_of_polygons': len(all_polygon_vertices),
                 'polygons_per_object': all_polygon_vertices,
                 # 'combined_polygons': combined_polygons    # If all the polygons shall be passed together
@@ -62,5 +55,4 @@ _objects = extract_polygonal_objects(file_path)
 print(f"\nObject names: ")
 for obj in _objects:
     print(obj['object_name'])
-
 
