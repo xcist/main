@@ -12,24 +12,11 @@ def CopyCfgPhantom(cfgfrom, cfgto=None):
 # split cfg.phantom from a list into 
 def SplitCfgPhantom(cfg):
     cfg_list = []
+    cfgphantom_attrs = [x for x in dir(cfg.phantom) if not x.startswith('__')]
     for i in range(len(cfg.phantom.filename)):
         thiscfg = CFG()
-        if hasattr(cfg.phantom, "centerOffset"):
-            thiscfg.phantom.centerOffset = deepcopy(cfg.phantom.centerOffset[i])
-        if hasattr(cfg.phantom, "callback"):
-            thiscfg.phantom.callback = deepcopy(cfg.phantom.callback[i])
-        if hasattr(cfg.phantom, "filename"):
-            thiscfg.phantom.filename = deepcopy(cfg.phantom.filename[i])
-        if hasattr(cfg.phantom, "projectorCallback"):
-            thiscfg.phantom.projectorCallback = deepcopy(cfg.phantom.projectorCallback[i])
-        if hasattr(cfg.phantom, "projectorNumThreads"):
-            thiscfg.phantom.projectorNumThreads = deepcopy(cfg.phantom.projectorNumThreads[i])
-        if hasattr(cfg.phantom, "numberOfMaterials"):
-            thiscfg.phantom.numberOfMaterials = deepcopy(cfg.phantom.numberOfMaterials[i])
-        if hasattr(cfg.phantom, "scale"):
-            thiscfg.phantom.scale = deepcopy(cfg.phantom.scale[i])
-        if hasattr(cfg.phantom, "projectorNumThreads"):
-            thiscfg.phantom.projectorNumThreads = deepcopy(cfg.phantom.projectorNumThreads[i])
+        for thisattr in cfgphantom_attrs:
+            setattr(thiscfg.phantom, thisattr, deepcopy(getattr(cfg.phantom, thisattr)[i]))
 
         cfg_list.append(thiscfg)
 
