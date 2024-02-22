@@ -12,10 +12,6 @@ def one_scan(cfg):
     # view loop
     if cfg.sim.isPhantomScan:
         print('phantom scan view loop...')
-        # phantom and material
-        #cfg = feval(cfg.phantom.callback, cfg)
-        #for thisPhantomCB in cfg.phantom.callback:
-        #    cfg = feval(thisPhantomCB, cfg)
         tmp = tqdm(range(cfg.sim.startViewId, cfg.sim.stopViewId+1))
     else:
         tmp = range(cfg.sim.startViewId, cfg.sim.stopViewId+1)

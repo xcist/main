@@ -5,20 +5,7 @@ from gecatsim.pyfiles.CommonTools import *
 def CopyCfgPhantom(cfgfrom, cfgto=None):
     if cfgto is None:
         cfgto = CFG()
-    if hasattr(cfgfrom.phantom, "centerOffset"):
-        cfgto.phantom.centerOffset = deepcopy(cfgfrom.phantom.centerOffset)
-    if hasattr(cfgfrom.phantom, "callback"):
-        cfgto.phantom.callback = deepcopy(cfgfrom.phantom.callback)
-    if hasattr(cfgfrom.phantom, "filename"):
-        cfgto.phantom.filename = deepcopy(cfgfrom.phantom.filename)
-    if hasattr(cfgfrom.phantom, "projectorCallback"):
-        cfgto.phantom.projectorCallback = deepcopy(cfgfrom.phantom.projectorCallback)
-    if hasattr(cfgfrom.phantom, "projectorNumThreads"):
-        cfgto.phantom.projectorNumThreads = deepcopy(cfgfrom.phantom.projectorNumThreads)
-    if hasattr(cfgfrom.phantom, "scale"):
-        cfgto.phantom.scale = deepcopy(cfgfrom.phantom.scale)
-    if hasattr(cfgfrom.phantom, "numberOfMaterials"):
-        cfgto.phantom.numberOfMaterials = deepcopy(cfgfrom.phantom.numberOfMaterials)
+    cfgto.phantom = cfgfrom.phantom
 
     return cfgto
 
