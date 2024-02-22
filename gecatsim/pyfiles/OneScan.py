@@ -4,14 +4,13 @@ import copy, time
 import matplotlib.pyplot as plt
 from gecatsim.pyfiles.CommonTools import *
 from tqdm import tqdm
+from gecatsim.pyfiles.PhantomProjectorWrapper import PhantomWrapper, ProjectorWrapper
 
 def one_scan(cfg):
     cfg = initialize_scan(cfg)
     
     # view loop
     if cfg.sim.isPhantomScan:
-        # phantom and material
-        cfg = feval(cfg.phantom.callback, cfg)
         print('phantom scan view loop...')
         tmp = tqdm(range(cfg.sim.startViewId, cfg.sim.stopViewId+1))
     else:
@@ -43,8 +42,8 @@ def one_scan(cfg):
             cfg = feval(cfg.physics.fluxCallback, cfg)
 
         # phantom and material
-        if cfg.physics.recalcPht and cfg.sim.isPhantomScan:
-            cfg = feval(cfg.phantom.callback, cfg)
+        if (viewId == cfg.sim.startViewId or cfg.physics.recalcPht) and cfg.sim.isPhantomScan:
+            cfg = PhantomWrapper(cfg)
     
         for subViewId in range(cfg.sim.subViewCount):
             # initial subview
@@ -55,7 +54,7 @@ def one_scan(cfg):
                 cfg = feval(cfg.protocol.scanTrajectory, cfg, viewId)
 
                 # projector
-                cfg = feval(cfg.phantom.projectorCallback, cfg, viewId, subViewId)
+                cfg = ProjectorWrapper(cfg, viewId, subViewId)
 
                 # scatter
                 if cfg.physics.scatterCallback:
