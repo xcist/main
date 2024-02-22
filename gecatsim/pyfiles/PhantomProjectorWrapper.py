@@ -51,7 +51,7 @@ def SplitCfgPhantom(cfg):
 def PhantomWrapper(cfg):
     if isinstance(cfg.phantom.callback, list):
         # if duplicate phantom callback, raise an error
-        if len(cfg.phantom.callback) != len(set(cfg.phantom.callback)):
+        if (len(cfg.phantom.callback) != len(set(cfg.phantom.callback))) and len(cfg.phantom.callback) > 1:
             print("Error! XCIST does not support repeated phantom types.\n")
             sys.exit(1)
 
