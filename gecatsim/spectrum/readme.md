@@ -6,4 +6,4 @@ Note that the generated spectrum here is in unit of photons/mA/mm^2/s at 1m, i.e
 `protocol.spectrumUnit_mm=1` \
 `protocol.spectrumUnit_mA=1`
 
-The spectrum generated is already filted.
+The spectrum generated is already filted (by tube window).
