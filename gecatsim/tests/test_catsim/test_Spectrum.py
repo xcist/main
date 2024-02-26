@@ -10,7 +10,7 @@ class Test_Spectrum(unittest.TestCase):
 
         cfg.det.totalNumCells = 5;
 
-        cfg.protocol.spectrumFilename = "tungsten_tar7_120_unfilt.dat"
+        cfg.protocol.spectrumFilename = "tungsten_tar7.0_120_filt.dat"
         cfg.physics.energyCount = 10
         cfg.protocol.spectrumScaling = 1
         cfg.physics.monochromatic = -1

@@ -28,7 +28,7 @@ ct.protocol.viewCount = ct.protocol.viewsPerRotation
 ct.protocol.stopViewId = ct.protocol.viewCount-1
 
 ct.protocol.mA = 500
-ct.protocol.spectrumFilename = "tungsten_tar7_120_unfilt.dat"
+ct.protocol.spectrumFilename = "tungsten_tar7.0_120_filt.dat"
 ct.physics.energyCount = 120
 
 ct.protocol.bowtie = "VCTlarge.txt"
