@@ -5,11 +5,9 @@ import gecatsim as xc
 import gecatsim.reconstruction.pyfiles.recon as recon
 from gecatsim.pyfiles.CommonTools import *
 
-my_path.add_search_path("./database")
-
 ##--------- Initialize
-#my_path = xc.pyfiles.CommonTools.my_path
 # add any additional search directories
+#my_path = xc.pyfiles.CommonTools.my_path
 #my_path.add_search_path("my-experiments")
 
 ct = xc.CatSim("./cfg/Scanner_PCCT", "./cfg/Phantom_Sample", "./cfg/Protocol_Sample_axial",'./cfg/Physics_Sample')  # initialization
