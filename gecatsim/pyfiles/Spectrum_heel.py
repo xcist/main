@@ -68,6 +68,7 @@ def Spectrum_heel(cfg):
         Avec_all.append(takeOffAngle)
 
     # note that the spectrum should be indexed from large photons (no heel effects, 9 deg) to small photons(heel effects, 5deg)
+    # i.e., indexed from cathode to anode
     # sort based on angle from smalle to large
     Ivec_all = [x for _, x in sorted(zip(Avec_all, Ivec_all))]
     Ivec_all = Ivec_all[::-1] # now from large to small to be consistent with gain factor
