@@ -1,7 +1,7 @@
 name: Build
 on:
   push:
-    branches: [ "master","tests_fix"]
+    branches: [ "master"]
   pull_request:
     types: [opened, synchronize, reopened]
 permissions:
