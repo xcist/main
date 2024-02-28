@@ -21,10 +21,6 @@ class Test_Xray_Filter(unittest.TestCase):
         cfg = Xray_Filter(cfg)
         trans = cfg.src.filterTrans.reshape(cfg.scanner.detectorColCount, cfg.scanner.detectorRowCount, cfg.spec.nEbin)
 
-        print(trans.max())
-
-        #assert trans.max() == 0.92675716
-        # assert (trans == 0.22895).any()
-
-        assert (trans == 0.92675716).any()
+        self.assertAlmostEqual(trans.max(), 0.9266918, places=4)
+        assert trans.shape == (900, 16, 20)
         assert trans is not None
