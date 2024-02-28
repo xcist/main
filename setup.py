@@ -6,7 +6,7 @@
 from setuptools import setup
 
 setup(name='gecatsim',
-      version='1.1.0',
+      version='1.1.2',
       description='Simulation toolkit for X-ray based cancer imaging',
       url='https://github.com/xcist/documentation/wiki',
       author='Mingye Wu, Paul FitzGerald, James Jobin, Jiayong Zhang, Nandan Reddy, Anupama Debnath, Brion Sarachan, Bruno De Man',
