@@ -29,7 +29,7 @@ class Test_Spectrum(unittest.TestCase):
         check_value(cfg.spec.Ivec)
 
         assert cfg.spec.nEbin == 10
-        assert (cfg.spec.Evec == [6.25, 18.25, 30.25, 42.25, 54.25, 66.25, 78.25, 90.25, 102.25, 114.25]).all()
+        assert (cfg.spec.Evec == [  6.,  18.,  30.,  42.,  54.,  66.,  78.,  90., 102., 114.] ).all()
         assert cfg.spec.Ivec is not None
 
 
