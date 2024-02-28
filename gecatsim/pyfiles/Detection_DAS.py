@@ -7,6 +7,7 @@ import sys
 
 def Detection_DAS(viewIn, viewId, cfg):
 
+    # to be consisten with spectrum_heel, gain factors should be indexed from cathode end to anode end
     if hasattr(cfg.scanner.detectionGain, "__len__"):
         if len(cfg.scanner.detectionGain) != cfg.scanner.detectorRowCount:
             print("Error! detectionGain should have the same length as row count\n")
