@@ -4,7 +4,7 @@ def ReadMaterialFile(mtFile):
     # read material file
     d0 = []
     for line in open(mtFile, 'r', encoding='UTF-8'):
-        line = line[:-1] # remove the end '\n'
+        line = line.strip() # remove the end '\n'
         if line and line[0].isdigit():
             d0.append(line)
 
