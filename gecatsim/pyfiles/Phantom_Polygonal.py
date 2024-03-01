@@ -3,17 +3,22 @@
 import numpy as np
 import os
 from gecatsim.pyfiles.Phantom_Analytic import parse_analytical_ppm
+from gecatsim.pyfiles.Phantom_Polygonal_ReadPolygon import extract_polygonal_objects
 from gecatsim.pyfiles.CommonTools import feval
 from gecatsim.pyfiles.CommonTools import *
+from ctypes import *
+from numpy.ctypeslib import ndpointer
+from gecatsim.pyfiles.GetMu import GetMu
+from gecatsim.pyfiles.CommonTools import *
 
-def phantom_polygonal(cfg):
+def Phantom_Polygonal(cfg):
     print('Starting to pass POLYGONAL phantom to C...')
 
     cfg.phantom.filename = my_path.find('phantom', cfg.phantom.filename, '')
     # if os.path.exists(cfg.phantom.filename):
     #    exec(open(cfg.phantom.filename).read())
 
-    object = parse_analytical_ppm(cfg.phantom.filename)
+    object = extract_polygonal_objects(cfg.phantom.filename)
 
     numPoly = len(object['type'])
     feval('C_Phantom_Polygonal_Clear', numPoly)
@@ -40,11 +45,6 @@ def phantom_polygonal(cfg):
 
     print('... done with phantom.')
 
-from ctypes import *
-from numpy.ctypeslib import ndpointer
-from gecatsim.pyfiles.GetMu import GetMu
-from gecatsim.pyfiles.CommonTools import *
-
 def set_materials(cfg, materialList):
     Evec = np.array(cfg.spec.Evec)
     nMat = len(materialList)
@@ -58,10 +58,10 @@ def set_materials(cfg, materialList):
     fun.restype = None
     fun(nMat, Evec.size, Mus)
 
-def C_Phantom_Polygonal_Clear(cfg, num_polygons=None):
-    print('Clearing the POLYGONAL phantom in C global variables.')
-    func = cfg.clib.clear_polygonalized_phantom
-    num_polygons = np.int32(num_polygons)
-    func.argtypes = [c_int]
-    func.restype = None
-    func(num_polygons)
+# def C_Phantom_Polygonal_Clear(cfg, num_polygons=None):
+#     print('Clearing the POLYGONAL phantom in C global variables.')
+#     func = cfg.clib.clear_polygonalized_phantom
+#     num_polygons = np.int32(num_polygons)
+#     func.argtypes = [c_int]
+#     func.restype = None
+#     func(num_polygons)
