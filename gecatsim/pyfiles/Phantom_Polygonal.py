@@ -4,7 +4,6 @@ import numpy as np
 import os
 from gecatsim.pyfiles.Phantom_Analytic import parse_analytical_ppm
 from gecatsim.pyfiles.Phantom_Polygonal_ReadPolygon import extract_polygonal_objects
-from gecatsim.pyfiles.CommonTools import feval
 from gecatsim.pyfiles.CommonTools import *
 from ctypes import *
 from numpy.ctypeslib import ndpointer
@@ -58,10 +57,3 @@ def set_materials(cfg, materialList):
     fun.restype = None
     fun(nMat, Evec.size, Mus)
 
-# def C_Phantom_Polygonal_Clear(cfg, num_polygons=None):
-#     print('Clearing the POLYGONAL phantom in C global variables.')
-#     func = cfg.clib.clear_polygonalized_phantom
-#     num_polygons = np.int32(num_polygons)
-#     func.argtypes = [c_int]
-#     func.restype = None
-#     func(num_polygons)

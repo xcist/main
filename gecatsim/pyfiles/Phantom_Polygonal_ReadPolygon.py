@@ -50,7 +50,7 @@ def extract_polygonal_objects(file_path):
     return objects
 
 
-file_path ="female_10yr_lung_lesions.nrb"
+file_path ="../phantom/reduced_female_10yr_lung_lesions.nrb"
 _objects = extract_polygonal_objects(file_path)
 print(f"\nObject names: ")
 for obj in _objects:
