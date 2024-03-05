@@ -5,7 +5,7 @@ from gecatsim.pyfiles.CommonTools import *
 def CopyCfgPhantom(cfgfrom, cfgto=None):
     if cfgto is None:
         cfgto = CFG()
-    cfgto.phantom = cfgfrom.phantom
+    cfgto.phantom = deepcopy(cfgfrom.phantom)
 
     return cfgto
 
