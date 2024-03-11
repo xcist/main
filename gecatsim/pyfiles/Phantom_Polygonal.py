@@ -32,15 +32,16 @@ def Phantom_Polygonal(cfg):
             object['vertices'][index] = np.dot(object['vertices'][index], transmat)
 
         # Scale and position
-        object['vertices'][index] = object['vertices'][index] * cfg['phantom_scale'] + np.tile(
-            cfg['phantom_position_offset'], (object['vertices'][index].shape[0], 1))
+        object['vertices'][index] = object['vertices'][index] * cfg.phantom.scale + np.tile(
+            cfg.phantom.centerOffset, (object['vertices'][index].shape[0], 1))
 
         # Pass phantom info to C
         num_triangles = object['tri_inds'][index].shape[0]
         inds = object['tri_inds'][index].T
-        triangles = object['vertices'][index][inds.ravel(), :].T.reshape((9, num_triangles))
-        feval('C_Phantom_Polygonal_SetPolygon', triangles, triangles.shape[1], object['density'][index],
-              object['material'][index] - 1)
+
+        triangles = np.array(inds)
+        feval('C_Phantom_Polygonal_SetPolygon', inds, num_triangles, object['density'],
+              object['materialId'])
 
     print('... done with phantom.')
 
