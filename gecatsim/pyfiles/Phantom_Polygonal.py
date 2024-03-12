@@ -20,7 +20,7 @@ def Phantom_Polygonal(cfg):
     object = extract_polygonal_objects(cfg.phantom.filename)
 
     numPoly = len(object['type'])
-    feval('C_Phantom_Polygonal_Clear', numPoly)
+    feval('C_Phantom_Polygonal_Clear',cfg,numPoly)
 
     for index in range(numPoly):
         # rotate around y-axis
@@ -40,10 +40,11 @@ def Phantom_Polygonal(cfg):
         inds = object['tri_inds'][index].T
 
         triangles = np.array(inds)
-        feval('C_Phantom_Polygonal_SetPolygon', inds, num_triangles, object['density'],
+        feval('C_Phantom_Polygonal_SetPolygon',cfg, inds, num_triangles, object['density'],
               object['materialId'])
 
     print('... done with phantom.')
+    return cfg
 
 def set_materials(cfg, materialList):
     Evec = np.array(cfg.spec.Evec)

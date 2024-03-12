@@ -8,11 +8,8 @@ import gecatsim.pyfiles.CommonTools as c
 # For example:
 # CatSimLib = ctypes.CDLL('CatSimLib.dll')  # Replace 'CatSimLib.dll' with the actual library file.
 
-def C_Phantom_Polygonal_SetPolygon(vertices = None, numTriangles = None, density = None, ID = None):
+def C_Phantom_Polygonal_SetPolygon(cfg, vertices = None, numTriangles = None, density = None, ID = None):
     print(f'Setting a polygon in C global variables; density = {density}; ID = {ID}.')
-    cfg = c.CFG("../examples/cfg/Phantom_Sample", "../examples/cfg/Scanner_Sample_generic",
-                "../examples/cfg/Protocol_Sample_axial")
-
     func = cfg.clib.pass_polygon_to_c
     cVertices = vertices.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
     # Assuming vertices is a list of floats, and num_triangles and ID are integers.
