@@ -21,24 +21,31 @@ def prep_view(cfg):
         airscan = nm.repmat(airscan, cfg.protocol.viewCount, 1)
     if cfg.protocol.offsetViewCount==1:
         offsetScan = nm.repmat(offsetScan, cfg.protocol.viewCount, 1)
+        
     ###--------- pre-log
     if hasattr(cfg.physics, "callback_pre_log") and cfg.physics.callback_pre_log:
         airscan, offsetScan, phantomScan = feval(cfg.physics.callback_pre_log, cfg, airscan, offsetScan, phantomScan)
     
+    
     ###--------- log
     prep = (phantomScan-offsetScan)/(airscan-offsetScan)
+    
+    ### simple low-signal correction and -log
     #smallValue = 1e-12
     #prep[prep<smallValue] = smallValue
-    prep = LowSignalCorr(cfg, prep)
     #prep = -np.log(prep)
     
+    ### signal-domain low-signal correction and -log
+    prep = LowSignalCorr(cfg, prep)
+    prep[prep<0] = 0
+    
+    
     ###--------- post-log
-
-    # now perform BHC
+    # BHC and so furth
     if hasattr(cfg.physics, "callback_post_log") and cfg.physics.callback_post_log:
         prep = feval(cfg.physics.callback_post_log, cfg, prep)
         
-    # a simple low signal correction, further limiting mu values if desired
+    # a simple p-domain low-signal correction, further limiting mu values if desired
     if cfg.protocol.maxPrep>0:
         prep[prep>cfg.protocol.maxPrep] = cfg.protocol.maxPrep
         
