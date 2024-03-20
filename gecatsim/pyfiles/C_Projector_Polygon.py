@@ -50,10 +50,13 @@ def C_Projector_Polygon(cfg, viewId, subViewId):
         fun.restype = None
 
         ###------- Run C function
-        fun(subviewWeight, thisView, sourcePoints, nSubSources, \
-            srcHullPoints, nSrcHullPoints, firstDetIndex, nModulesIn, modTypeInds, \
-            Up, Right, Center, UNUSED_tvLength)
+        try:
+            fun(subviewWeight, thisView, sourcePoints, nSubSources, \
+                srcHullPoints, nSrcHullPoints, firstDetIndex, nModulesIn, modTypeInds, \
+                Up, Right, Center, UNUSED_tvLength)
 
+        except OSError as e:
+            print("ERROR:", e)
     ###------- Apply transmittance
     cfg.thisSubView *= thisView
 

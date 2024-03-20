@@ -60,6 +60,6 @@ def extract_polygonal_objects(file_path):
     return obj
 
 
-file_path ="../phantom/reduced_female_10yr_lung_lesions.nrb"
-_obj = extract_polygonal_objects(file_path)
-print(f"\nmesh object types: {_obj['type']}")
+# file_path ="../phantom/reduced_female_10yr_lung_lesions.nrb"
+# _obj = extract_polygonal_objects(file_path)
+# print(f"\nmesh object types: {_obj['type']}")
