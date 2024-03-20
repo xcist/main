@@ -1,3 +1,5 @@
+import numpy as np
+
 from gecatsim.pyfiles.CommonTools import *
 
 def Phantom_Polygonal_ReadPolygon(Verts):
@@ -12,23 +14,19 @@ def Phantom_Polygonal_ReadPolygon(Verts):
 
     return Vx,nV
 
+
 def extract_polygonal_objects(file_path):
-    objects = []
-
-    # Trial using parameters like Phantom_CAD_to_Polygonal.py---------------
-    materialName = 'water'
-    materialId = 1
-    mesReductionRatio = -1
-    sizeScale = 0
-    offcenter = (0, 0, 0)
-    drawCAD = True
-    materialList = ['water', 'plexi', 'al', 'ti', 'fe', 'cu', 'graphite']
-    materialList[materialId] = materialName
-
-    # ------------------------------------------------------------------------
+    obj = {}
+    obj['vertices'] ={}
+    obj['type'] = {}
+    obj['materialId'] =None
+    obj['density'] = None
+    obj['num_triangles'] = {}
+    points =[]
     with open(file_path, 'r') as file:
         lines = [line.strip() for line in file.readlines()]
         index = 0
+        j = 0
         combined_polygons = []
         while index < len(lines):
             if index + 4 >= len(lines):
@@ -47,34 +45,21 @@ def extract_polygonal_objects(file_path):
                 read_line_of_coordinates = lines[index + 4 + i]
                 each_polygon_coordinates = [tuple(map(float, point.split(','))) for point in read_line_of_coordinates.split()]
                 all_polygon_vertices.append(each_polygon_coordinates)
-            combined_polygons.extend(all_polygon_vertices)
+                points = [point for sublist in all_polygon_vertices for point in sublist]
+            obj['vertices'][j] = np.array(points)
+            obj['type'][j] = object_name
+            obj['num_triangles'][j]= num_polygons
+            obj['density'] = 1
+            obj['materialId'] = material_index
 
-            objects.append({
-                'object_name': object_name,
-                'material_index': material_index,
-                'number_of_polygons': len(all_polygon_vertices),
-                'polygons_per_object': all_polygon_vertices,
-                # 'combined_polygons': combined_polygons    # If all the polygons shall be passed together
-                'density' : 1,
-                # 'vertices' : all_polygon_vertices[0][0][:3], #(-11.842316, 12.247543, 122.757446)
-                'tri_inds' : all_polygon_vertices,
-                'vertices': all_polygon_vertices,
-                'type': all_polygon_vertices,
-                'materialId' : material_index
+            j = j + 1
 
-                # tuple(vert)
-                # tri_ends = tuple(face)
-
-
-            })
             # move to next objects
             index += 4 + num_polygons
-    objects[0]['vertices'] = np.array(objects[0]['vertices'])
-    objects[0]['tri_inds'] = np.array(objects[0]['tri_inds'])
-    return objects[0]
+
+    return obj
 
 
 file_path ="../phantom/reduced_female_10yr_lung_lesions.nrb"
-_objects = extract_polygonal_objects(file_path)
-print(f"\nObject names: ")
-print(len(_objects['type']))
+_obj = extract_polygonal_objects(file_path)
+print(f"\nmesh object types: {_obj['type']}")
