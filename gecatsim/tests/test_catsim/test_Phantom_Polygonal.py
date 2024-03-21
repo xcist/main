@@ -1,35 +1,29 @@
 from gecatsim.pyfiles.CommonTools import *
 import unittest.mock
 from gecatsim.pyfiles import CommonTools
-from gecatsim.pyfiles.Phantom_Polygonal import (
-phantom_polygonal,
-     set_materials,
-     C_Phantom_Polygonal_Clear
-)
-from unittest.mock import patch, MagicMock
+from gecatsim.pyfiles.Phantom_Polygonal import Phantom_Polygonal, set_materials, extract_polygonal_objects
+import unittest
 
-from unittest.mock import patch, call
+from unittest.mock import patch, call, MagicMock
 
 class Test_Phantom_Polygonal(unittest.TestCase):
 
     @patch('gecatsim.pyfiles.Phantom_Polygonal.feval', create=True)
-    def test_Phantom_Polygonal(self, feval_mock):
-        cfg = CommonTools.CFG("../examples/cfg/Phantom_Sample_Analytic")
+    @patch('gecatsim.pyfiles.Phantom_Polygonal.extract_polygonal_objects', create=True)
+    def test_Phantom_Polygonal(self, feval_mock, extract_polygonal_objects_mock):
+        cfg = CommonTools.CFG("../examples/cfg/Phantom_Sample_Polygonal")
 
-        cfg.phantom.filename = '../phantom/W20.ppm'
         cfg.sim.subViewCount = 1
 
         cfg = feval(cfg.scanner.detectorCallback, cfg)
         cfg = feval(cfg.scanner.focalspotCallback, cfg)
         cfg = feval(cfg.protocol.spectrumCallback, cfg)
 
-        cfg.clib.set_src_info_vox = MagicMock()
-        cfg = phantom_polygonal(cfg)
+        assert extract_polygonal_objects_mock.call_count == 0
 
-        expected = [call("C_Phantom_Polygonal_Clear", cfg), call("C_Phantom_Polygonal_SetPolygon", cfg)]
-        assert feval_mock.mock_calls == expected
+        Phantom_Polygonal(cfg)
 
-        assert cfg.clib.set_src_info_vox.call_count == 1
+        assert extract_polygonal_objects_mock.call_count == 1
 
 
 class Test_Phantom_Polygonal_set_materials(unittest.TestCase):
@@ -84,14 +78,3 @@ class Test_Phantom_Polygonal_set_materials(unittest.TestCase):
 
         assert cfg.clib.set_material_info.call_count == 1
 
-
-class Test_C_Phantom_Polygonal_Clear(unittest.TestCase):
-    def test_C_Phantom_Polygonal_Clear(self):
-        cfg = CommonTools.CFG("../examples/cfg/Phantom_Sample", "../examples/cfg/Scanner_Sample_generic",
-                              "../examples/cfg/Protocol_Sample_axial")
-
-        num_polygons = 5
-        cfg.clib.clear_polygonalized_phantom = MagicMock()
-        C_Phantom_Polygonal_Clear(cfg, num_polygons)
-
-        assert cfg.clib.clear_polygonalized_phantom.call_count == 1

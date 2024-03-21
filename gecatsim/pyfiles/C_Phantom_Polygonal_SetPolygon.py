@@ -13,7 +13,7 @@ def C_Phantom_Polygonal_SetPolygon(cfg, vertices = None, numTriangles = None, de
     func = cfg.clib.pass_polygon_to_c
     cVertices = vertices.ctypes.data_as(ctypes.POINTER(ctypes.c_double))
     # Assuming vertices is a list of floats, and num_triangles and ID are integers.
-    cfg.clib.pass_polygon_to_c.argtypes = [
+    func.argtypes = [
         ctypes.POINTER(ctypes.c_double),  # vertices as a double pointer (C array of doubles)
         ctypes.c_int,                     # num_triangles as an integer
         ctypes.c_double,                  # density as a double
@@ -21,7 +21,7 @@ def C_Phantom_Polygonal_SetPolygon(cfg, vertices = None, numTriangles = None, de
     ]
 
     # Call the C function and get the return value
-    cfg.clib.pass_polygon_to_c.restype = None
+    func.restype = None
     func(cVertices, numTriangles, density, ID)
 
     return cVertices
