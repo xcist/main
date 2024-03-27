@@ -6,6 +6,7 @@
 #define MIN_(a,b) (((a) < (b)) ? (a) : (b))
 #define MAX_(a,b) (((a) > (b)) ? (a) : (b))
 
+extern bool useUInt16;
 
 /*
 * DD3 transpose
@@ -13,7 +14,7 @@
 void DD3Transpose(int nrcols,
 				  int nrrows,
 				  int nrplanes,
-				  float *pOrig,
+				  void *pOrig,
 				  float *pTrans);
 
 /*
@@ -37,7 +38,7 @@ void DD3ProjRow_roi_notrans_mm(float imgX,
 								float imgZstart,
 								float imgZstep,
 								int nrplanes,
-								float *pImg,
+								void *pImg,
 								float *detX,
 								int increment,
 								float *detZ,
@@ -65,7 +66,7 @@ void DD3ProjView_roi_notrans_mm(float x0,
 								 int nrcols,
 								 int nrrows,       // images
 								 int nrplanes,     //     do NOT
-								 float *pOrig,     //        contain
+								 void *pOrig,     //        contain
 								 float vox_xy_size,   // voxel size
 								 float vox_z_size,
 								 byte* xy_mask,
@@ -77,7 +78,7 @@ void DD3BackRow_roi_notrans_mm(float imgX,
 								float imgZstart,
 								float imgZstep,
 								int nrplanes,
-								float *pImg,
+								void *pImg,
 								float *detX,
 								int increment,
 								float *detZ,
@@ -106,7 +107,7 @@ void DD3BackView_roi_notrans_mm(float x0,
 								 int nrcols,
 								 int nrrows,       // images
 								 int nrplanes,     //     do NOT
-								 float *pOrig,     //        contain
+								 void *pOrig,     //        contain
 								 float vox_xy_size,   // voxel size
 								 float vox_z_size,
 								 byte* xy_mask,
@@ -186,7 +187,7 @@ extern "C"{
 		int nrcols,         // image
 		int nrrows,         //    does NOT
 		int nrplanes,       //        contain a dummy 1 pixel frame
-		float *pOrig,
+		void *pOrig,
 		float vox_xy_size, //added fields
 		float vox_z_size,//added fields 
 		byte* xy_mask); //added fields for xy_mask
@@ -210,7 +211,7 @@ extern "C"{
 		int nrcols,         // image
 		int nrrows,         //    does NOT
 		int nrplanes,       //        contain a dummy 1 pixel frame
-		float *pOrig,
+		void *pOrig,
 		float vox_xy_size, //added fields
 		float vox_z_size,//added fields 
 		byte* xy_mask); //added fields for xy_mask
@@ -237,7 +238,7 @@ extern "C"{
 		int nrcols,         // image
 		int nrrows,         //    does NOT
 		int nrplanes,       //        contain a dummy 1 pixel frame
-		float *pOrig,
+		void *pOrig,
 		float vox_xy_size, //added fields
 		float vox_z_size,//added fields 
 		byte* xy_mask); //added fields for xy_mask
@@ -260,7 +261,7 @@ extern "C"{
 		int nrcols,         // image
 		int nrrows,         //    does NOT
 		int nrplanes,       //        contain a dummy 1 pixel frame
-		float *pOrig,
+		void *pOrig,
 		float vox_xy_size, //added fields
 		float vox_z_size,//added fields 
 		byte* xy_mask); //added fields for xy_mask
