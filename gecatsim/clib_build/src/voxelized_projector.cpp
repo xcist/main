@@ -42,6 +42,7 @@
 char  TempString[10000];
 char  OutputString[10000];
 int   PrintReportOutput = 1;
+bool useUInt16;
 
 struct module_info
   {
@@ -73,10 +74,11 @@ static struct material_info materials = {0,0,NULL};
 
 static int debug_flag = 0;
 
+//TODO: check memory alignement article to understand if possible to reduce memory
 struct phantom_info
   {
   int **dims;
-  float **volume; // volume is a pointer to pointers because the voxelized phantom may have multiple materials
+  void **volume; // volume is a pointer to pointers because the voxelized phantom may have multiple materials
   float *xoff;
   float *yoff;
   float *zoff;
@@ -119,6 +121,18 @@ int* my_memcpyi(int *src, int *dest, int bytes)
     dest = NULL;
     }
   dest = (int *) malloc(bytes);
+  memcpy(dest, src, bytes);
+  return dest;
+  }
+
+unsigned short* my_memcpyus(unsigned short *src, unsigned short *dest, int bytes)
+  {
+  if (dest != NULL) 
+    {
+    free(dest);
+    dest = NULL;
+    }
+  dest = (unsigned short *) malloc(bytes);
   memcpy(dest, src, bytes);
   return dest;
   }
@@ -198,13 +212,14 @@ DLLEXPORT void set_phantom_info_vox(int *Status, float *vol, int *dims, float xo
   unsigned long reserved_memory_size = (unsigned long)2*(unsigned long)1024*(unsigned long)1024*(unsigned long)1024; // reserve 2GB memory to store sinogram and other things;
 
 	*Status = 0;
+    useUInt16 = false;
 	
 	if(phantom.volume==NULL) {
 		previously_allocated_memory_size = 0;
 		system_memory_size = getMemorySize();
 		
 		Report(sprintf(OutputString, "Preparing to allocate memory for material volume data...\n"));
-		phantom.volume = (float **)malloc(sizeof(float *) * NumOfMaterials);
+		phantom.volume = (void **)malloc(sizeof(float *) * NumOfMaterials);
 		phantom.dims = (int **)malloc(sizeof(int *) * NumOfMaterials);
 		phantom.xy_mask = (unsigned char **)malloc(sizeof(unsigned char *) * NumOfMaterials);
 		
@@ -240,6 +255,86 @@ DLLEXPORT void set_phantom_info_vox(int *Status, float *vol, int *dims, float xo
 	
 	Report(sprintf(OutputString, "Copying data for material %2d into C memory...", MaterialIndex));
 	memcpy( (phantom.volume)[MaterialIndex-1], vol, dims[0]*dims[1]*dims[2]*sizeof(float) );
+	Report(sprintf(OutputString, " done.\n"));
+	
+	memcpy( phantom.dims[MaterialIndex-1], dims, 4*sizeof(int) );
+	phantom.xoff[MaterialIndex-1] = xoff;
+	phantom.yoff[MaterialIndex-1] = yoff;
+	phantom.zoff[MaterialIndex-1] = zoff;
+	phantom.dxy[MaterialIndex-1] = dxy;
+	phantom.dz[MaterialIndex-1] = dz;
+	
+	// phantom.xy_mask[MaterialIndex-1] = new unsigned char[dims[0]*dims[1]*2];
+	memcpy( phantom.xy_mask[MaterialIndex-1], xy_mask, sizeof(unsigned char)*dims[0]*dims[1] );
+	#if defined(DEBUG_00)
+	Report(sprintf(OutputString, "Copied mask into C memory\n"));
+	#endif
+	unsigned char *transposeMask = phantom.xy_mask[MaterialIndex-1] + dims[0]*dims[1];
+	for(int i = 0;i < dims[0];i++)
+		for(int j = 0;j < dims[1];j++)
+			transposeMask[j+i*dims[1]] = xy_mask[i+j*dims[0]]; 
+	#if defined(DEBUG_00)
+	Report(sprintf(OutputString, "Transposed mask\n"));
+	#endif
+	
+	if(MaterialIndex==NumOfMaterials)
+		Report(sprintf(OutputString, "Allocated a total of %6lu MB.\n", previously_allocated_memory_size/((unsigned long)(1024*1024))));
+  }
+}
+
+extern "C" {
+DLLEXPORT void set_phantom_info_vox_uint16(int *Status, unsigned short *vol, int *dims, float xoff, float yoff, float zoff, float dxy, float dz, unsigned char *xy_mask, int MaterialIndex, int NumOfMaterials)
+  {
+  static unsigned long long previously_allocated_memory_size;
+  static unsigned long long system_memory_size;
+  unsigned long long phantom_num_voxels_this_material  = (unsigned long)dims[0]*(unsigned long)dims[1]*(unsigned long)dims[2];
+  unsigned long long required_memory_size_this_material  = phantom_num_voxels_this_material *(unsigned long)sizeof(unsigned short);
+  unsigned long reserved_memory_size = (unsigned long)2*(unsigned long)1024*(unsigned long)1024*(unsigned long)1024; // reserve 2GB memory to store sinogram and other things;
+
+	*Status = 0;
+    useUInt16 = true;
+	
+	if(phantom.volume==NULL) {
+		previously_allocated_memory_size = 0;
+		system_memory_size = getMemorySize();
+		
+		Report(sprintf(OutputString, "Preparing to allocate memory for material volume data...\n"));
+		phantom.volume = (void **)malloc(sizeof(unsigned short *) * NumOfMaterials);
+		phantom.dims = (int **)malloc(sizeof(int *) * NumOfMaterials);
+		phantom.xy_mask = (unsigned char **)malloc(sizeof(unsigned char *) * NumOfMaterials);
+		
+		phantom.xoff = (float *)malloc(sizeof(float) * NumOfMaterials);
+		phantom.yoff = (float *)malloc(sizeof(float) * NumOfMaterials);
+		phantom.zoff = (float *)malloc(sizeof(float) * NumOfMaterials);
+		phantom.dxy = (float *)malloc(sizeof(float) * NumOfMaterials);
+		phantom.dz = (float *)malloc(sizeof(float) * NumOfMaterials);
+
+		if(phantom.volume==NULL || phantom.dims==NULL || phantom.xy_mask==NULL) {
+			Report(sprintf(OutputString, "Memory allocation error - couldn't allocate memory for pointers to materials.\n"));
+			*Status = -1;
+			return;
+		}
+	}
+	
+	if(system_memory_size - reserved_memory_size < previously_allocated_memory_size + required_memory_size_this_material) {
+		Report(sprintf(OutputString, "Insuffucient system memory available.\n"));
+		*Status = -2;
+		return;
+	} else {
+		(phantom.volume)[MaterialIndex-1] = (unsigned short *)malloc(required_memory_size_this_material);
+		(phantom.dims)[MaterialIndex-1] = (int *)malloc(4*sizeof(int));
+		phantom.xy_mask[MaterialIndex-1] = (unsigned char *)malloc(dims[0]*dims[1]*2*sizeof(unsigned char));
+		if(phantom.volume[MaterialIndex-1]==NULL || phantom.dims[MaterialIndex-1]==NULL) {
+			Report(sprintf(OutputString, "Memory allocation error - couldn't allocate memory for material %i.\n", MaterialIndex));
+			*Status = -1;
+			return;
+		}
+		Report(sprintf(OutputString, "Allocated memory for image volume for material %2i\n", MaterialIndex));
+		previously_allocated_memory_size += required_memory_size_this_material;
+	}
+	
+	Report(sprintf(OutputString, "Copying data for material %2d into C memory...", MaterialIndex));
+	memcpy( (phantom.volume)[MaterialIndex-1], vol, dims[0]*dims[1]*dims[2]*sizeof(unsigned short) );
 	Report(sprintf(OutputString, " done.\n"));
 	
 	memcpy( phantom.dims[MaterialIndex-1], dims, 4*sizeof(int) );
@@ -542,10 +637,11 @@ void voxelized_projector(
   for(int detIndex=0; detIndex<nrdetcols*nrdetrows; detIndex++)
     for (EnergyBin = 0; EnergyBin < materials.eBinCount; EnergyBin++)
     {
-    thisView[detIndex*materials.eBinCount + EnergyBin] = thisViewProj[detIndex]*materials.muTable[EnergyBin * materials.materialCount + (MaterialIndex-1)];
+        float intScale = useUInt16?0.0001:1.0;
+        thisView[detIndex*materials.eBinCount + EnergyBin] = intScale*thisViewProj[detIndex]*materials.muTable[EnergyBin * materials.materialCount + (MaterialIndex-1)];
     #if defined(DEBUG_20)
-    Report(sprintf(OutputString, "thisView(index1)=%f\n", thisView[detIndex]));
-    Report(sprintf(OutputString, "materials.muTable(index2) = %f\n", materials.muTable[EnergyBin * materials.materialCount + (MaterialIndex-1)]));
+        Report(sprintf(OutputString, "thisView(index1)=%f\n", thisView[detIndex]));
+        Report(sprintf(OutputString, "materials.muTable(index2) = %f\n", materials.muTable[EnergyBin * materials.materialCount + (MaterialIndex-1)]));
     #endif
     }
   #if defined(DEBUG_00)

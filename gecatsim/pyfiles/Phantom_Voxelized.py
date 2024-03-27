@@ -89,9 +89,17 @@ def set_material(cfg, materialList):
     fun(nMat, Evec.size, Mus)
 
 def set_voxelized_volume(cfg, volumeData, volumeDims, offsets, voxelsize, xyMask, materialIndex, numberOfMaterials):
-    fun = cfg.clib.set_phantom_info_vox
-    fun.argtypes = [POINTER(c_int), ndpointer(c_float), ndpointer(c_int), \
-        c_float, c_float, c_float, c_float, c_float, ndpointer(c_ubyte), c_int, c_int]
+    if cfg.phantom.useUInt16:
+        fun = cfg.clib.set_phantom_info_vox_uint16
+        fun.argtypes = [POINTER(c_int), ndpointer(c_ushort), ndpointer(c_int), \
+            c_float, c_float, c_float, c_float, c_float, ndpointer(c_ubyte), c_int, c_int]
+
+        # convert data to uint16
+        volumeData = np.ushort(np.round(volumeData*10000))
+    else:
+        fun = cfg.clib.set_phantom_info_vox
+        fun.argtypes = [POINTER(c_int), ndpointer(c_float), ndpointer(c_int), \
+            c_float, c_float, c_float, c_float, c_float, ndpointer(c_ubyte), c_int, c_int]
     fun.restype = None
     
     Status = [0]

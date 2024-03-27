@@ -7,6 +7,8 @@
 
 #include "DD3_roi_notrans_mm.hpp"
 
+//bool useUInt16;
+
 //Version 1.0 ,  mask, and no trans
 void DD3ProjRow_roi_notrans_mm(float imgX,
 							float imgXstep,
@@ -14,7 +16,7 @@ void DD3ProjRow_roi_notrans_mm(float imgX,
 							float imgZstart,
 							float imgZstep,
 							int nrplanes,
-							float *pImg,
+							void *pImg,
 							float *detX,
 							int increment,
 							float *detZ,
@@ -63,7 +65,13 @@ void DD3ProjRow_roi_notrans_mm(float imgX,
 		start_imgX_ind=int((detX_0-imgXStart)*inv_imgXstep-1); //extra 1 to avoid precision error
 		if(start_imgX_ind>0)
 		{
-			pImg+=start_imgX_ind*nrplanes*trans_rowstep;
+			//pImg += start_imgX_ind*nrplanes*trans_rowstep;
+		    int tmpstep = start_imgX_ind*nrplanes*trans_rowstep;
+            if (useUInt16) {
+                pImg = static_cast<unsigned short*>(pImg) + tmpstep;
+            } else {
+                pImg = static_cast<float*>(pImg) + tmpstep;
+            }
 			colnr=start_imgX_ind;
 			previousX=imgXStart+imgXstep*start_imgX_ind;
 			imgX=previousX+imgXstep;
@@ -128,8 +136,8 @@ void DD3ProjRow_roi_notrans_mm(float imgX,
 
 			float enddetZ = z0 + scale *detZ[nrdetrows];
 			int start_imgZ_ind=0,end_imgZ_ind=nrplanes;
-			float *pImgcopy;
-			pImgcopy=pImg;
+			void *pImgcopy;
+            pImgcopy = pImg;
 
 			//Z end boundary check
 			if(enddetZ<imgZ_end)
@@ -144,7 +152,12 @@ void DD3ProjRow_roi_notrans_mm(float imgX,
 				start_imgZ_ind=int((nextdetZ-imgZstart)*inv_imgZstep)-1; //extra 1 to avoid precision error
 				if(start_imgZ_ind>0)
 				{
-					pImgcopy+=start_imgZ_ind;
+					//pImgcopy += start_imgZ_ind;
+                    if (useUInt16) {
+                        pImgcopy = static_cast<unsigned short*>(pImgcopy) + start_imgZ_ind;
+                    } else {
+                        pImgcopy = static_cast<float*>(pImgcopy) + start_imgZ_ind;
+                    }
 					planenr=start_imgZ_ind;
 					previousZ=imgZstart+imgZstep*start_imgZ_ind;
 					imgZ=previousZ+imgZstep;	
@@ -167,15 +180,26 @@ void DD3ProjRow_roi_notrans_mm(float imgX,
 			{
 				if (imgZ <= nextdetZ) /* next Z boundary is a pixel boundary */
 				{
-					*viewCopy += dx*(imgZ-previousZ)*(*pImgcopy);
-					pImgcopy++;
+					//*viewCopy += dx*(imgZ-previousZ)*(*pImgcopy);
+                    if (useUInt16) {
+					    *viewCopy += dx*(imgZ-previousZ)*(*static_cast<unsigned short*>(pImgcopy));
+                        pImgcopy = static_cast<unsigned short*>(pImgcopy) + 1;
+                    } else {
+					    *viewCopy += dx*(imgZ-previousZ)*(*static_cast<float*>(pImgcopy));
+                        pImgcopy = static_cast<float*>(pImgcopy) + 1;
+                    }
 					planenr++;
 					previousZ=imgZ;
 					imgZ+=imgZstep;
 				}
 				else /* next Z boundary is a detector boundary */
 				{
-					*viewCopy += dx*(nextdetZ-previousZ)*(*pImgcopy);
+					//*viewCopy += dx*(nextdetZ-previousZ)*(*pImgcopy);
+                    if (useUInt16) {
+					    *viewCopy += dx*(nextdetZ-previousZ)*(*static_cast<unsigned short*>(pImgcopy));
+                    } else {
+					    *viewCopy += dx*(nextdetZ-previousZ)*(*static_cast<float*>(pImgcopy));
+                    }
 					detZ_ind++;
 					viewCopy++;
 					previousZ=nextdetZ;
@@ -183,7 +207,12 @@ void DD3ProjRow_roi_notrans_mm(float imgX,
 				}
 			}//while z-planes
 		}//mask
-		pImg+=(jumpcount);
+		//pImg+=(jumpcount);
+        if (useUInt16) {
+            pImg = static_cast<unsigned short*>(pImg) + jumpcount;
+        } else {
+            pImg = static_cast<float*>(pImg) + jumpcount;
+        }
 	}//while colnr  
 }
 
@@ -209,18 +238,20 @@ void DD3ProjView_roi_notrans_mm(float x0,
 							 int nrcols,
 							 int nrrows,       // images
 							 int nrplanes,     //     do NOT
-							 float *pOrig,     //        contain
+							 void *pOrig,     //        contain
 							 float vox_xy_size,   // voxel size
 							 float vox_z_size,
 							 byte* xy_mask,        //mask
 							 byte* xy_mask_trans)    //transposed mask
 
 {
-	float *detXcopy, *pImg, *viewCopy, *detZcopy, *scalesCopy;
+	float *detXcopy, *viewCopy, *detZcopy, *scalesCopy;
 	int xdistnr, nrxdist;
 	int dummyint, increment, rownr, detcolnr, detrownr;
 	float dummyfloat, imgX, imgXstep, imgZ, imgZstep, invCos;
 	float deltaX, deltaZ, detXstep, detZstep;
+
+    void *pImg;
 
 	int num_trans_plane_step=1,num_trans_rowstep=1;//to compensate for the removal of pTrans
 
@@ -330,7 +361,12 @@ void DD3ProjView_roi_notrans_mm(float x0,
 			z0, viewCopy, nrdetrows,nrdetcols,num_trans_rowstep,p_mask+rownr*nrcols);
 
 		//pImg += nrcols*nrplanes; //original code
-		pImg+=num_trans_plane_step;
+		//pImg+=num_trans_plane_step;
+        if (useUInt16) {
+            pImg = static_cast<unsigned short*>(pImg) + num_trans_plane_step;
+        } else {
+            pImg = static_cast<float*>(pImg) + num_trans_plane_step;
+        }
 	}
 
 	/*
@@ -395,7 +431,7 @@ extern "C"{
 		int nrcols,         // image
 		int nrrows,         //    does NOT
 		int nrplanes,       //        contain a dummy 1 pixel frame
-                                    float *pOrig,//z is fastest changing (start -), then x (start -), then y (start +)
+                                    void *pOrig,//z is fastest changing (start -), then x (start -), then y (start +)
 		float vox_xy_size, //added fields
 		float vox_z_size,//added fields 
 		byte* xy_mask) //added fields for xy_mask [mask,mask_trans] (mask out xy locations such as those outside FOV)
