@@ -5,7 +5,7 @@ from numpy.ctypeslib import ndpointer
 from gecatsim.pyfiles.GetMu import GetMu
 from gecatsim.pyfiles.CommonTools import *
 
-def C_Phantom_Polygonal_Clear(cfg, num_polygons=6):
+def C_Phantom_Polygonal_Clear(cfg, num_polygons = None):
     print('Clearing the POLYGONAL phantom in C global variables.')
     func = cfg.clib.clear_polygonalized_phantom
     num_polygons = np.int32(num_polygons)
