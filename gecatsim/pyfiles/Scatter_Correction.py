@@ -43,7 +43,8 @@ def Scatter_Correction(cfg, airscan, offsetScan, phantomScan):
     print("done.\n")
     
     ###--------- save corrected scan
-    #rawwrite(cfg.resultsName+'_SC.scan', phantomScan)
+    if hasattr(cfg.physics,"scatterCorrectionSaveView") and cfg.physics.scatterCorrectionSaveView:
+        rawwrite(cfg.resultsName+'_SC.scan', phantomScan)
     
     
     return airscan, offsetScan, phantomScan
