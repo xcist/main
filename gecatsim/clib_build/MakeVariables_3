@@ -24,5 +24,5 @@ OBJECTS = $(patsubst %.cpp,%.o,$(CPPSOURCES))
 OBJECTS += $(patsubst %.c,%.o,$(CSOURCES))
 OBJECTS += p_nlog_inline.o
 
-CC = gcc
-CXX = g++
+CC = /usr/local/opt/gcc/bin/gcc-14
+CXX = /usr/local/opt/gcc/bin/g++-14
