@@ -24,5 +24,6 @@ OBJECTS = $(patsubst %.cpp,%.o,$(CPPSOURCES))
 OBJECTS += $(patsubst %.c,%.o,$(CSOURCES))
 OBJECTS += p_nlog_inline.o
 
-CC = /usr/local/opt/gcc/bin/gcc-14
-CXX = /usr/local/opt/gcc/bin/g++-14
+# use path to user installed gcc instead of simple gcc on mac
+CC = gcc #/usr/local/opt/gcc/bin/gcc-14 
+CXX = g++ #/usr/local/opt/gcc/bin/g++-14
