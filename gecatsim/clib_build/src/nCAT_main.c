@@ -6039,6 +6039,7 @@ void *ncat_projector_wrapper(void *pointerIn)
           dbug(1,"  done w/module %d\r\n",module);
         }
     }
+  return NULL;//pthread_exit(NULL);
 }
 
 DLLEXPORT void ncat_projector_threaded(double subviewWeight, double *thisView, float *sourcePoints, int nSubSources, double *srcHullPoints, int nSrcHullPoints, int *firstDetIndex, int nModulesIn, int *modTypeInds, double *Up, double *Right, double *Center, int UNUSED_tvLength, int numThreads, double UNUSED)
@@ -6069,7 +6070,7 @@ DLLEXPORT void ncat_projector_threaded(double subviewWeight, double *thisView, f
   t_id = malloc(sizeof(pthread_t)*thread_count);
   for (i=0;i<thread_count;i++)
     {
-      pthread_create(&t_id[i],NULL,ncat_projector_wrapper,projectorArgs);
+      pthread_create(&t_id[i], NULL, ncat_projector_wrapper, projectorArgs);
     }
   // Wait for them to complete
   for (i=0;i<thread_count;i++)
