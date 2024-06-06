@@ -13,6 +13,7 @@ all: libcatsim_macos.so
 
 p_nlog_inline.o: p_nlog_inline.c
 	#gcc -O0 -g -Wall -static -msse -masm=intel -fPIC -c p_nlog_inline.c
+	# For a Mac OS machine with the M1/M2/M3 chip, remove the "-msse" flag in the line below.
 	/usr/local/opt/gcc/bin/gcc-14 -O0 -g -Wall -static -msse -fPIC -c p_nlog_inline.c
 
 64bitLibrary = libcatsim_macos.so
