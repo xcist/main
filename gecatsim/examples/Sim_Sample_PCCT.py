@@ -31,7 +31,7 @@ ct.protocol.mA = 500
 ct.protocol.spectrumFilename = "tungsten_tar7.0_120_filt.dat"
 ct.physics.energyCount = 120
 
-ct.protocol.bowtie = "VCTlarge.txt"
+ct.protocol.bowtie = "large.txt"
 ct.protocol.flatFilter = ['Al', 3.0]
 
 ct.scanner.detectorRowsPerMod = 2
