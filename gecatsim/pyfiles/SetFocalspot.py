@@ -182,8 +182,11 @@ def SetFocalspot(cfg):
     os_z = os_range_z[0] + (np.arange(os_nz)+0.5)*os_dz # 0.5 comes from the actual center is not at edge
     os_y = -os_z/np.tan(cfg.scanner.targetAngle*np.pi/180.)
     [os_xx, os_zz] = np.meshgrid(os_x, os_z)
-    os_interp = interpolate.interp2d(fs_pos_z, fs_pos_x, I, kind='linear')
-    os_I = os_interp(os_z, os_x)
+    #os_interp = interpolate.interp2d(fs_pos_z, fs_pos_x, I, kind='linear')
+
+    #os_I = os_interp(os_z, os_x)
+    os_interp = interpolate.RectBivariateSpline(fs_pos_z, fs_pos_x, I.T, kx=1, ky=1)
+    os_I = os_interp(os_z, os_x).T
 
     if hasattr(cfg.scanner, 'focalspotData') or cfg.scanner.focalspotShape.lower() != 'uniform':
         os_xx *= cfg.scanner.focalspotWidth/W0
