@@ -186,7 +186,7 @@ def SetFocalspot(cfg):
 
     #os_I = os_interp(os_z, os_x)
     os_interp_ = interpolate.RectBivariateSpline(fs_pos_z, fs_pos_x, I.T, kx=1, ky=1)
-    os_I = os_interp_r(os_z, os_x).T
+    os_I = os_interp(os_z, os_x).T
 
     if hasattr(cfg.scanner, 'focalspotData') or cfg.scanner.focalspotShape.lower() != 'uniform':
         os_xx *= cfg.scanner.focalspotWidth/W0
