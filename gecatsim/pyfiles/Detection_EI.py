@@ -25,14 +25,14 @@ def Detection_EI(cfg, viewId, subViewId):
     
     # scatter cross-talk
     if cfg.physics.crosstalkCallback:
-        thisSubView = feval(cfg.physics.crosstalkCallback, cfg.thisSubView, cfg)
+        cfg.thisSubView = feval(cfg.physics.crosstalkCallback, cfg.thisSubView, cfg)
         
     # quantum noise
     if cfg.sim.enableQuantumNoise:
-        thisSubView = randpf(thisSubView)
+        cfg.thisSubView = randpf(cfg.thisSubView)
         
     # merge energies
-    thisSubView = thisSubView.dot(Evec)
+    thisSubView = cfg.thisSubView.dot(Evec)
         
     # lag
     if cfg.physics.lagCallback:
