@@ -9,8 +9,8 @@ from scipy import signal
 #from catsim.pyfiles.CommonTools import *
 
 def getConvKernel(row_crosstalk, col_crosstalk):
-    row_ker = np.array([row_crosstalk, 1.-2.*row_crosstalk, row_crosstalk])
-    col_ker = np.array([col_crosstalk, 1.-2.*col_crosstalk, col_crosstalk])
+    row_ker = np.array([row_crosstalk, 1.-2.*row_crosstalk, row_crosstalk], dtype=np.single)
+    col_ker = np.array([col_crosstalk, 1.-2.*col_crosstalk, col_crosstalk], dtype=np.single)
     return col_ker[:,None]*row_ker
 
 def CalcOptCrossTalk(thisView, cfg):
@@ -19,11 +19,11 @@ def CalcOptCrossTalk(thisView, cfg):
     conv_kernel = getConvKernel(cfg.physics.row_crosstalk_opt, cfg.physics.col_crosstalk_opt)
     if conv_kernel[1,1] == 1.: return thisView
     
-    outView = np.reshape(np.copy(thisView), [cfg.scanner.detectorColCount, cfg.scanner.detectorRowCount])
+    outView = np.reshape(thisView, [cfg.scanner.detectorColCount, cfg.scanner.detectorRowCount])
     #outView = np.reshape(np.copy(thisView), [cfg.scanner.detectorRowCount, cfg.scanner.detectorColCount])
     #outView = np.copy(thisView)
     outView = signal.convolve2d(outView, conv_kernel, mode='same', boundary='fill', fillvalue=0.)
-    outView = outView.astype(np.single)
+    outView = outView.astype(np.single, copy=False)
 
     return np.reshape(outView, thisView.shape)
 

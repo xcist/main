@@ -48,22 +48,22 @@ def Detector_RayAngles_2D(cfg):
     
     cfg.det.rayDistance = rayDistance
     
-    alphas = np.arctan(tanAlphas)
-    cfg.det.alphas = alphas
-    cfg.det.sinAlphas = np.sin(alphas)
-    cfg.det.cosAlphas = np.cos(alphas)
-    cfg.det.tanAlphas = tanAlphas
+    #alphas = np.arctan(tanAlphas)
+    cfg.det.alphas = np.arctan(tanAlphas)
+    #cfg.det.sinAlphas = np.sin(alphas)
+    #cfg.det.cosAlphas = np.cos(alphas)
+    #cfg.det.tanAlphas = tanAlphas
     
     cfg.det.betas = betas
-    cfg.det.sinBetas = np.sin(betas)
-    cfg.det.cosBetas = np.cos(betas)
-    cfg.det.tanBetas = np.tan(betas)
+    #cfg.det.sinBetas = np.sin(betas)
+    #cfg.det.cosBetas = np.cos(betas)
+    #cfg.det.tanBetas = np.tan(betas)
     
-    gammas = np.arctan(tanGammas)
-    cfg.det.gammas = gammas
-    cfg.det.sinGammas = np.sin(gammas)
-    cfg.det.cosGammas = np.cos(gammas)
-    cfg.det.tanGammas = tanGammas
+    #gammas = np.arctan(tanGammas)
+    cfg.det.gammas = np.arctan(tanGammas)
+    #cfg.det.sinGammas = np.sin(gammas)
+    #cfg.det.cosGammas = np.cos(gammas)
+    #cfg.det.tanGammas = tanGammas
     
     return cfg
 
