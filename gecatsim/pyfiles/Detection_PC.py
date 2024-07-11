@@ -13,13 +13,13 @@ def Detection_PC(cfg, viewId, subViewId):
     if viewId == cfg.sim.startViewId and subViewId == 0:
         ### detection efficiency
         # detector prefilter
-        Wvec = feval(cfg.physics.prefilterCallback, cfg)
+        cfg.sim.Wvec = feval(cfg.physics.prefilterCallback, cfg)
         
         # detector absorption
         detectorMu = GetMu(cfg.scanner.detectorMaterial, Evec)
-        detEff = 1-np.exp(-0.1*cfg.scanner.detectorDepth/cfg.det.cosBetas*detectorMu)
+        detEff = 1-np.exp(-0.1*cfg.scanner.detectorDepth/np.cos(cfg.det.betas)*detectorMu)
         
-        cfg.sim.Wvec = Wvec*detEff
+        np.multiply(cfg.sim.Wvec, detEff, out=cfg.sim.Wvec)
         
         ### spectral response - primary
         cfg = get_spectral_response(cfg)
