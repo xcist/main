@@ -18,6 +18,7 @@ class TestDetection_EI(unittest.TestCase):
 
         cfg.det.totalNumCells = 5
         #cfg.det.cosBetas = np.ones([cfg.det.totalNumCells, 1], dtype=np.single)
+        cfg.det.betas = np.zeros([cfg.det.totalNumCells, 1], dtype=np.single)
 
         cfg = feval(cfg.protocol.spectrumCallback, cfg)
 
