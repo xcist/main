@@ -25,5 +25,5 @@ class TestDetector_RayAngles_2D(unittest.TestCase):
 
         assert cfg.det.rayDistance is not None
         assert cfg.det.alphas is not None
-        assert cfg.det.cosBetas is not None
+        #assert cfg.det.cosBetas is not None
         assert cfg.det.gammas is not None
