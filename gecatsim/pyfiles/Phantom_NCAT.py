@@ -9,12 +9,8 @@ from gecatsim.pyfiles.CommonTools import *
 def Phantom_NCAT(cfg):
     ###----------- pass material Mu and volume to C
     nMat = set_material(cfg)
+    ###----------- pass volume info to C
     set_volume(cfg, nMat)
-    
-    ###----------- pass detector and source info to C
-    set_detector(cfg)
-    set_source(cfg)
-
     return cfg
 
 
@@ -97,46 +93,4 @@ def set_volume(cfg, nMat):
     offsets = (c_float*3)(*cfg.phantom.centerOffset)
     scale = cfg.phantom.scale
     fun(phantom_filename, material_flags, offsets, scale)
-
-
-def set_detector(cfg):
-    det = cfg.det
-    
-    Height = [det.height]
-    Width = [det.width]
-    Pix = [det.nCells]
-    Coords = det.cellCoords.astype(np.double)
-    Sub = [det.nSamples]
-    Sampling = det.sampleCoords.astype(np.double)
-    Weight = det.weights.astype(np.double)
-    nModuleTypes = det.nModDefs
-    maxPix = np.max(det.nCells)
-    maxSubDets = np.max(det.nSamples)
-    UNUSED = 0
-    
-    Height = (c_double*1)(*Height)
-    Width = (c_double*1)(*Width)
-    Pix = (c_int*1)(*Pix)
-    Sub = (c_int*1)(*Sub)
-        
-    # in nCAT_main.c: void set_module_info_NCAT(double *Height, double *Width, int *Pix, double *Coords, int *Sub, double *Sampling, double *Weight, int nModuleTypes, int maxPix, int maxSubDets, int UNUSED)
-    # the C func wants data order: row -> col -> pixel_ind or sample_ind
-    fun = cfg.clib.set_module_info_NCAT
-    fun.argtypes = [POINTER(c_double), POINTER(c_double), POINTER(c_int), ndpointer(c_double), \
-        POINTER(c_int), ndpointer(c_double), ndpointer(c_double), c_int, c_int, c_int, c_int]
-    fun.restype = None    
-    fun(Height, Width, Pix, Coords, \
-        Sub, Sampling, Weight, nModuleTypes, maxPix, maxSubDets, UNUSED)
- 
- 
-def set_source(cfg):
-    # in nCAT_main.c: void set_src_info_NCAT(double *sourceWeights, int nSubSources)
-    fun = cfg.clib.set_src_info_NCAT
-    fun.argtypes = [ndpointer(c_double), c_int]
-    fun.restype = None
-    
-    SourceWeights = cfg.src.weights.astype(np.double)
-    NumberOfSubSources = cfg.src.nSamples
-    
-    fun(SourceWeights, NumberOfSubSources)
  

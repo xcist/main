@@ -69,10 +69,6 @@ def Phantom_Voxelized(cfg):
     # input('*******************************************')
     # plt.close('all')
 
-    ###----------- pass detector and source info to C
-    set_detector(cfg)
-    set_source(cfg)
-
     return cfg
 
 def set_material(cfg, materialList):
@@ -112,44 +108,7 @@ def set_voxelized_volume(cfg, volumeData, volumeDims, offsets, voxelsize, xyMask
     elif Status[0] == -2:
         print("*** Error %d in set_phantom_info_vox: Not have enough system memory for voxelized phantom!" % Status[0])
 
-def set_detector(cfg):
-    det = cfg.det
-    
-    Height = [det.height]
-    Width = [det.width]
-    Pix = [det.nCells]
-    Coords = det.cellCoords
-    Sub = [det.nSamples]
-    Sampling = det.sampleCoords
-    Weight = det.weights
-    nModuleTypes = det.nModDefs
-    maxPix = np.max(det.nCells)
-    maxSubDets = np.max(det.nSamples)
-    moduleOverlapType = 2
-    
-    Height = (c_float*1)(*Height)
-    Width = (c_float*1)(*Width)
-    Pix = (c_int*1)(*Pix)
-    Sub = (c_int*1)(*Sub)
-    
-    # the C func wants data order: row -> col -> pixel_ind or sample_ind
-    fun = cfg.clib.set_module_info_vox
-    fun.argtypes = [POINTER(c_float), POINTER(c_float), POINTER(c_int), ndpointer(c_float), \
-        POINTER(c_int), ndpointer(c_float), ndpointer(c_float), c_int, c_int, c_int, c_int]
-    fun.restype = None    
-    fun(Height, Width, Pix, Coords, \
-        Sub, Sampling, Weight, nModuleTypes, maxPix, maxSubDets, moduleOverlapType)
- 
-def set_source(cfg):
-    SourceWeights = cfg.src.weights
-    NumberOfSubSources = cfg.src.nSamples
-    
-    fun = cfg.clib.set_src_info_vox
-    fun.argtypes = [ndpointer(c_float), c_int]
-    fun.restype = None    
-    fun(SourceWeights, NumberOfSubSources)
- 
- 
+
 if __name__ == "__main__":
     cfg = source_cfg("./cfg/default.cfg")
     cfg.phantom.filename = 'BIG.json'

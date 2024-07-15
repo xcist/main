@@ -16,8 +16,6 @@ def Phantom_Analytic(cfg):
     cfg.phantom.numberOfMaterials = len(phobject['materialList'])
     set_materials(cfg, phobject['materialList'])
     set_volume(cfg, numObjects, T, cumCP, NumCP, materialIndex, X, K, Q, Eta, S, D)
-    set_detector(cfg)
-    set_source(cfg)
 
     print('... done reading phantom.')
     return cfg
@@ -48,47 +46,6 @@ def set_volume(cfg, numObjects, T, cumCP, NumCP, materialIndex, X, K, Q, Eta, S,
     fun.argtypes = [c_int, ndpointer(c_int), ndpointer(c_int), ndpointer(c_int), ndpointer(c_int), ndpointer(c_double), ndpointer(c_double), ndpointer(c_double), ndpointer(c_double), ndpointer(c_double), ndpointer(c_double), c_int]
     fun.restype = None
     fun(numObjects, T, cumCP, NumCP, materialIndex, X, K, Q, Eta, S, D, cumCP[-1])
-
-
-def set_source(cfg):
-    # analytic_projector.c: void set_src_info(double *sourceWeights, int nSubSources)
-    fun = cfg.clib.set_src_info
-    fun.argtypes = [ndpointer(c_double), c_int]
-    fun.restype = None
-    
-    SourceWeights = cfg.src.weights.astype(np.double)
-    NumberOfSubSources = cfg.src.nSamples
-    
-    fun(SourceWeights, NumberOfSubSources)
-
-
-def set_detector(cfg):
-    det = cfg.det
-    
-    Height = [det.height]
-    Width = [det.width]
-    Pix = [det.nCells]
-    Coords = det.cellCoords.astype(np.double)
-    Sub = [det.nSamples]
-    Sampling = det.sampleCoords.astype(np.double)
-    Weight = det.weights.astype(np.double)
-    nModuleTypes = det.nModDefs
-    maxPix = np.max(det.nCells)
-    maxSubDets = np.max(det.nSamples)
-    moduleOverlapType = 2
-    
-    Height = (c_double*1)(*Height)
-    Width = (c_double*1)(*Width)
-    Pix = (c_int*1)(*Pix)
-    Sub = (c_int*1)(*Sub)
-        
-    # analytic_projector.c: void set_module_info(double *Height, double *Width, int *Pix, double *Coords, int *Sub, double *Sampling, double *Weight, int nModuleTypes, int maxPix, int maxSubDets, int moduleOverlapType)
-    fun = cfg.clib.set_module_info
-    fun.argtypes = [POINTER(c_double), POINTER(c_double), POINTER(c_int), ndpointer(c_double), \
-        POINTER(c_int), ndpointer(c_double), ndpointer(c_double), c_int, c_int, c_int, c_int]
-    fun.restype = None
-    fun(Height, Width, Pix, Coords, \
-        Sub, Sampling, Weight, nModuleTypes, maxPix, maxSubDets, moduleOverlapType)
     
 '''
 NOTE: phobject here is object in matlab [simply the parsed phantom], phantobject here is phobject in matlab

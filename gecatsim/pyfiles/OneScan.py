@@ -5,18 +5,19 @@ import matplotlib.pyplot as plt
 from gecatsim.pyfiles.CommonTools import *
 from tqdm import tqdm
 from gecatsim.pyfiles.PhantomProjectorWrapper import PhantomWrapper, ProjectorWrapper
+from gecatsim.pyfiles.C_Projector_SetData import C_Projector_SetData
 
 def one_scan(cfg):
     cfg = initialize_scan(cfg)
     
     # view loop
     if cfg.sim.isPhantomScan:
-        print('phantom scan view loop...')
-        tmp = tqdm(range(cfg.sim.startViewId, cfg.sim.stopViewId+1))
+        # print('phantom scan view loop...')
+        viewIndex = tqdm(range(cfg.sim.startViewId, cfg.sim.stopViewId+1))
     else:
-        tmp = range(cfg.sim.startViewId, cfg.sim.stopViewId+1)
-    for viewId in tmp:
-    #for viewId in range(cfg.sim.startViewId, cfg.sim.stopViewId+1):
+        viewIndex = range(cfg.sim.startViewId, cfg.sim.stopViewId+1)
+    for viewId in viewIndex:
+    # for viewId in range(cfg.sim.startViewId, cfg.sim.stopViewId+1):
         # detector
         if viewId == cfg.sim.startViewId or cfg.physics.recalcDet:
             cfg = feval(cfg.scanner.detectorCallback, cfg)
@@ -44,7 +45,10 @@ def one_scan(cfg):
         # phantom and material
         if (viewId == cfg.sim.startViewId or cfg.physics.recalcPht) and cfg.sim.isPhantomScan:
             cfg = PhantomWrapper(cfg)
-    
+        
+        # Pass det and src to C projectors
+        C_Projector_SetData(cfg, viewId)
+        
         for subViewId in range(cfg.sim.subViewCount):
             # initial subview
             cfg.thisSubView = copy.copy(cfg.detFlux)
