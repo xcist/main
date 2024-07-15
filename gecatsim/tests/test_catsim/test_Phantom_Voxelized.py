@@ -10,6 +10,7 @@ class Test_Phantom_Voxelized(unittest.TestCase):
                               "../examples/cfg/Protocol_Sample_axial")
 
         cfg.phantom.filename = '../phantom/CatSimLogo_1024/CatSim_logo_1024.json'
+        nMaterial = 2    # there're 2 material maps in this phantom
         cfg.sim.subViewCount = 1
 
         cfg = feval(cfg.scanner.detectorCallback, cfg)
@@ -22,4 +23,4 @@ class Test_Phantom_Voxelized(unittest.TestCase):
         cfg = Phantom_Voxelized(cfg)
 
         assert cfg.clib.set_material_info_vox.call_count == 1
-        assert cfg.clib.set_phantom_info_vox.call_count == 1
+        assert cfg.clib.set_phantom_info_vox.call_count == nMaterial
