@@ -16,7 +16,10 @@ class Test_Phantom_Voxelized(unittest.TestCase):
         cfg = feval(cfg.scanner.focalspotCallback, cfg)
         cfg = feval(cfg.protocol.spectrumCallback, cfg)
 
-        cfg.clib.set_src_info_vox = MagicMock()
+        cfg.clib.set_material_info_vox = MagicMock()
+        cfg.clib.set_phantom_info_vox = MagicMock()
+        
         cfg = Phantom_Voxelized(cfg)
 
-        assert cfg.clib.set_src_info_vox.call_count == 1
+        assert cfg.clib.set_material_info_vox.call_count == 1
+        assert cfg.clib.set_phantom_info_vox.call_count == 1

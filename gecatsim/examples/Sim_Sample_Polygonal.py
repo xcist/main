@@ -11,7 +11,7 @@ ct = xc.CatSim("./cfg/Phantom_Sample_Polygonal")  # initialization
 ##--------- Make changes to parameters (optional)
 ct.resultsName = "test_Polygonal"
 
-ct.phantom.filename = '../phantom/female_adult_average_lung_lesions.nrb'
+ct.phantom.filename = '../phantom/female_adult_average_lung_lesions_reduced.nrb'
 
 # Here the phantom position and scaling are only for illustrating purpose due to the object's small size.
 ct.phantom.centerOffset = [54, 51, -102]      # offset of phantom center relative to origin (in mm)
