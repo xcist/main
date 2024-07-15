@@ -23,6 +23,6 @@ class Test_Phantom_NCAT(unittest.TestCase):
         cfg = Phantom_Polygonal(cfg)
 
         assert cfg.clib.set_material_info_NCAT.call_count == 1
-        assert cfg.clib.clear_polygonalized_phantom == 1
-        assert cfg.clib.pass_polygon_to_c > 0
+        assert cfg.clib.clear_polygonalized_phantom.call_count == 1
+        assert cfg.clib.pass_polygon_to_c.call_count > 0
 

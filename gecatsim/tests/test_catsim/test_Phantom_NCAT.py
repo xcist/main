@@ -22,5 +22,5 @@ class Test_Phantom_NCAT(unittest.TestCase):
         cfg = Phantom_NCAT(cfg)
 
         assert cfg.clib.set_material_info_NCAT.call_count == 1
-        assert cfg.clib.Parse_Phantom == 1
+        assert cfg.clib.Parse_Phantom.call_count == 1
 
