@@ -1,5 +1,6 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
+import numpy as np
 from scipy import interpolate
 from gecatsim.pyfiles.GetMu import GetMu
 from gecatsim.pyfiles.CommonTools import *
@@ -21,7 +22,7 @@ def flat_filter(cfg):
     '''
     Apply the transmittance of flat filter at source side, dim: [Ebin, totalNumCells]
     '''
-    cosineFactors = 1/cfg.det.cosGammas/cfg.det.cosAlphas
+    cosineFactors = 1/np.cos(cfg.det.gammas)/np.cos(cfg.det.alphas)
     
     Evec = cfg.sim.Evec
     trans = np.ones([cfg.det.totalNumCells, cfg.spec.nEbin], dtype = np.single)
@@ -60,7 +61,7 @@ def bowtie_filter(cfg):
     for i in range(len(bowtieMaterials)):
         mu = GetMu(bowtieMaterials[i], Evec)
         f = interpolate.interp1d(gammas0, t0[:, i], kind='linear', fill_value='extrapolate')
-        t1 = f(gammas1)/cfg.det.cosAlphas
+        t1 = f(gammas1)/np.cos(cfg.det.alphas)
         muT += t1 @ mu.reshape(1, mu.size)
     
     trans = np.exp(-muT)

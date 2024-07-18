@@ -1,5 +1,6 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
+import numpy as np
 from gecatsim.pyfiles.GetMu import GetMu
 from gecatsim.pyfiles.randpf import randpf
 from gecatsim.pyfiles.CommonTools import *
@@ -11,27 +12,27 @@ def Detection_EI(cfg, viewId, subViewId):
     # detection efficiency
     if viewId == cfg.sim.startViewId and subViewId == 0:
         # detector prefilter
-        Wvec = feval(cfg.physics.prefilterCallback, cfg)
+        cfg.sim.Wvec = feval(cfg.physics.prefilterCallback, cfg)
         
         # detector absorption
         detectorMu = GetMu(cfg.scanner.detectorMaterial, Evec)
-        detEff = 1-np.exp(-0.1*cfg.scanner.detectorDepth/cfg.det.cosBetas*detectorMu)
-        
-        cfg.sim.Wvec = Wvec*detEff
+        detEff = 1-np.exp(-0.1*cfg.scanner.detectorDepth/np.cos(cfg.det.betas)*detectorMu)
+
+        np.multiply(cfg.sim.Wvec, detEff, out=cfg.sim.Wvec)
         
     # Apply energy-dependent detection efficiency
-    thisSubView = cfg.thisSubView*cfg.sim.Wvec
+    np.multiply(cfg.thisSubView, cfg.sim.Wvec,  out=cfg.thisSubView)
     
     # scatter cross-talk
     if cfg.physics.crosstalkCallback:
-        thisSubView = feval(cfg.physics.crosstalkCallback, thisSubView, cfg)
+        cfg.thisSubView = feval(cfg.physics.crosstalkCallback, cfg.thisSubView, cfg)
         
     # quantum noise
     if cfg.sim.enableQuantumNoise:
-        thisSubView = randpf(thisSubView)
+        cfg.thisSubView = randpf(cfg.thisSubView)
         
     # merge energies
-    thisSubView = thisSubView.dot(Evec)
+    thisSubView = cfg.thisSubView.dot(Evec)
         
     # lag
     if cfg.physics.lagCallback:

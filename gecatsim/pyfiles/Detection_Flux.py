@@ -1,5 +1,6 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
+import numpy as np
 import numpy.matlib as nm
 from gecatsim.pyfiles.CommonTools import *
 
@@ -19,14 +20,14 @@ def Detection_Flux(cfg):
         return cfg
     
     ###------- air or phantom scan
-    detActiveArea = cfg.det.activeArea*cfg.det.cosBetas # mm^2
-    detActiveArea = nm.repmat(detActiveArea, 1, cfg.spec.nEbin)
+    detActiveArea = cfg.det.activeArea*np.cos(cfg.det.betas) # mm^2
+    #detActiveArea = nm.repmat(detActiveArea, 1, cfg.spec.nEbin)
     
     distanceFactor = np.square(1000/cfg.det.rayDistance) # mm
-    distanceFactor = nm.repmat(distanceFactor, 1, cfg.spec.nEbin)
+    #distanceFactor = nm.repmat(distanceFactor, 1, cfg.spec.nEbin)
     
     cfg.spec.netIvec = cfg.spec.Ivec*cfg.src.filterTrans
-    cfg.detFlux = np.single(cfg.spec.netIvec*detActiveArea*distanceFactor)
+    cfg.detFlux = np.multiply(cfg.spec.netIvec.astype(np.single, copy=False), np.single(detActiveArea*distanceFactor))
     
     return cfg
 
