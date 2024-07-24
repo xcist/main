@@ -40,6 +40,10 @@ def set_volume(cfg):
         # Scale and position
         object['vertices'][index] = object['vertices'][index]*cfg.phantom.scale + np.tile(cfg.phantom.centerOffset,(object['vertices'][index].shape[0], 1)).astype(np.float32)
 
+        # # Move objects to the center, for testing puprpose ONLY.
+        # for kk in [2]:
+            # object['vertices'][index][:,kk] -= np.mean(object['vertices'][index][:,kk])
+            
         # Pass volumes to C
         C_Phantom_Polygonal_SetPolygon(cfg, object['vertices'][index], object['num_triangles'][index], object['density'][index], object['materialId'][index])
 

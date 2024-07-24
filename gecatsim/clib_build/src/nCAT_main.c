@@ -93,12 +93,14 @@ struct module_info_NCAT modules_NCAT = {NULL, NULL, NULL, NULL, NULL, NULL, NULL
 static int n_energies = 0;
 static int n_materials = 0;
 static int NUM_MODELS = 0;
+static int NUM_NRB = 0;
 static int NUM_POLY = 0;
 static FILE *fpo = NULL;
 SURFACE *nrb_model = NULL;
 BEZIER_MODEL *bez_model = NULL;
 TRI_MODEL *tri_model = NULL;
-bvh_element **treepointer = NULL;                        /*Holds bounding volume hierarchies for organs*/
+bvh_element **treepointer_nrb = NULL;                    /*Holds bounding volume hierarchies for organs, for nurbs*/
+bvh_element **treepointer_tri = NULL;                    /*Holds bounding volume hierarchies for organs, for polygon*/
 static float mu_table[MAXIMUM_NUMBER_OF_MATERIALS][300]; /*FIXME: harcoded number of materials and energy bins*/
 static float **mu_table_tri = NULL;
 static int use_tri_model = 0;
@@ -2442,11 +2444,11 @@ void Create_Bounding_Box(SURFACE surf, BEZIER_MODEL bez_model, int ID)
   for (i = 0; i < bez_model.num_patches; i++)
     patches[i] = i;
 
-  if (treepointer[ID] != NULL)
-    FreeItem_BVH(treepointer[ID]);
+  if (treepointer_nrb[ID] != NULL)
+    FreeItem_BVH(treepointer_nrb[ID]);
 
-  AddItem(&treepointer[ID], bez_model.num_patches, surf.min_x, surf.max_x, surf.min_y, surf.max_y, surf.min_z, surf.max_z, patches);
-  CreateBVH(treepointer[ID], bez_model, bez_model.num_patches, patches);
+  AddItem(&treepointer_nrb[ID], bez_model.num_patches, surf.min_x, surf.max_x, surf.min_y, surf.max_y, surf.min_z, surf.max_z, patches);
+  CreateBVH(treepointer_nrb[ID], bez_model, bez_model.num_patches, patches);
 
   free_ivector(patches, 0, bez_model.num_patches);
 }
@@ -2650,10 +2652,10 @@ void Create_Bounding_Box_Cyl(SURFACE surf, listelement *listpointer, int begin_n
   for (i = 0; i < num; i++)
     patches[i] = i + begin_num;
 
-  treepointer[ID] = NULL;
-  AddItem(&treepointer[ID], num, surf.min_x, surf.max_x, surf.min_y, surf.max_y, surf.min_z, surf.max_z, patches);
+  treepointer_nrb[ID] = NULL;
+  AddItem(&treepointer_nrb[ID], num, surf.min_x, surf.max_x, surf.min_y, surf.max_y, surf.min_z, surf.max_z, patches);
 
-  CreateBVHCyl(treepointer[ID], listpointer, num, patches);
+  CreateBVHCyl(treepointer_nrb[ID], listpointer, num, patches);
 
   free_ivector(patches, 0, num);
 }
@@ -2693,10 +2695,10 @@ void Create_Bounding_Box_Cyl2(listelement *listpointer, int begin_num, int end_n
       maxz = listpointer[patches[i]].maxz;
   }
 
-  treepointer[ID] = NULL;
-  AddItem(&treepointer[ID], num, minx, maxx, miny, maxy, minz, maxz, patches);
+  treepointer_nrb[ID] = NULL;
+  AddItem(&treepointer_nrb[ID], num, minx, maxx, miny, maxy, minz, maxz, patches);
 
-  CreateBVHCyl(treepointer[ID], listpointer, num, patches);
+  CreateBVHCyl(treepointer_nrb[ID], listpointer, num, patches);
 
   free_ivector(patches, 0, num);
 }
@@ -2904,18 +2906,18 @@ void Create_Bounding_Box_TRI(TRI_MODEL tmodel, int ID)
   for (i = 0; i < num; i++)
     patches[i] = i;
 
-  if (treepointer[ID] != NULL)
+  if (treepointer_tri[ID] != NULL)
   {
     dbug(1, "Free TP: %d\n", ID);
-    FreeItem_BVH(treepointer[ID]);
+    FreeItem_BVH(treepointer_tri[ID]);
   }
 
-  treepointer[ID] = NULL;
+  treepointer_tri[ID] = NULL;
 
   CalcBVHTri(tmodel, num, patches, &tmodel.min_x, &tmodel.max_x, &tmodel.min_y, &tmodel.max_y, &tmodel.min_z, &tmodel.max_z);
   dbug(1, "Create TP: %d\n", ID);
-  AddItem(&treepointer[ID], num, tmodel.min_x, tmodel.max_x, tmodel.min_y, tmodel.max_y, tmodel.min_z, tmodel.max_z, patches);
-  CreateBVHTri(treepointer[ID], tmodel, num, patches);
+  AddItem(&treepointer_tri[ID], num, tmodel.min_x, tmodel.max_x, tmodel.min_y, tmodel.max_y, tmodel.min_z, tmodel.max_z, patches);
+  CreateBVHTri(treepointer_tri[ID], tmodel, num, patches);
   free_ivector(patches, 0, num);
 }
 /*------------------------------------End Tree Definition--------------------------------------------*/
@@ -3143,7 +3145,7 @@ void print_poly(int model_num)
   printf("maxy: %f\r\n", tmodel->max_y);
   printf("minz: %f\r\n", tmodel->min_z);
   printf("maxz: %f\r\n", tmodel->max_z);
-  print_bvh(treepointer[model_num], 0);
+  print_bvh(treepointer_tri[model_num], 0);
 }
 
 DLLEXPORT void clear_polygonalized_phantom(int num_polygons)
@@ -3156,12 +3158,12 @@ DLLEXPORT void clear_polygonalized_phantom(int num_polygons)
     Otherwise, you can run once with 10 polygons and then when you run with 20 later, it won't have room --> possible crash.
   */
 
-  if (treepointer == NULL)
+  if (treepointer_tri == NULL)
   {
     dbug(1, " Allocating space for bvh trees\n");
-    treepointer = (bvh_element **)malloc(max_num_models * sizeof(bvh_element *));
+    treepointer_tri = (bvh_element **)malloc(max_num_models * sizeof(bvh_element *));
     for (i = 0; i < max_num_models; i++)
-      treepointer[i] = NULL;
+      treepointer_tri[i] = NULL;
   }
 
   if (tri_model == NULL)
@@ -3186,9 +3188,7 @@ DLLEXPORT void clear_polygonalized_phantom(int num_polygons)
     dbug(1, "\n");
   }
 
-  NUM_MODELS = 0;
-  NUM_POLY = num_polygons;
-  use_tri_model = 1;
+  NUM_POLY = 0;
 }
 
 DLLEXPORT void pass_polygon_to_c(float *vertices, int num_triangles, float density, int ID)
@@ -3196,18 +3196,13 @@ DLLEXPORT void pass_polygon_to_c(float *vertices, int num_triangles, float densi
 {
   int model_num;
 
-  model_num = NUM_MODELS;
-  if (model_num >= NUM_POLY)
-  {
-    dbug(0, "Error: Too many polygons!\r\n");
-    exit(1);
-  }
+  model_num = NUM_POLY;
   // dbug(1,"\rmodel: %d\n",model_num);
   Add_polygon(&tri_model[model_num], ID, density, vertices, num_triangles);
   Calc_extents_tri(&tri_model[model_num]);
   Create_Bounding_Box_TRI(tri_model[model_num], model_num);
   dbug(2, "f\n");
-  NUM_MODELS++;
+  NUM_POLY++;
   // print_poly(model_num);
 }
 
@@ -3245,11 +3240,11 @@ DLLEXPORT void Parse_Phantom(char *filename, int *materials, float *coord_origin
 
   // JDP
 
-  if (treepointer == NULL)
+  if (treepointer_nrb == NULL)
   {
-    treepointer = (bvh_element **)malloc(max_num_models * sizeof(bvh_element *));
+    treepointer_nrb = (bvh_element **)malloc(max_num_models * sizeof(bvh_element *));
     for (i = 0; i < max_num_models; i++)
-      treepointer[i] = NULL;
+      treepointer_nrb[i] = NULL;
   }
 
   if (nrb_model == NULL)
@@ -3395,8 +3390,10 @@ DLLEXPORT void Parse_Phantom(char *filename, int *materials, float *coord_origin
     k++;
     tmp = fscanf(fp, "%s", line);
   }
-  NUM_MODELS = k;
+  NUM_NRB = k;
   fclose(fp);
+  NUM_MODELS = NUM_NRB;
+  
   dbug(0, "Done parsing nCAT phantom.\r\n");
 }
 
@@ -5126,7 +5123,7 @@ double findFarPoint(float origin[3], float vector[3], float x1, float x2, int or
     vec[1] = origin[1] + x * vector[1];
     vec[2] = origin[2] + x * vector[2];
 
-    if (isAwayFromBez(treepointer[organ_id], &bez_model[organ_id], vec, my_tol))
+    if (isAwayFromBez(treepointer_nrb[organ_id], &bez_model[organ_id], vec, my_tol))
       return x; // usually done 1st time here
 
     // otherwise, start testing various points along the segment (not too close to the ends)
@@ -5183,7 +5180,7 @@ int Segm_Inside_Object(float origin[3], float vector[3], float x1, float x2, int
     line_v_inv[1] = 1 / line_v[1];
     line_v_inv[2] = 1 / line_v[2];
     check.length = 0;
-    Find_Intersections2(treepointer[organ_id], &bez_model[organ_id], organ_id, line_o, line_v, line_v_inv, &check, tol2);
+    Find_Intersections2(treepointer_nrb[organ_id], &bez_model[organ_id], organ_id, line_o, line_v, line_v_inv, &check, tol2);
 
     for (i = 0; i < 3; i++)
       dbug(1, "%1.10f\n", line_v[i]);
@@ -5259,7 +5256,7 @@ int Check_Y_Boundary(float x, float y, float z, int organ_id)
       line_v[cnt % 3] = -1.0;
     check.length = 0;
     // if ((cnt==3)&&(debug_flag == 2)) debug_flag = 3;
-    Find_Intersections2(treepointer[organ_id], &bez_model[organ_id], organ_id, line_o, line_v, line_v, &check, tol1);
+    Find_Intersections2(treepointer_nrb[organ_id], &bez_model[organ_id], organ_id, line_o, line_v, line_v, &check, tol1);
     // if ((cnt==3)&&(debug_flag == 3)) debug_flag = 2;
     dbug(3, "cnto: %d\n", cnt);
     if (check.length != 0)
@@ -5294,7 +5291,7 @@ int Check_Y_Boundary(float x, float y, float z, int organ_id)
     vec_inv(line_v, line_v_inv);
 
     check.length = 0;
-    Find_Intersections2(treepointer[organ_id], &bez_model[organ_id], organ_id, line_o, line_v, line_v_inv, &check, tol2);
+    Find_Intersections2(treepointer_nrb[organ_id], &bez_model[organ_id], organ_id, line_o, line_v, line_v_inv, &check, tol2);
     if (check.length != 0)
       hits++;
     else
@@ -5581,7 +5578,7 @@ void Fill_tri(XP_ARRAY int_points, TRI_MODEL tmodel, int organ_id, float line_or
       y = line_origin[1] + (int_points.xp[i].x + int_points.xp[i + 1].x) / 2.0 * line_vector[1];
       z = line_origin[2] + (int_points.xp[i].x + int_points.xp[i + 1].x) / 2.0 * line_vector[2];
 
-      flag = Check_Y_Boundary_tri(treepointer[organ_id], tmodel, x, y, z, organ_id);
+      flag = Check_Y_Boundary_tri(treepointer_tri[organ_id], tmodel, x, y, z, organ_id);
       if (flag)
       {
         lines->sp[lines->length].x1 = int_points.xp[i].x;
@@ -5867,7 +5864,7 @@ void intersections_NCAT_all(SEG_ARRAY *segments, float *a, float *alpha, float *
       if (!use_tri_model)
       {
         /*---Find Intersection points for MODEL #i---*/
-        Find_Intersections2(treepointer[i], &bez_model[i], i, a, alpha,
+        Find_Intersections2(treepointer_nrb[i], &bez_model[i], i, a, alpha,
                             alpha_inv, &int_points, tol2);
         /*---Create line segment from intersection points---*/
         Fill(int_points, i, a, alpha, &lines);
@@ -5875,7 +5872,7 @@ void intersections_NCAT_all(SEG_ARRAY *segments, float *a, float *alpha, float *
       else
       {
         /*---Find Intersection points for MODEL #i---*/
-        Find_Intersections_tri(treepointer[i], tri_model[i], i, a, alpha,
+        Find_Intersections_tri(treepointer_tri[i], tri_model[i], i, a, alpha,
                                alpha_inv, &int_points);
         /*---Create line segment from intersection points---*/
         Fill_tri(int_points, tri_model[i], i, a, alpha, &lines);
@@ -6110,7 +6107,7 @@ void intersections_NCAT(double *detCenter, double *right, double *up, double *sa
           {
             /*---Find Intersection points for MODEL #i---*/
             // if ((i==169) && (debug_flag == 1) && (k==3) && (l==0)) debug_flag = 2;
-            Find_Intersections2(treepointer[i], &bez_model[i], i, &sourcePoints[3 * k], alpha, alpha_inv, &int_points, tol2);
+            Find_Intersections2(treepointer_nrb[i], &bez_model[i], i, &sourcePoints[3 * k], alpha, alpha_inv, &int_points, tol2);
             // if ((i==169) && (debug_flag == 2)) debug_flag = 1;
             // if (int_points.length != 0){
             // dbug(2, "len: %3d   model: %3d\r\n", int_points.length, i);
@@ -6124,7 +6121,7 @@ void intersections_NCAT(double *detCenter, double *right, double *up, double *sa
           else
           {
             // dbug(2,"start\r\n");
-            Find_Intersections_tri(treepointer[i], tri_model[i], i, &sourcePoints[3 * k], alpha,
+            Find_Intersections_tri(treepointer_tri[i], tri_model[i], i, &sourcePoints[3 * k], alpha,
                                    alpha_inv, &int_points);
             Fill_tri(int_points, tri_model[i], i, &sourcePoints[3 * k], alpha, &lines);
             // dbug(2,"end\r\n");
@@ -6304,14 +6301,32 @@ DLLEXPORT void ncat_projector_threaded(double subviewWeight, double *thisView, f
   free(t_id);
 }
 
+void set_para_for_Polygon(int flag)
+{
+	if(flag)
+	{
+		use_tri_model = 1;
+		NUM_MODELS = NUM_POLY;
+	}
+	else
+	{
+		use_tri_model = 0;
+		NUM_MODELS = NUM_NRB;
+	}
+}
+
 DLLEXPORT void polygon_projector_one_thread(double subviewWeight, double *thisView, float *sourcePoints, int nSubSources, double *srcHullPoints, int nSrcHullPoints, int *firstDetIndex, int nModulesIn, int *modTypeInds, double *Up, double *Right, double *Center, int UNUSED_tvLength)
 
 {
+  set_para_for_Polygon(1);
   ncat_projector(subviewWeight, thisView, sourcePoints, nSubSources, srcHullPoints, nSrcHullPoints, firstDetIndex, nModulesIn, modTypeInds, Up, Right, Center, UNUSED_tvLength);
+  set_para_for_Polygon(0);
 }
 
 DLLEXPORT void polygon_projector(double subviewWeight, double *thisView, float *sourcePoints, int nSubSources, double *srcHullPoints, int nSrcHullPoints, int *firstDetIndex, int nModulesIn, int *modTypeInds, double *Up, double *Right, double *Center, int UNUSED_tvLength, int numThreads, double UNUSED)
 
 {
+  set_para_for_Polygon(1);
   ncat_projector_threaded(subviewWeight, thisView, sourcePoints, nSubSources, srcHullPoints, nSrcHullPoints, firstDetIndex, nModulesIn, modTypeInds, Up, Right, Center, UNUSED_tvLength, numThreads, UNUSED);
+  set_para_for_Polygon(0);
 }
