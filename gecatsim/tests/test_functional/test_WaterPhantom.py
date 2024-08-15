@@ -7,7 +7,6 @@ import numpy as np
 import gecatsim as xc
 import gecatsim.reconstruction.pyfiles.recon as recon
 from gecatsim.pyfiles.CommonTools import *
-from gecatsim.pyfiles.Detection_PC import Detection_PC
 
 import matplotlib.pyplot as plt
 from operator import __getitem__
@@ -16,7 +15,7 @@ class Test_Functional_WaterPhantom(unittest.TestCase):
 
     def test_create_waterphantom(self):
 
-        ct = xc.CatSim( "all_in_one_config") #initalization
+        ct = xc.CatSim( "./test_functional/all_in_one_config") #initalization
          
         # Make changes to parameters (optional)
         ct.resultsName = "Water_IQ_test"
@@ -76,7 +75,7 @@ class Test_Functional_WaterPhantom(unittest.TestCase):
         Phantom1='W20'
         Phantom2='W30'
 
-        with open('all_in_one_config.cfg', 'r') as fp:
+        with open('./test_functional/all_in_one_config.cfg', 'r') as fp:
             lines = fp.readlines()
             for line in lines:
             # check if string present on a current line
