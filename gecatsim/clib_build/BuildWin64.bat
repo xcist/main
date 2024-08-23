@@ -1,5 +1,5 @@
 ECHO OFF
-REM Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+REM Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 ECHO ON
 
 set PATH=C:\mingw64\bin;%PATH%

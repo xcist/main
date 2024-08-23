@@ -1,4 +1,4 @@
-# Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/main/blob/master/license/LICENSE
+# Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/blob/master/license/LICENSE
 
 #import numpy as np
 from gecatsim.pyfiles.CommonTools import *
