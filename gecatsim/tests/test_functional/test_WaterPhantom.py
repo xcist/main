@@ -6,7 +6,7 @@ import numpy as np
 
 import gecatsim as xc
 import gecatsim.reconstruction.pyfiles.recon as recon
-#from gecatsim.pyfiles.CommonTools import *
+from gecatsim.pyfiles.CommonTools import *
 #from gecatsim.pyfiles.Detection_PC import Detection_PC
 
 import matplotlib.pyplot as plt
