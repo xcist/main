@@ -6,8 +6,8 @@ import numpy as np
 
 import gecatsim as xc
 import gecatsim.reconstruction.pyfiles.recon as recon
-from gecatsim.pyfiles.CommonTools import *
-from gecatsim.pyfiles.Detection_PC import Detection_PC
+#from gecatsim.pyfiles.CommonTools import *
+#from gecatsim.pyfiles.Detection_PC import Detection_PC
 
 import matplotlib.pyplot as plt
 from operator import __getitem__
@@ -16,10 +16,18 @@ class Test_Functional_WaterPhantom(unittest.TestCase):
 
     def test_create_waterphantom(self):
 
-        ct = xc.CatSim( "all_in_one_config") #initalization
+        #ct = xc.CatSim( "all_in_one_config_generic_scanner") #initalization
+        ct = xc.CatSim("../examples/vct_examples/Phantom_Sample_Analytic", 
+               "../examples/vct_examples/Physics_Sample", 
+              "../examples/vct_examples/Protocol_Sample_axial", 
+              "../examples/vct_examples/Recon_Sample_2d", 
+              "../examples/vct_examples/Scanner_Sample_generic") #initalization
          
-        # Make changes to parameters (optional)
+        # Make changes to parameters as required
         ct.resultsName = "Water_IQ_test"
+        ct.phantom.filename ='W20.ppm'  # water phantom filename
+        ct.recon.fov = 300.0           # diameter of the reconstruction field-of-view (in mm)
+        ct.recon.sliceCount = 4        # number of slices to reconstruct
         ct.physics.energyCount = 24
         ct.physics.monochromatic = -1
         ct.physics.colSampleCount = 2
@@ -27,11 +35,20 @@ class Test_Functional_WaterPhantom(unittest.TestCase):
         ct.physics.srcXSampleCount = 2
         ct.physics.srcYSampleCount = 2
         ct.physics.viewSampleCount = 1
+        ct.protocol.mA = 130                           # tube current (in mA)
+        ct.protocol.spectrumFilename = "xcist_kVp120_tar7_bin1.dat" # name of the spectrum file
+
+        ct.physics.callback_post_log = 'Prep_BHC_Accurate'
+        ct.physics.EffectiveMu = 0.2
+        ct.physics.BHC_poly_order = 5
+        ct.physics.BHC_max_length_mm = 300
+        ct.physics.BHC_length_step_mm = 10
 
         # Run simulation
         ct.run_all()
          
-        assert(os.path.exists('all_in_one_config.cfg') == True)
+        #assert(os.path.exists('all_in_one_config_generic_scanner.cfg') == True)
+        #assert(os.path.exists('all_in_one_config.cfg') == True)
 
         # Reconstruction
         ct.do_Recon = 1
@@ -41,6 +58,7 @@ class Test_Functional_WaterPhantom(unittest.TestCase):
         imgFname = "%s_%dx%dx%d.raw" %(ct.resultsName, ct.recon.imageSize, ct.recon.imageSize, ct.recon.sliceCount)
         img = xc.rawread(imgFname, [ct.recon.sliceCount, ct.recon.imageSize, ct.recon.imageSize], 'float')
         plt.imshow(img[2,:,:], cmap='gray', vmin=-200, vmax=200)
+        plt.savefig(imgFname)
         #plt.show()
 
     def test_functional_waterphantom(self):
@@ -71,35 +89,13 @@ class Test_Functional_WaterPhantom(unittest.TestCase):
 
         print("Noise_at centre:" ,round(noise_ROI_40_40,2))
          
-        file_dir = os.path.dirname(os.path.realpath('__file__'))
-
-        Phantom1='W20'
-        Phantom2='W30'
-
-        with open('all_in_one_config.cfg', 'r') as fp:
-            lines = fp.readlines()
-            for line in lines:
-            # check if string present on a current line
-                if line.find(Phantom1) !=-1:
-                    #print(Phantom1,'the phantom is W20') 
-                    pass
+        
             
-                    roiMatrix_P1 = imgStackRaw[imgNum, 105:145,245 :285]
-                    roiMatrix_P2 = imgStackRaw[imgNum, 365:405,245 :285]
-                    roiMatrix_P3 = imgStackRaw[imgNum, 245:285,105 :145]
-                    roiMatrix_P4 = imgStackRaw[imgNum, 245:285,365 :405]
+        roiMatrix_P1 = imgStackRaw[imgNum, 105:145,245 :285]
+        roiMatrix_P2 = imgStackRaw[imgNum, 365:405,245 :285]
+        roiMatrix_P3 = imgStackRaw[imgNum, 245:285,105 :145]
+        roiMatrix_P4 = imgStackRaw[imgNum, 245:285,365 :405]
            
-            for line in lines:
-                if line.find(Phantom2) !=-1:
-                    #print(Phantom2,'the phantom is W30') 
-
-                    roiMatrix_P1 = imgStackRaw[imgNum, 105-50:145-50,245 :285]
-                    roiMatrix_P2 = imgStackRaw[imgNum, 365+50:405+50,245 :285]
-                    roiMatrix_P3 = imgStackRaw[imgNum, 245:285,105-50 :145-50]
-                    roiMatrix_P4 = imgStackRaw[imgNum, 245:285,365+50 :405+50]
-           
-                    pass
-
         #calculate mean deviation from centre value
         meanHU_P1 = np.mean(roiMatrix_P1)
         meanHU_P2 = np.mean(roiMatrix_P2)
