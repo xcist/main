@@ -45,10 +45,7 @@ class Test_Functional_WaterPhantom(unittest.TestCase):
         ct.physics.BHC_length_step_mm = 10
 
         # Run simulation
-        ct.run_all()
-         
-        #assert(os.path.exists('all_in_one_config_generic_scanner.cfg') == True)
-        #assert(os.path.exists('all_in_one_config.cfg') == True)
+        #ct.run_all()
 
         # Reconstruction
         ct.do_Recon = 1
@@ -56,9 +53,19 @@ class Test_Functional_WaterPhantom(unittest.TestCase):
          
         # Show results
         imgFname = "%s_%dx%dx%d.raw" %(ct.resultsName, ct.recon.imageSize, ct.recon.imageSize, ct.recon.sliceCount)
+        fig_name = imgFname + '.png'
         img = xc.rawread(imgFname, [ct.recon.sliceCount, ct.recon.imageSize, ct.recon.imageSize], 'float')
         plt.imshow(img[2,:,:], cmap='gray', vmin=-200, vmax=200)
-        plt.savefig(imgFname)
+        plt.savefig(fig_name)
+
+        assert self.getFileSize("%s.air" % (ct.resultsName)) == ct.scanner.detectorRowCount * ct.scanner.detectorColCount
+        assert self.getFileSize(
+            "%s.offset" % (ct.resultsName)) == ct.scanner.detectorRowCount * ct.scanner.detectorColCount
+        assert self.getFileSize(
+            "%s.prep" % (ct.resultsName)) == ct.scanner.detectorRowCount * ct.scanner.detectorColCount * ct.protocol.viewsPerRotation
+        assert self.getFileSize(
+            imgFname) == ct.recon.imageSize * ct.recon.imageSize * ct.recon.sliceCount
+
         #plt.show()
 
     def test_functional_waterphantom(self):
@@ -84,8 +91,10 @@ class Test_Functional_WaterPhantom(unittest.TestCase):
 
         if meanHU_C <3 and meanHU_C>-3:
             print('CT number is wthin the range, test pass!')
+            assert True
         else:
             print('CT number is not within the range, test failed!')
+            assert False
 
         print("Noise_at centre:" ,round(noise_ROI_40_40,2))
          
@@ -111,8 +120,10 @@ class Test_Functional_WaterPhantom(unittest.TestCase):
                 if meanHU_P3 <3 and meanHU_P3 >-3:
                     if meanHU_P4 <3 and meanHU_P4 >-3:
                         print( 'CT number at periphery is within the range, test pass!')
+                        assert True
         else: 
             print ('CT number at periphery is not within the range, test failed!')
+            assert False
 
         print("CT Number Uniformity:",round(uniformity,2),"HU")
 
@@ -129,6 +140,10 @@ class Test_Functional_WaterPhantom(unittest.TestCase):
         print("Noise Uniformity:",round(Noise_uniformity,2))
 
         #plt.show()
+
+    def getFileSize(self, fileName):
+        fileDataRaw = np.fromfile(fileName, "<f")
+        return int(len(fileDataRaw))
 
 if __name__ == "__main__":
     unittest.main()
