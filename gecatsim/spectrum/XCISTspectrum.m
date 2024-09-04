@@ -5,9 +5,9 @@ function [newE,newI] = XCISTspectrum(kVp, angle, dE)
   % Last modified: B. De Man, August 27, 2020, 2020 - GE Research, Niskayuna, NY 12065, USA
   % modified by Jiayong Zhang at June 2023: added the correct scaling factor for spectrum
   %
-  % Copyright 2020, General Electric Company
+  % Copyright 2024, GE Precision HealthCare
   % Code Developed Using US Government Funding via National Cancer Institute Grant 1U01CA231860-01A1 (ITCR)
-  % All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+  % All rights reserved. See https://github.com/xcist/main/tree/master/license
   %
   % Purpose
   %    Function to generate normalized, unfiltered X-ray CT spectrum for tungsten anode for tube voltages between
