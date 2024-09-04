@@ -1,7 +1,7 @@
 name: Build
 on:
   push:
-    branches: [ "master"]
+    branches: [ "master","update_unittests"]
   pull_request:
     types: [opened, synchronize, reopened]
 permissions:
