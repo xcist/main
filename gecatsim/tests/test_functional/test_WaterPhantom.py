@@ -45,7 +45,7 @@ class Test_Functional_WaterPhantom(unittest.TestCase):
         ct.physics.BHC_length_step_mm = 10
 
         # Run simulation
-        #ct.run_all()
+        ct.run_all()
 
         # Reconstruction
         ct.do_Recon = 1
