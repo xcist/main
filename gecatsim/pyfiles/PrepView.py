@@ -1,4 +1,4 @@
-# Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/tree/master/license
 
 # This is raw-data prep for EICT or gray-scale CT only. Use other code to prep spectral CT / PCCT.
 

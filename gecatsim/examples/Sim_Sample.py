@@ -1,4 +1,4 @@
-# Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/blob/master/license/LICENSE
+# Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/tree/master/license
 
 ###------------ import XCIST-CatSim
 import gecatsim as xc

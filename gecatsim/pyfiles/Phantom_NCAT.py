@@ -1,4 +1,4 @@
-# Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
+# Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/tree/master/license
 
 from ctypes import *
 from numpy.ctypeslib import ndpointer
