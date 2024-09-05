@@ -10,7 +10,7 @@ class TestOneScan(unittest.TestCase):
     @patch('gecatsim.pyfiles.OneScan.feval', create=True)
     def test_air_scan(self, faval_mock):
         cfg = CommonTools.CFG("../examples/cfg/Phantom_Sample", "../examples/cfg/Scanner_Sample_generic",
-                              "../examples/cfg/Protocol_Sample_axial")
+                              "../examples/cfg/Protocol_Sample_axial", "../examples/cfg/Scanner_Sample_generic.cfg")
 
         cfg.sim.thisScanType = [1, 0, 0]
 
@@ -43,10 +43,10 @@ class TestOneScan(unittest.TestCase):
                     call(cfg.scanner.detectionCallback, cfg, 0, 0), call(cfg.physics.outputCallback, cfg, 0)]
         assert faval_mock.mock_calls == expected
 
-
+    @patch('gecatsim.pyfiles.OneScan.C_Projector_SetData', create=True)
     @patch('gecatsim.pyfiles.PhantomProjectorWrapper.feval', create=True)
     @patch('gecatsim.pyfiles.OneScan.feval', create=True)
-    def test_phantom_scan(self, onescan_feval_mock, phantom_projector_feval):
+    def test_phantom_scan(self, onescan_feval_mock, phantom_projector_feval, c_projector_setdata):
         cfg = CommonTools.CFG("../examples/cfg/Phantom_Sample", "../examples/cfg/Scanner_Sample_generic",
                               "../examples/cfg/Protocol_Sample_axial")
         cfg.sim.thisScanType = [0, 0, 1]
