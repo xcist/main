@@ -81,7 +81,7 @@ class Test_recon(unittest.TestCase):
     @patch('gecatsim.reconstruction.pyfiles.recon.plt.pause', create=True)
     @patch('gecatsim.reconstruction.pyfiles.recon.plt.savefig', create=True)
     @patch('gecatsim.reconstruction.pyfiles.recon.plt.axis', create=True)
-    def test_recon_display_image_pictures(self, recon_plt_axis, recon_plt_savefig, recon_plt_pause, recon_plt_draw, recon_plt_close, recon_plt_title, recon_plt_imshow, recon_plt_figure):
+    def test_recon_image_pictures_display(self, recon_plt_axis, recon_plt_savefig, recon_plt_pause, recon_plt_draw, recon_plt_close, recon_plt_title, recon_plt_imshow, recon_plt_figure):
         ct = self.initialize()
         ct.do_Recon = False
         ct.recon.displayImagePictures = True
