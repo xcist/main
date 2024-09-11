@@ -21,15 +21,15 @@ def Detection_prefilter( cfg ):
     
     return Wvec
     
-if __name__ == "__main__":
-    cfg = CFG()
-    cfg.detector = CFG()
-    cfg.scanner.detectorPrefilter = ['al', 0.1, 'water', 2]
-
-    cfg = source_cfg("./cfg/default.cfg", cfg)
-    
-    cfg.det.totalNumCells = 3
-    
-    cfg = feval(cfg.protocol.spectrumCallback, cfg)
-    Wvec = Detection_prefilter( cfg )
-    check_value(Wvec)
+# if __name__ == "__main__":
+#     cfg = CFG()
+#     cfg.detector = CFG()
+#     cfg.scanner.detectorPrefilter = ['al', 0.1, 'water', 2]
+#
+#     cfg = source_cfg("./cfg/default.cfg", cfg)
+#
+#     cfg.det.totalNumCells = 3
+#
+#     cfg = feval(cfg.protocol.spectrumCallback, cfg)
+#     Wvec = Detection_prefilter( cfg )
+#     check_value(Wvec)

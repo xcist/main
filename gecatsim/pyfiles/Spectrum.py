@@ -100,31 +100,31 @@ def spectrum_read(spectrumFile):
     return Evec, Ivec, takeOffAngle
 
 
-if __name__ == "__main__":
-
-    cfg = source_cfg("./cfg/default.cfg")
-    
-    cfg.det.totalNumCells = 5;
-    
-    cfg.protocol.spectrumFilename = "tungsten_tar7.0_120_filt.dat"
-    cfg.physics.energyCount = 10
-    cfg.protocol.spectrumScaling = 1
-    cfg.physics.monochromatic = -1
-    
-    cfg.protocol.mA = 200
-    cfg.protocol.rotationTime = 1
-    cfg.protocol.viewsPerRotation = 984
-    
-    cfg.sim.subViewCount = 1
-    cfg.protocol.dutyRatio = 1
-    
-    #Evec, Ivec, takeOffAngle = spectrum_read(cfg.protocol.spectrumFilename)
-    #check_value(Evec)
-    #check_value(Ivec)
-    #check_value(takeOffAngle)
-    
-    cfg = Spectrum(cfg)
-    check_value(cfg.spec.nEbin)
-    check_value(cfg.spec.Evec)
-    check_value(cfg.spec.Ivec)
+# if __name__ == "__main__":
+#
+#     cfg = source_cfg("./cfg/default.cfg")
+#
+#     cfg.det.totalNumCells = 5;
+#
+#     cfg.protocol.spectrumFilename = "tungsten_tar7.0_120_filt.dat"
+#     cfg.physics.energyCount = 10
+#     cfg.protocol.spectrumScaling = 1
+#     cfg.physics.monochromatic = -1
+#
+#     cfg.protocol.mA = 200
+#     cfg.protocol.rotationTime = 1
+#     cfg.protocol.viewsPerRotation = 984
+#
+#     cfg.sim.subViewCount = 1
+#     cfg.protocol.dutyRatio = 1
+#
+#     #Evec, Ivec, takeOffAngle = spectrum_read(cfg.protocol.spectrumFilename)
+#     #check_value(Evec)
+#     #check_value(Ivec)
+#     #check_value(takeOffAngle)
+#
+#     cfg = Spectrum(cfg)
+#     check_value(cfg.spec.nEbin)
+#     check_value(cfg.spec.Evec)
+#     check_value(cfg.spec.Ivec)
     

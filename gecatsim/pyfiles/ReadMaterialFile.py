@@ -24,6 +24,6 @@ def ReadMaterialFile(mtFile):
 
     return numberOfElements, density, atomicNumbers, massFractions
 
-if __name__ == '__main__':
-    (numberOfElements, density, atomicNumbers, massFractions) = ReadMaterialFile('water')
-    print(numberOfElements, density, atomicNumbers, massFractions)
+# if __name__ == '__main__':
+#     (numberOfElements, density, atomicNumbers, massFractions) = ReadMaterialFile('water')
+#     print(numberOfElements, density, atomicNumbers, massFractions)

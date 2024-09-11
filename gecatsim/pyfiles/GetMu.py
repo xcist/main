@@ -61,8 +61,8 @@ def GetMu(materialFile, Evec):
         mu = mu.reshape(origShape)
     return mu
 
-if __name__ == '__main__':
-    Evec = range(10, 70, 10)
-    # Evec = np.array([(20, 30, 40), (50, 60, 70)], dtype=np.single)
-    mu = GetMu('water', Evec)
-    print(mu, type(mu))
+# if __name__ == '__main__':
+#     Evec = range(10, 70, 10)
+#     # Evec = np.array([(20, 30, 40), (50, 60, 70)], dtype=np.single)
+#     mu = GetMu('water', Evec)
+#     print(mu, type(mu))

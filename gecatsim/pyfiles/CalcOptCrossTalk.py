@@ -27,13 +27,13 @@ def CalcOptCrossTalk(thisView, cfg):
 
     return np.reshape(outView, thisView.shape)
 
-if __name__ == "__main__":
-    import scipy.io
-    import catsim as xc
-    mat_in = scipy.io.loadmat('view_in_reshape.mat')['view_out']
-    mat_out = scipy.io.loadmat('view_out_reshape.mat')['view_out']
-    ct = xc.CatSim("all_in_one")
-    cfg = ct.get_current_cfg()
-    py_out = CalcOptCrossTalk(mat_in, cfg)
-    diff = py_out-mat_out
-    plt.imshow(diff[:,:32]);plt.colorbar();plt.show()
+# if __name__ == "__main__":
+#     import scipy.io
+#     import catsim as xc
+#     mat_in = scipy.io.loadmat('view_in_reshape.mat')['view_out']
+#     mat_out = scipy.io.loadmat('view_out_reshape.mat')['view_out']
+#     ct = xc.CatSim("all_in_one")
+#     cfg = ct.get_current_cfg()
+#     py_out = CalcOptCrossTalk(mat_in, cfg)
+#     diff = py_out-mat_out
+#     plt.imshow(diff[:,:32]);plt.colorbar();plt.show()
