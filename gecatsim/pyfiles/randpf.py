@@ -17,11 +17,11 @@ def randpf(arr):
     
     return arr
 
-if __name__ == '__main__':
-    data0 = np.float32(np.random.random([5, 4])*100)
-    data0[1:4, 1:3] = 0
-    
-    check_value(data0)
-    data1 = randpf(data0)
-    check_value(data0)
-    check_value(data1)
+# if __name__ == '__main__':
+#     data0 = np.float32(np.random.random([5, 4])*100)
+#     data0[1:4, 1:3] = 0
+#
+#     check_value(data0)
+#     data1 = randpf(data0)
+#     check_value(data0)
+#     check_value(data1)

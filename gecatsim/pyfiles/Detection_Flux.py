@@ -31,17 +31,17 @@ def Detection_Flux(cfg):
     
     return cfg
 
-if __name__ == "__main__":
-
-    cfg = source_cfg("./cfg/default.cfg")
-    
-    cfg.sim.isOffsetScan = 0
-    
-    cfg = feval(cfg.scanner.detectorCallback, cfg)
-    cfg = feval(cfg.scanner.focalspotCallback, cfg)
-    cfg = feval(cfg.physics.rayAngleCallback, cfg)
-    cfg = feval(cfg.protocol.spectrumCallback, cfg)
-    cfg = feval(cfg.protocol.filterCallback, cfg)
-    
-    cfg = Detection_Flux(cfg)
-    check_value(cfg.detFlux)
+# if __name__ == "__main__":
+#
+#     cfg = source_cfg("./cfg/default.cfg")
+#
+#     cfg.sim.isOffsetScan = 0
+#
+#     cfg = feval(cfg.scanner.detectorCallback, cfg)
+#     cfg = feval(cfg.scanner.focalspotCallback, cfg)
+#     cfg = feval(cfg.physics.rayAngleCallback, cfg)
+#     cfg = feval(cfg.protocol.spectrumCallback, cfg)
+#     cfg = feval(cfg.protocol.filterCallback, cfg)
+#
+#     cfg = Detection_Flux(cfg)
+#     check_value(cfg.detFlux)

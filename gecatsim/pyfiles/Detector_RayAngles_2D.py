@@ -68,19 +68,19 @@ def Detector_RayAngles_2D(cfg):
     return cfg
 
 
-if __name__ == "__main__":
-    import matplotlib.pyplot as plt
-    cfg = source_cfg("./cfg/default.cfg")
-    
-    cfg = feval("Detector_ThirdgenCurved", cfg)
-    cfg = feval("Source_Uniform", cfg)
-    cfg = Detector_RayAngles_2D(cfg)
-    
-    check_value(cfg.det.rayDistance)
-    check_value(cfg.det.alphas)
-    check_value(cfg.det.cosBetas)
-    check_value(cfg.det.gammas)
-    
-    ga = cfg.det.gammas.reshape(cfg.scanner.detectorColCount, cfg.scanner.detectorRowCount)
-    plt.plot(ga[:, 7])
-    plt.show()
+# if __name__ == "__main__":
+#     import matplotlib.pyplot as plt
+#     cfg = source_cfg("./cfg/default.cfg")
+#
+#     cfg = feval("Detector_ThirdgenCurved", cfg)
+#     cfg = feval("Source_Uniform", cfg)
+#     cfg = Detector_RayAngles_2D(cfg)
+#
+#     check_value(cfg.det.rayDistance)
+#     check_value(cfg.det.alphas)
+#     check_value(cfg.det.cosBetas)
+#     check_value(cfg.det.gammas)
+#
+#     ga = cfg.det.gammas.reshape(cfg.scanner.detectorColCount, cfg.scanner.detectorRowCount)
+#     plt.plot(ga[:, 7])
+#     plt.show()

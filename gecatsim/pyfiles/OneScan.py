@@ -123,22 +123,22 @@ def update_scan_time(cfg, subViewId):
 
     return cfg
 
-if __name__ == "__main__":
-
-    cfg = source_cfg("./cfg/default.cfg")
-    
-    cfg.sim.thisScanType = [0, 0, 1]
-    cfg.sim.enableQuantumNoise = 0
-    cfg.sim.subViewCount = 3
-    cfg.protocol.startViewId = 0
-    cfg.protocol.stopViewId = cfg.protocol.viewsPerRotation-1
-    cfg.protocol.startAngle = 29
-    cfg.protocol.startZ = 2
-    
-    cfg = one_scan(cfg)
-    
-    thisScan = cfg.thisView.reshape(cfg.scanner.detectorColCount, cfg.scanner.detectorRowCount)
-
-    check_value(thisScan[400:500, 7])
-    plt.plot(thisScan[:, 7])
-    plt.show()
+# if __name__ == "__main__":
+#
+#     cfg = source_cfg("./cfg/default.cfg")
+#
+#     cfg.sim.thisScanType = [0, 0, 1]
+#     cfg.sim.enableQuantumNoise = 0
+#     cfg.sim.subViewCount = 3
+#     cfg.protocol.startViewId = 0
+#     cfg.protocol.stopViewId = cfg.protocol.viewsPerRotation-1
+#     cfg.protocol.startAngle = 29
+#     cfg.protocol.startZ = 2
+#
+#     cfg = one_scan(cfg)
+#
+#     thisScan = cfg.thisView.reshape(cfg.scanner.detectorColCount, cfg.scanner.detectorRowCount)
+#
+#     check_value(thisScan[400:500, 7])
+#     plt.plot(thisScan[:, 7])
+#     plt.show()

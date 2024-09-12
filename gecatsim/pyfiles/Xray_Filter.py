@@ -69,23 +69,23 @@ def bowtie_filter(cfg):
     
     return cfg
 
-if __name__ == "__main__":
-    import matplotlib.pyplot as plt
-    cfg = source_cfg("./cfg/default.cfg")
-    
-    cfg = feval(cfg.scanner.detectorCallback, cfg)
-    cfg = feval(cfg.scanner.focalspotCallback, cfg)
-    cfg = feval(cfg.physics.rayAngleCallback, cfg)
-    cfg = feval(cfg.protocol.spectrumCallback, cfg)
-        
-    cfg.protocol.bowtie = 'medium'
-    cfg.protocol.flatFilter = ['al', 0.1, 'water', 2]
-        
-    cfg = Xray_Filter(cfg)
-    trans = cfg.src.filterTrans.reshape(cfg.scanner.detectorColCount, cfg.scanner.detectorRowCount, cfg.spec.nEbin)
-    check_value(trans)
-    plt.plot(trans[:, 7, 8])
-    plt.show()
+# if __name__ == "__main__":
+#     import matplotlib.pyplot as plt
+#     cfg = source_cfg("./cfg/default.cfg")
+#
+#     cfg = feval(cfg.scanner.detectorCallback, cfg)
+#     cfg = feval(cfg.scanner.focalspotCallback, cfg)
+#     cfg = feval(cfg.physics.rayAngleCallback, cfg)
+#     cfg = feval(cfg.protocol.spectrumCallback, cfg)
+#
+#     cfg.protocol.bowtie = 'medium'
+#     cfg.protocol.flatFilter = ['al', 0.1, 'water', 2]
+#
+#     cfg = Xray_Filter(cfg)
+#     trans = cfg.src.filterTrans.reshape(cfg.scanner.detectorColCount, cfg.scanner.detectorRowCount, cfg.spec.nEbin)
+#     check_value(trans)
+#     plt.plot(trans[:, 7, 8])
+#     plt.show()
     
     
     

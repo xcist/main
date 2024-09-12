@@ -109,12 +109,12 @@ def set_voxelized_volume(cfg, volumeData, volumeDims, offsets, voxelsize, xyMask
         print("*** Error %d in set_phantom_info_vox: Not have enough system memory for voxelized phantom!" % Status[0])
 
 
-if __name__ == "__main__":
-    cfg = source_cfg("./cfg/default.cfg")
-    cfg.phantom.filename = 'BIG.json'
-    
-    cfg = feval(cfg.scanner.detectorCallback, cfg)
-    cfg = feval(cfg.scanner.focalspotCallback, cfg)
-    cfg = feval(cfg.protocol.spectrumCallback, cfg)
-
-    cfg = Phantom_Voxelized(cfg)
+# if __name__ == "__main__":
+#     cfg = source_cfg("./cfg/default.cfg")
+#     cfg.phantom.filename = 'BIG.json'
+#
+#     cfg = feval(cfg.scanner.detectorCallback, cfg)
+#     cfg = feval(cfg.scanner.focalspotCallback, cfg)
+#     cfg = feval(cfg.protocol.spectrumCallback, cfg)
+#
+#     cfg = Phantom_Voxelized(cfg)

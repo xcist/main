@@ -114,7 +114,7 @@ def rebin_energy(cfg, thisView):
 
     return rebinView
     
-if __name__ == "__main__":
-    pass
+# if __name__ == "__main__":
+#     pass
     
     
