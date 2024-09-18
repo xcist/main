@@ -30,6 +30,7 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --exclude=EXE,./gecatsim/pyfiles/doserecon
       - name: Test with pytest
         run: |
+          echo ${{ vars.ENABLE_FUNCTIONAL_TEST }}
           python -m pytest -v -s --junitxml=xunit.xml --cov=gecatsim --cov-report=xml --cov-report=html
         env:
           ENABLE_FUNCTIONAL_TEST: ${{ vars.ENABLE_FUNCTIONAL_TEST }}
