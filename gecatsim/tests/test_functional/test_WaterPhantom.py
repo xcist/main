@@ -12,9 +12,14 @@ from gecatsim.pyfiles.CommonTools import *
 import matplotlib.pyplot as plt
 from operator import __getitem__
 
+from gecatsim.tests.test_functional.functional_test_disabled import functional_test_disabled
+
 class Test_Functional_WaterPhantom(unittest.TestCase):
 
     def test_create_waterphantom(self):
+        if (functional_test_disabled()):
+            assert True
+            return
 
         #ct = xc.CatSim( "all_in_one_config_generic_scanner") #initalization
         ct = xc.CatSim("../examples/vct_examples/Phantom_Sample_Analytic", 
@@ -69,7 +74,10 @@ class Test_Functional_WaterPhantom(unittest.TestCase):
         #plt.show()
 
     def test_functional_waterphantom(self):
-
+        if (functional_test_disabled()):
+            assert True
+            return
+            
         fileName = "./Water_IQ_test_512x512x4.raw"
         imgRows = 512
         imgCols = 512
