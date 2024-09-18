@@ -33,7 +33,7 @@ jobs:
       - name: Test with pytest without functional tests
         if: ${{vars.ENABLE_FUNCTIONAL_TEST == 'FALSE'}}
         run: |
-          python -m pytest -v -s --junitxml=xunit.xml --cov=gecatsim --cov-report=xml --cov-report=html --ignore=gecatsim/tests/test_functional
+          python -m pytest -v -s --junitxml=xunit.xml --cov=gecatsim --cov-report=xml --cov-report=html --ignore=${{vars.FUNCTIONAL_TEST_DIRECTORY}}
       - name: Upload test results
         uses: actions/upload-artifact@v3
         with:
