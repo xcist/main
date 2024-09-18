@@ -1,9 +1,11 @@
 name: Build
 on:
   push:
-    branches: [ "master"]
+    branches: [ "master", "disable_functional_tests"]
   pull_request:
     types: [opened, synchronize, reopened]
+env:
+  ENABLE_FUNCTIONAL_TEST: ${{ vars.ENABLE_FUNCTIONAL_TEST }}
 permissions:
   contents: read
 jobs:
@@ -29,6 +31,8 @@ jobs:
       - name: Test with pytest
         run: |
           python -m pytest -v -s --junitxml=xunit.xml --cov=gecatsim --cov-report=xml --cov-report=html
+        env:
+          ENABLE_FUNCTIONAL_TEST: ${{ ENABLE_FUNCTIONAL_TEST }}
       - name: Upload test results
         uses: actions/upload-artifact@v3
         with:
