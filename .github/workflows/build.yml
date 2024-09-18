@@ -1,7 +1,7 @@
 name: Build
 on:
   push:
-    branches: [ "master", "disable_functional_tests_workflow_only"]
+    branches: [ "master"]
   pull_request:
     types: [opened, synchronize, reopened]
 permissions:
