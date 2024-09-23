@@ -1,9 +1,21 @@
 name: Build
 on:
   push:
-    branches: [ "master"]
+    branches: [ "master", "disable_functional_tests_workflow_only"]
   pull_request:
     types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      ENABLE_FUNCTIONAL_TEST:
+        description: 'Set the value to TRUE/FALSE to enable or disable functional tests'
+        required: true
+        default: 'FALSE'
+        type: string
+      FUNCTIONAL_TEST_DIRECTORY:
+        description: 'The directories where functional tests are present in the tests folder under gecatsim/tests/'
+        required: true
+        default: 'gecatsim/tests/test_functional'
+        type: string        
 permissions:
   contents: read
 jobs:
