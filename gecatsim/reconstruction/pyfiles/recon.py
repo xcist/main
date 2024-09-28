@@ -6,19 +6,17 @@ import matplotlib.pyplot as plt
 import numpy as np
 # Need to import new recons as they are added
 
+def recon_direct(cfg):
+    prep = load_prep(cfg)
+    # cfg.recon.reconType is the recon function's name
+    imageVolume3D = feval("gecatsim.reconstruction.pyfiles." + cfg.recon.reconType, cfg, prep)
+    imageVolume3D = scaleReconData(cfg, imageVolume3D)
+    return imageVolume3D
 
 def recon(cfg):
     # If doing the recon, load the projection data, do the recon, and save the resulting image volume.
     if cfg.do_Recon:
-        prep = load_prep(cfg)
-
-        # cfg.recon.reconType is the recon function's name
-        imageVolume3D = feval("gecatsim.reconstruction.pyfiles." + cfg.recon.reconType, cfg, prep)
-
-        imageVolume3D = scaleReconData(cfg, imageVolume3D)
-
-        if cfg.recon.saveImageVolume:
-            saveImageVolume(cfg, imageVolume3D)
+        imageVolume3D = recon_direct(cfg)
 
     # If not doing the recon, load the previously-saved recon image volume.
     else:
