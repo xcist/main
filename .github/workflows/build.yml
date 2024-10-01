@@ -32,12 +32,12 @@ jobs:
         if: ${{vars.ENABLE_FUNCTIONAL_TEST == 'TRUE' && github.event.schedule == ''}}
         run: |
           echo ${{github.event.schedule}}
-          python -m pytest -v -s --junitxml=xunit.xml --cov=gecatsim --cov-report=xml --cov-report=html
+          python -m pytest -v -s --junitxml=xunit.xml --cov=gecatsim --cov-report=xml --cov-report=html --ignore=${{vars.FUNCTIONAL_TEST_DIRECTORY}}
       - name: Test with pytest without functional tests
         if: ${{vars.ENABLE_FUNCTIONAL_TEST == 'TRUE' && github.event.schedule != ''}}
         run: |
           echo ${{github.event.schedule}}
-          python -m pytest -v -s --junitxml=xunit.xml --cov=gecatsim --cov-report=xml --cov-report=html --ignore=${{vars.FUNCTIONAL_TEST_DIRECTORY}}
+          python -m pytest -v -s --junitxml=xunit.xml --cov=gecatsim --cov-report=xml --cov-report=html
       - name: Upload test results
         uses: actions/upload-artifact@v3
         with:
