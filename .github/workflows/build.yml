@@ -4,18 +4,8 @@ on:
     branches: [ "master", "disable_functional_tests_workflow_only"]
   pull_request:
     types: [opened, synchronize, reopened]
-  workflow_dispatch:
-    inputs:
-      ENABLE_FUNCTIONAL_TEST:
-        description: 'Set the value to TRUE/FALSE to enable or disable functional tests'
-        required: true
-        default: 'FALSE'
-        type: string
-      FUNCTIONAL_TEST_DIRECTORY:
-        description: 'The directories where functional tests are present in the tests folder under gecatsim/tests/'
-        required: true
-        default: 'gecatsim/tests/test_functional'
-        type: string        
+  schedule:
+    - cron: "15 20 * * *"
 permissions:
   contents: read
 jobs:
@@ -39,12 +29,14 @@ jobs:
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --exclude=EXE,./gecatsim/pyfiles/doserecon
       - name: Test with pytest
-        if: ${{vars.ENABLE_FUNCTIONAL_TEST == 'TRUE'}}
+        if: ${{vars.ENABLE_FUNCTIONAL_TEST == 'TRUE' && github.event.schedule == ''}}
         run: |
+          echo ${{github.event.schedule}}
           python -m pytest -v -s --junitxml=xunit.xml --cov=gecatsim --cov-report=xml --cov-report=html
       - name: Test with pytest without functional tests
-        if: ${{vars.ENABLE_FUNCTIONAL_TEST == 'FALSE'}}
+        if: ${{vars.ENABLE_FUNCTIONAL_TEST == 'TRUE' && github.event.schedule != ''}}
         run: |
+          echo ${{github.event.schedule}}
           python -m pytest -v -s --junitxml=xunit.xml --cov=gecatsim --cov-report=xml --cov-report=html --ignore=${{vars.FUNCTIONAL_TEST_DIRECTORY}}
       - name: Upload test results
         uses: actions/upload-artifact@v3
