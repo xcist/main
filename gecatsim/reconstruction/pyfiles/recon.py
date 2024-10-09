@@ -17,6 +17,8 @@ def recon(cfg):
     # If doing the recon, load the projection data, do the recon, and save the resulting image volume.
     if cfg.do_Recon:
         imageVolume3D = recon_direct(cfg)
+        if cfg.recon.saveImageVolume:
+            saveImageVolume(cfg, imageVolume3D)
 
     # If not doing the recon, load the previously-saved recon image volume.
     else:
