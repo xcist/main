@@ -1,0 +1,12 @@
+materialList = {'w' };
+
+object.center(1,:) = [0.000000 0.000000 0.000000];
+object.half_axes(1,:) = [0.025000 0.025000 17.500000];
+object.euler_angs(1,:) = [0.000000 0.000000 0.000000];
+object.density(1) = 1.000000;
+object.type(1) = 2;
+object.material(1) = 1;
+object.axial_lims(1,:) = [0 0];
+object.shape(1) = 0;
+object.clip{1} = [];
+
