@@ -1882,14 +1882,18 @@ void Plane_eqn(double *p1, double *p2, double *p3, double *p4, double *A, double
 
   sum_nrm = nrm[0] + nrm[1];
 
+  if(sum_nrm == 0.0) {
+	  *A = 0; *B = 0; *C = 0; *D = 0;
+	  // Fixed the issue, Mingye Wu, 7/15/2024
+	  //dbug(-1,"*************************************XCAT*************************ERROR************************************");
+	  return;
+  }
+  
   *A = (nrm[0] * result[0][0] + nrm[1] * result[1][0]) / sum_nrm;
   *B = (nrm[0] * result[0][1] + nrm[1] * result[1][1]) / sum_nrm;
   *C = (nrm[0] * result[0][2] + nrm[1] * result[1][2]) / sum_nrm;
 
   *D = -(*A) * p1[0] - (*B) * p1[1] - (*C) * p1[2];
-
-  if (sum_nrm == 0.0)
-    dbug(-1, "*************************************XCAT*************************ERROR************************************");
 }
 
 void random_unit_vector(double *vec)
