@@ -14,8 +14,8 @@ class Test_Functional_SpacialResolution(unittest.TestCase):
     def test_create_spatialresolution(self):
 
         ##--------- Initialize
-        ct = xc.CatSim("../examples/vct_examples/Phantom_Sample_Analytic", "../examples/vct_examples/Scanner_Sample_generic",
-                       "../examples/vct_examples/Protocol_Sample_axial")  # initialization
+        ct = xc.CatSim("../examples/mtf_examples/Phantom_Sample_Analytic", "../examples/mtf_examples/Scanner_Sample_generic",
+                       "../examples/mtf_examples/Protocol_Sample_axial")  # initialization
 
         ##--------- Make changes to parameters (optional)
         ct.resultsName = "W_wire"
