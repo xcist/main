@@ -25,6 +25,8 @@ def writeHdf5(cfg, ofolder):
     with h5py.File(ofile, "w") as h5f:
         for i in range(1, total_n_views + 1):
             sino = np.fromfile(fp, dtype=np.float32, count=cfg.col_count * cfg.row_count)
+            if sino.size != cfg.col_count * cfg.row_count:
+                raise ValueError(f"Expected {cfg.col_count * cfg.row_count} elements, but got {sino.size}")
             sino = sino.reshape((cfg.col_count, cfg.row_count))
             sino *= scalefactor
             h5f.create_dataset(f"/counts/{i}", data=sino)
@@ -33,7 +35,7 @@ def writeHdf5(cfg, ofolder):
         h5f.create_dataset("/info/gantry_angle_rad", data=cfg.betas)
         h5f.create_dataset("/info/current_ma", data=np.repeat(cfg.mA, total_n_views))
         h5f.create_dataset("/info/integration_period_s",
-                           data=np.repeat(cfg.rotation_period / cfg.views_per_rotation, total_n_views))
+                           data=np.repeat(cfg.rotation_period / cfg.protocol.viewsPerRotation, total_n_views))
         h5f.create_dataset("/info/voltage_kv", data=np.repeat(120, total_n_views))
 
         # Add attributes
@@ -53,24 +55,24 @@ def writeHdf5(cfg, ofolder):
 
         # Add scan related parameters
         imgTable = calcImgTableParams(cfg, row_thickness_mm)
-        h5f.attrs["pitch_per_view_mm"] = imgTable.pitch_per_view_mm
-        h5f.attrs["pitch_rows"] = imgTable.pitch_rows
-        h5f.attrs["scan_pitch_ratio"] = imgTable.scan_pitch_ratio
-        h5f.attrs["first_image_location_mm"] = imgTable.first_image_location_mm
-        h5f.attrs["number_of_images"] = imgTable.number_of_images
-        h5f.attrs["first_view_for_image"] = imgTable.first_view_for_image
-        h5f.attrs["number_of_views_for_image"] = imgTable.number_of_views_for_image
-        h5f.attrs["image_location_increment_mm"] = imgTable.image_location_increment_mm
-        h5f.attrs["table_speed_mm_sec"] = imgTable.table_speed_mm_sec
-        h5f.attrs["actual_table_end_mm"] = imgTable.actual_table_end_mm
-        h5f.attrs["actual_table_start_mm"] = imgTable.actual_table_start_mm
-        h5f.attrs["table_direction"] = imgTable.table_direction
-        h5f.attrs["number_of_views_per_image"] = imgTable.number_of_views_per_image
+        h5f.attrs["pitch_per_view_mm"] = imgTable["pitch_per_view_mm"]
+        h5f.attrs["pitch_rows"] = imgTable["pitch_rows"]
+        h5f.attrs["scan_pitch_ratio"] = imgTable["scan_pitch_ratio"]
+        h5f.attrs["first_image_location_mm"] = imgTable["first_image_location_mm"]
+        h5f.attrs["number_of_images"] = imgTable["number_of_images"]
+        h5f.attrs["first_view_for_image"] = imgTable["first_view_for_image"]
+        h5f.attrs["number_of_views_for_image"] = imgTable["number_of_views_for_image"]
+        h5f.attrs["image_location_increment_mm"] = imgTable["image_location_increment_mm"]
+        h5f.attrs["table_speed_mm_sec"] = imgTable["table_speed_mm_sec"]
+        h5f.attrs["actual_table_end_mm"] = imgTable["actual_table_end_mm"]
+        h5f.attrs["actual_table_start_mm"] = imgTable["actual_table_start_mm"]
+        h5f.attrs["table_direction"] = imgTable["table_direction"]
+        h5f.attrs["number_of_views_per_image"] = imgTable["number_of_views_per_image"]
 
         # Add view weighting parameters for the image table module
         if cfg.table_speed > 0:
             collimation = cfg.row_count
-            pitch = imgTable.pitch_rows
+            pitch = imgTable["pitch_rows"]
             vparams = readViewWeighting(collimation, pitch)
         else:
             vparams = {
@@ -103,7 +105,6 @@ def writeHdf5(cfg, ofolder):
         # h5f.attrs["poly_coeff"] = fparams.p
 
     print(f"Saved HDF5 file: {ofile}")
-
 
 def getNumExtraViews(cfg):
     centerDet = (1.0 + cfg.col_count) * 0.5 - cfg.col_offset - 1.0

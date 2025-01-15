@@ -2,7 +2,7 @@
 import os
 import numpy as np
 from gecatsim.pyfiles.Spectrum import spectrum_read
-from gecatsim.pyfiles.Xray_Filter import flat_filter
+from gecatsim.pyfiles.GetMu import GetMu
 
 def catsimfilter(cfg):
 
@@ -16,12 +16,12 @@ def catsimfilter(cfg):
     filtered_suffix = '_filt' + cfg.spectrum_filtered_string
 
     # Get spectrum path/name
-    spectrum_filename = os.path.exists(cfg.spectrum_filename)
-    if not spectrum_filename:
-        full_spectrum_filename = os.path.join('gecatsim/spectrum', cfg.spectrum_filename)
-        spectrum_filename = os.path.exists(full_spectrum_filename)
-        if not spectrum_filename:
-            raise FileNotFoundError(f"*** ERROR: {cfg.spectrum_filename} cannot be found!")
+    spectrum_filename = cfg.spectrum_filename
+    if not os.path.exists(spectrum_filename):
+        full_spectrum_filename = os.path.join('gecatsim/spectrum', spectrum_filename)
+        if not os.path.exists(full_spectrum_filename):
+            raise FileNotFoundError(f"*** ERROR: {spectrum_filename} cannot be found!")
+        spectrum_filename = full_spectrum_filename
 
     # Read spectrum
     ivec = []
@@ -32,19 +32,31 @@ def catsimfilter(cfg):
         num_spectrum_files = len(spectrum_filenames)
         for file_index in range(num_spectrum_files):
             spectrum_filename_with_path = spectrum_filenames[file_index]
-            i, e = spectrum_read(spectrum_filename_with_path)
+            e, i, _ = spectrum_read(spectrum_filename_with_path)
             ivec.append(i)
             evec.append(e)
     elif os.path.isfile(spectrum_filename):
         num_spectrum_files = 1
-        i, e = spectrum_read(spectrum_filename)
+        e, i, _ = spectrum_read(spectrum_filename)
         ivec.append(i)
         evec.append(e)
 
     # Calculate and apply filter transmission
+    cfg.sim.Evec = evec[0]  # Assuming all spectra have the same energy vector
+    cosineFactors = 1 / np.cos(cfg.det.gammas) / np.cos(cfg.det.alphas)
+    trans = np.ones([cfg.det.totalNumCells, cfg.spec.nEbin], dtype=np.single)
+
+    if hasattr(cfg.protocol, "flatFilter"):
+        for ii in range(0, round(len(cfg.protocol.flatFilter) / 2)):
+            material = cfg.protocol.flatFilter[2 * ii]
+            depth = cfg.protocol.flatFilter[2 * ii + 1]
+            mu = GetMu(material, cfg.sim.Evec)
+            trans *= np.exp(-depth * 0.1 * cosineFactors[:, np.newaxis] @ mu.reshape(1, -1))
+
+    cfg.src.filterTrans = trans
+
     for file_index in range(num_spectrum_files):
-        mu_times_thickness = flat_filter(cfg.flat_filters, evec[file_index])
-        ivec[file_index] = ivec[file_index] * np.exp(-mu_times_thickness)
+        ivec[file_index] = ivec[file_index] * np.exp(-cfg.src.filterTrans)
 
     # Write spectrum
     if os.path.isdir(spectrum_filename):
@@ -53,8 +65,10 @@ def catsimfilter(cfg):
         pathstr = os.path.dirname(spectrum_filename)
         path_filtered = os.path.join(pathstr, 'filtered')
 
-    if not os.path.exists(path_filtered):
+    try:
         os.makedirs(path_filtered)
+    except FileExistsError:
+        pass
 
     for file_index in range(num_spectrum_files):
         number_ebins = len(evec[file_index])

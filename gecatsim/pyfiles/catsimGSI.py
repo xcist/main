@@ -5,7 +5,6 @@ import gecatsim as xc
 from gecatsim.pyfiles.CommonTools import *
 from gecatsim.pyfiles.PrepView import prep_view
 
-
 def catsimGSI(cfg, adjust, preadjust, silent):
 
     kVp_0 = cfg.kVp  # note the initial kVp
@@ -15,7 +14,7 @@ def catsimGSI(cfg, adjust, preadjust, silent):
     # GSI parameters
     n_subphase = len(cfg.duty_cycle_per_view)
     n_phase = len(cfg.subphase_grouping)
-    cfg.duty_cycle_per_view = cfg.duty_cycle_per_view / sum(cfg.duty_cycle_per_view)
+    cfg.duty_cycle_per_view = np.array(cfg.duty_cycle_per_view) / sum(cfg.duty_cycle_per_view)  # Convert to NumPy array
     duty_cycle = cfg.duty_cycle_per_view
 
     airscan = [None] * n_phase

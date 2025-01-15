@@ -9,7 +9,7 @@ def USampling(cfg, total_n, intensive_n):
 
     # account depth-dependent magnification of the collimator
     # assume each collimator in front of scintillator is aligned with x-ray source
-    if 'plate_thickness' in cfg and cfg.plate_thickness > 0:
+    if hasattr(cfg, 'plate_thickness') and cfg.plate_thickness > 0:
         platethickness = cfg.plate_thickness
         plateheight = cfg.plate_height
         plateairgap = cfg.plate_airgap
@@ -24,7 +24,7 @@ def USampling(cfg, total_n, intensive_n):
     #
     # add intensive & sparse oversampling, Mingye, 5/9/2013
     #
-    if ('detection_on_kerf' in cfg and cfg.detection_on_kerf == 1) or cfg.callback_detector == 'Detector_SVCT':
+    if (hasattr(cfg, 'detection_on_kerf') and cfg.detection_on_kerf == 1) or cfg.callback_detector == 'Detector_SVCT':
         uactive_collimator_edge = colsize - shadow_width
         uactive_collimator_center = colsize - shadow_width
     else:

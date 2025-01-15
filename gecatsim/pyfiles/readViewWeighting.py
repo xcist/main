@@ -1,16 +1,5 @@
 # Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/tree/master/license
 
-import numpy as np
-
-def vectornorm(xyz):
-    if xyz.shape[0] != 3:
-        print('ERROR: argument of vectornorm has to be of size 3 x n')
-        return None
-
-    norms = np.sqrt(np.sum(xyz * xyz, axis=0))
-    return norms
-
-
 def readViewWeighting(collimation, pitch):
     vw = {}
     try:
@@ -38,5 +27,14 @@ def readViewWeighting(collimation, pitch):
         vw['vct_r'] = 0.0
         vw['zsf'] = 1.0
         vw['kw'] = 0.0
+
+    # Ensure all keys are present with default values if not found
+    vw.setdefault('zsf', 1.0)
+    vw.setdefault('kw', 0.0)
+    vw.setdefault('beta_0', 0.825)
+    vw.setdefault('beta_t', 0.175)
+    vw.setdefault('vct_k', 0.0)
+    vw.setdefault('vct_q', 0.0)
+    vw.setdefault('vct_r', 0.0)
 
     return vw

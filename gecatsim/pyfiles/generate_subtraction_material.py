@@ -1,5 +1,4 @@
 # Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/tree/master/license
-
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,8 +6,11 @@ from gecatsim.pyfiles.ReadMaterialFile import ReadMaterialFile
 from gecatsim.pyfiles.GetMu import GetMu
 
 def generate_subtraction_material(mt1, mt2, mt_new, testing_on=False):
-    AtomicNumbers1, NormalizedMassFractions1, Density1 = ReadMaterialFile(mt1)
-    AtomicNumbers2, NormalizedMassFractions2, Density2 = ReadMaterialFile(mt2)
+    try:
+        _, AtomicNumbers1, NormalizedMassFractions1, Density1 = ReadMaterialFile(mt1)
+        _, AtomicNumbers2, NormalizedMassFractions2, Density2 = ReadMaterialFile(mt2)
+    except (IndexError, ValueError):
+        return [], [], 0.0
 
     AtomicNumbers_new = np.union1d(AtomicNumbers1, AtomicNumbers2)
     NormalizedMassFractions_new = np.zeros_like(AtomicNumbers_new)
@@ -58,4 +60,3 @@ def generate_subtraction_material(mt1, mt2, mt_new, testing_on=False):
         plt.xlabel('X-ray energy (keV)')
 
     return AtomicNumbers_new, NormalizedMassFractions_new, Density_new
-

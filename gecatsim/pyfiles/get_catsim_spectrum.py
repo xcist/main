@@ -16,26 +16,26 @@ def get_catsim_spectrum(cfg, sim_step=0):
     """
 
     # Spectrum before bowtie & flat filter
-    spec = cfg.callback_spectrum(cfg)
+    spec = feval(cfg.protocol.spectrumCallback, cfg)
     if sim_step == 0:
         ss = spec.Ivec
         return ss, spec, cfg
 
-    # Spectrum after bowtie & flat filter, before det prefilter
-    det0 = cfg.callback_detector(cfg)
-    src0 = cfg.callback_source(cfg)
-    cfg = Detector_RayAngles_2D(cfg, det0, src0)
+    # Spectrum after bowtie & flat filter, before detector prefilter
+    det0 = feval(cfg.scanner.detectorCallback, cfg)
+    src0 = feval(cfg.scanner.focalspotCallback, cfg)
+    cfg = Detector_RayAngles_2D(cfg)
     cfg.Evec = spec.Evec
-    bowtie = cfg.callback_bowtie(cfg)
-    FiltrationTransVec = cfg.callback_filtration(cfg)
+    bowtie = feval(cfg.scanner.bowtieCallback, cfg)
+    FiltrationTransVec = feval(cfg.scanner.filtrationCallback, cfg)
     spec = Combine_Spectrum_Bowtie_FlatFilter(cfg, bowtie, spec, FiltrationTransVec)
     if sim_step == 1:
         ss = spec.netIvec
         return ss, spec, cfg
 
     # Spectrum into detector active region (after detector prefilter)
-    if hasattr(cfg, 'callback_detector_prefilter'):
-        Eff_prefilter = cfg.callback_detector_prefilter(cfg)
+    if hasattr(cfg.scanner, 'detectorPrefilterCallback'):
+        Eff_prefilter = feval(cfg.scanner.detectorPrefilterCallback, cfg)
         spec.netIvec = spec.netIvec * Eff_prefilter
     if sim_step == 2:
         ss = spec.netIvec
