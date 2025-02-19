@@ -17,7 +17,7 @@ yds = -400*np.ones(nrdetcols, dtype=np.single)
 zds = np.linspace(-nrdetrows/2+0.5, nrdetrows/2-0.5, nrdetrows, dtype=np.single)
 
 # original image and view settings
-dzdx = 1
+dzdx = 1  # voxel size
 imgXoffset = 0
 imgYoffset = 0
 imgZoffset = 0
@@ -27,7 +27,7 @@ zshifts = np.zeros(nrviews, dtype=np.single)  # z-position of each view
 nrcols = 51
 nrrows = 51
 nrplanes = 30
-pOrig = np.zeros((nrrows, nrcols, nrplanes), dtype=np.single)
+pOrig = np.zeros((nrrows, nrcols, nrplanes), dtype=np.single)  # voxelized object, where each voxel's value is the volume fraction
 pOrig[25,25,:] = 1
 pOrig[25,0,:] = 1
 pOrig[0,0,:] = 1
