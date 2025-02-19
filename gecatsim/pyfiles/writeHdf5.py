@@ -1,5 +1,15 @@
 # Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/tree/master/license
 
+"""
+function writeHdf5(cfg, ofolder)
+writes a binary prep file into a HDF5 format
+create a HDF5 format outfile
+
+Comments: Requires a view_weighting.m file which defines the
+view_weighting for different collimation/pitch is GE confidential
+(Defaults have been provided in this code so that default view weighting
+can be inserted in the HDF file but may not provide adequate IQ)
+"""
 import os
 import numpy as np
 import h5py

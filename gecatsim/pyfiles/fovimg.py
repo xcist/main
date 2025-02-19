@@ -1,5 +1,16 @@
 # Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/tree/master/license
+"""
+Aim
+    This function returns a binary image representing a circular (2D) or cylindrical (3D) certain field-of-view
 
+Inputs
+    nrrows, nrcols, nrplanes : dimensions of the output img ; default nrplanes is 1
+    radius                   : radius of the field-of-view ; default is half of smallest in-plane image dimension
+    centerrow, centercol     : center of the field-of-view ; default is in the center of the image
+
+Outputs
+    img                      : field-of-view image (2D) or volume (3D)
+"""
 import numpy as np
 
 def fovimg(nrrows, nrcols, nrplanes=1, radius=None, centerrow=None, centercol=None):

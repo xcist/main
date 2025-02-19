@@ -1,5 +1,12 @@
 # Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/tree/master/license
 
+"""
+This function reads a view_weighting.m file and assigns the view weights
+based on the input collimation/pitch value.
+Default has been provided in case the view_Weighting file does not exist
+in the path
+"""
+
 def readViewWeighting(collimation, pitch):
     vw = {}
     try:

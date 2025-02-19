@@ -1,7 +1,19 @@
 # Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/tree/master/license
 
+"""
+Aim
+    Checks whether file 1 is newer than file 2
+
+Inputs
+    FirstFile   A string containing the first filename
+    SecondFile  A string containing the second filename
+
+Outputs
+    ReturnValue 0 if FirstFile does not exist
+                1 if FirstFile exists and SecondFile does not exist
+                  or if FirstFile is newer than SecondFile
+"""
 import os
-import time
 
 def first_file_newer(first_file, second_file):
     # If first_file does not exist, return False. If first_file exists and second_file does not,

@@ -1,4 +1,18 @@
 # Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/tree/master/license
+"""
+Aim
+    Generates a new material that matches the attenuation curve as material #1 (mt1) minus material #2 (mt2).
+
+Inputs
+    mt1, mt2, and mt_new are material filenames, e.g.:
+    mt1 = 'water';
+    mt2 = 'ncat_adipose';
+    mt_new = 'water_minus_adipose';
+
+Outputs
+    Writes the new material file.
+"""
+
 import os
 import numpy as np
 import matplotlib.pyplot as plt

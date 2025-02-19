@@ -10,18 +10,16 @@ class TestUSampling(unittest.TestCase):
                        "../examples/cfg/Scanner_Sample_generic",
                        "../examples/cfg/Protocol_Sample_axial")
         # Add missing attributes
-        self.cfg.recon_slice_thickness = 1.0
-        self.cfg.recon_mu = 0.02
-        self.cfg.col_size = 1.0
-        self.cfg.col_intensive_oversample_length = 0.1
-        self.cfg.plate_thickness = 0.0
-        self.cfg.plate_height = 0.0
-        self.cfg.plate_airgap = 0.0
-        self.cfg.sdd = 1000.0
-        self.cfg.col_cast = 0.0
-        self.cfg.detection_on_kerf = 0
-        self.cfg.callback_detector = 'Detector_SVCT'
-        self.cfg.plate_location = 0
+        self.cfg.scanner.detectorColSize = 1.0
+        self.cfg.scanner.colIntensiveOversampleLength = 0.1
+        self.cfg.scanner.plateThickness = 0.0
+        self.cfg.scanner.plateHeight = 0.0
+        self.cfg.scanner.plateAirgap = 0.0
+        self.cfg.scanner.sdd = 1000.0
+        self.cfg.scanner.colCast = 0.0
+        self.cfg.scanner.detectionOnKerf = 0
+        self.cfg.scanner.callbackDetector = 'Detector_SVCT'
+        self.cfg.scanner.plateLocation = 0
 
     def test_usampling_no_intensive(self):
         total_n = 10
@@ -46,9 +44,7 @@ class TestUSampling(unittest.TestCase):
 
         # Check the values of the output arrays
         self.assertTrue(np.allclose(steplen[:intensive_n], steplen[0]))  # Intensive region step lengths should be equal
-        self.assertTrue(
-            np.allclose(steplen[-intensive_n:], steplen[0]))  # Intensive region step lengths should be equal
-
+        self.assertTrue(np.allclose(steplen[-intensive_n:], steplen[0]))  # Intensive region step lengths should be equal
 
 if __name__ == '__main__':
     unittest.main()

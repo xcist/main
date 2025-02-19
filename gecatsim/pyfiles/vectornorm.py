@@ -1,5 +1,8 @@
 # Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/tree/master/license
-
+"""
+Aim
+    Compute the norms of an array of vectors
+"""
 import numpy as np
 
 def vectornorm(xyz):

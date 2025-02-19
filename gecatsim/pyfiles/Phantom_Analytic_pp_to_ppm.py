@@ -1,5 +1,19 @@
 # Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/tree/master/license
 
+"""
+Aim
+    This function converts a .pp phantom file to a .ppm file.
+
+Inputs:
+    PhantomFileBasename  The name of the phantom file, with no extension.
+                         A file named [PhantomFileBasename '.pp'] must exist.
+    Scale                (optional) A scale factor, to resize phantom, also used to convert from cm to mm (scale=10).
+                         Default: 1
+
+Outputs:
+    A new file is written to [PhantomFileBasename '.ppm']
+"""
+
 import os
 from math import *
 from gecatsim.pyfiles.C_Phantom_Analytic_FORBILD_to_tmp import C_Phantom_Analytic_FORBILD_to_tmp
@@ -54,6 +68,8 @@ def phantom_analytic_pp_to_ppm(cfg, phantom_file_basename, scale=1):
             for j in range(len(tmpc)):
                 fid.write(f'{tmpc[j][0]} {tmpc[j][1]} {tmpc[j][2]} {tmpc[j][3]};')
             fid.write('];\n\n')
+
+    print(f'... done writing {ppm_phantom_filename}')
 
 def read_text_lines2(file_name):
     try:

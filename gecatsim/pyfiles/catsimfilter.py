@@ -1,4 +1,17 @@
 # Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/tree/master/license
+"""
+Aim
+    Generate filtered spectra
+
+Input
+    cfg filename or cfg structure
+        cfg.spectrum_SpectrumFilename
+        cfg.filter
+    spectra data, .dat files
+
+Output
+    filtered spectrum files, form: '\\filtered\\*_filt.dat'
+"""
 import os
 import numpy as np
 from gecatsim.pyfiles.Spectrum import spectrum_read

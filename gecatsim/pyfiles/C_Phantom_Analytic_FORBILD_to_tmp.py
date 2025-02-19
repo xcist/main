@@ -1,5 +1,8 @@
 # Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/tree/master/license
-
+"""
+Aim
+    Wrapper for call to C function by the same or similar name
+"""
 from numpy.ctypeslib import ndpointer
 from gecatsim.pyfiles.CommonTools import *
 
