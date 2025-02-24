@@ -3,28 +3,27 @@ import numpy as np
 from gecatsim.pyfiles.CommonTools import CFG
 from gecatsim.pyfiles.USampling import USampling
 
-class TestUSampling(unittest.TestCase):
+cfg = CFG("../examples/cfg/Phantom_Sample",
+          "../examples/cfg/Scanner_Sample_generic",
+          "../examples/cfg/Protocol_Sample_axial")
 
-    def setUp(self):
-        self.cfg = CFG("../examples/cfg/Phantom_Sample",
-                       "../examples/cfg/Scanner_Sample_generic",
-                       "../examples/cfg/Protocol_Sample_axial")
-        # Add missing attributes
-        self.cfg.scanner.detectorColSize = 1.0
-        self.cfg.scanner.colIntensiveOversampleLength = 0.1
-        self.cfg.scanner.plateThickness = 0.0
-        self.cfg.scanner.plateHeight = 0.0
-        self.cfg.scanner.plateAirgap = 0.0
-        self.cfg.scanner.sdd = 1000.0
-        self.cfg.scanner.colCast = 0.0
-        self.cfg.scanner.detectionOnKerf = 0
-        self.cfg.scanner.callbackDetector = 'Detector_SVCT'
-        self.cfg.scanner.plateLocation = 0
+cfg.scanner.detectorColSize = 1.0
+cfg.scanner.colIntensiveOversampleLength = 0.1
+cfg.scanner.plateThickness = 0.0
+cfg.scanner.plateHeight = 0.0
+cfg.scanner.plateAirgap = 0.0
+cfg.scanner.sdd = 1000.0
+cfg.scanner.colCast = 0.0
+cfg.scanner.detectionOnKerf = 0
+cfg.scanner.callbackDetector = 'Detector_SVCT'
+cfg.scanner.plateLocation = 0
+
+class TestUSampling(unittest.TestCase):
 
     def test_usampling_no_intensive(self):
         total_n = 10
         intensive_n = 0
-        us, steplen = USampling(self.cfg, total_n, intensive_n)
+        us, steplen = USampling(cfg, total_n, intensive_n)
 
         # Check the length of the output arrays
         self.assertEqual(len(us), total_n)
@@ -36,7 +35,7 @@ class TestUSampling(unittest.TestCase):
     def test_usampling_with_intensive(self):
         total_n = 20
         intensive_n = 5
-        us, steplen = USampling(self.cfg, total_n, intensive_n)
+        us, steplen = USampling(cfg, total_n, intensive_n)
 
         # Check the length of the output arrays
         self.assertEqual(len(us), total_n)
