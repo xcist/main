@@ -101,8 +101,12 @@ typedef struct qnet
   POINT **Qw;
 } QNET;
 
-typedef struct surface
-{
+typedef struct material {
+  int MU_ID;
+  float FRACTION;
+} MATERIAL;
+
+typedef struct surface {
   CNET net;
   DEGREE p,
          q;
@@ -110,7 +114,7 @@ typedef struct surface
              knv;
   float min_x, max_x, min_y, max_y, min_z, max_z;
   float centerx, centery, centerz;
-  int MU_ID;
+  MATERIAL MU[10];
 } SURFACE;
 
 typedef struct xpoint
