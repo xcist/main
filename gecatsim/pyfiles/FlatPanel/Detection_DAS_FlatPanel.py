@@ -1,11 +1,9 @@
 # Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
 import numpy as np
-import matplotlib.pyplot as plt
 from scipy import signal
-from catsim.randpf import randpf
 
-def Detection_DAS_FlatPanel(viewIn, cfg):
+def Detection_DAS_FlatPanel(viewIn, viewId, cfg):
     '''
     - Performs image/frequency-domain down-sampling to model detector aliasing in the flat panel detector
     - Models the electronic gain conversion stage and the additive electronic noise
@@ -100,4 +98,4 @@ def Detection_DAS_FlatPanel(viewIn, cfg):
     # Data type conversion
     viewOut_alias = viewOut_alias.astype('float32')
     
-    return viewOut_alias
+    return viewOut_alias.ravel()
