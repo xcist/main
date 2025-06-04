@@ -4,7 +4,7 @@ import ctypes
 import json
 import os
 import struct
-
+import importlib
 import numpy as np
 
 '''
@@ -26,28 +26,33 @@ def make_col(a):
     return a
 
 
-def feval(funcName, *args):
-    try:
-        md = __import__(funcName)
-    except ModuleNotFoundError:
-        pass
-    try:
-        md = __import__("gecatsim.pyfiles."+funcName, fromlist=[funcName])  # equal to: from gecatsim.foo import foo
-    except ModuleNotFoundError:
-        pass
-    try:
-        md = __import__("gecatsim.pyfiles.FlatPanel."+funcName, fromlist=[funcName])
-    except ModuleNotFoundError:
-        pass
+def feval(func_name, *args):
+    module_paths = [
+        func_name,
+        f"gecatsim.pyfiles.{func_name}",
+        f"gecatsim.pyfiles.FlatPanel.{func_name}"
+    ]
 
-    strip_leading_module = '.'.join(funcName.split('.')[1:])
-    func_name_only = funcName.split('.')[-1]
+    module = None
+    for path in module_paths:
+        try:
+            module = importlib.import_module(path)
+            break
+        except ModuleNotFoundError:
+            continue
 
-    if len(strip_leading_module) > 0:
-        eval_name = f"md.{strip_leading_module}.{func_name_only}"
-    else:
-        eval_name = f"md.{func_name_only}"
-    return eval(eval_name)(*args)
+    if module is None:
+        raise ImportError(f"Could not import module: {func_name}. Tried paths: {module_paths}")
+
+    # Extract the function name (the part after the last dot)
+    func_name_only = func_name.split('.')[-1]
+
+    try:
+        func = getattr(module, func_name_only)
+    except AttributeError:
+        raise AttributeError(f"Function '{func_name_only}' not found in module '{module.__name__}'")
+
+    return func(*args)
 
 
 def load_C_lib():
@@ -254,11 +259,16 @@ def source_cfg(*para):
         
     # initialize structs in cfg and structs
     attrList = ['sim', 'det', 'detNew', 'src', 'srcNew', 'spec', 'protocol', 'scanner', 'phantom', 'physics', 'recon', 'dose']
+    
     for attr in attrList:
+        # Ensure cfg has the attribute
         if not hasattr(cfg, attr):
             setattr(cfg, attr, emptyCFG())
-        if not attr in dir():
-            exec("%s = emptyCFG()" % attr)
+
+        # Define the variable in the local scope if not already defined
+        if attr not in locals():
+            globals()[attr] = emptyCFG()
+            # exec("%s = emptyCFG()" % attr)  # globals()[attr] = ... is more explicit and safer for dynamic variable creation
         
     # execute scripts in cfg file
     exec(open(cfg_file).read())
