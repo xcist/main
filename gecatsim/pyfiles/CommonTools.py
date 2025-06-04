@@ -29,8 +29,17 @@ def make_col(a):
 def feval(funcName, *args):
     try:
         md = __import__(funcName)
-    except:
+    except ModuleNotFoundError:
+        pass
+    try:
         md = __import__("gecatsim.pyfiles."+funcName, fromlist=[funcName])  # equal to: from gecatsim.foo import foo
+    except ModuleNotFoundError:
+        pass
+    try:
+        md = __import__("gecatsim.pyfiles.FlatPanel."+funcName, fromlist=[funcName])
+    except ModuleNotFoundError:
+        pass
+
     strip_leading_module = '.'.join(funcName.split('.')[1:])
     func_name_only = funcName.split('.')[-1]
 
