@@ -77,6 +77,10 @@ jobs:
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@master
+        with:
+          args: >
+            -Dsonar.projectKey=xcist_main
+            -Dsonar.organization=xcist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
