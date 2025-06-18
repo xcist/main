@@ -3,7 +3,7 @@
 import numpy as np
 import numpy.matlib as nm
 import math
-from catsim.CommonTools import *
+from gecatsim.pyfiles.CommonTools import *
 
 def Detector_FlatPanel(cfg):
     '''
