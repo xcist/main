@@ -218,6 +218,7 @@ def SetFocalspot(cfg):
                             [os_x[0], cfg.scanner.sid+os_y[-1], os_z[-1]],
                             [os_x[-1], cfg.scanner.sid+os_y[-1], os_z[-1]],
                             [os_x[-1], cfg.scanner.sid+os_y[0], os_z[0]]])
+        corners = corners + nm.repmat(cfg.protocol.focalspotOffset, 4, 1)
     else:
         corners = np.c_[samples[0, :], samples[-1, :]].T
     nCorners = corners.shape[0]
