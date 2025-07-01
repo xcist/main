@@ -6,7 +6,7 @@
 # ct.protocol.viewsPerRotation = 50
 # ct.protocol.viewCount = ct.protocol.viewsPerRotation
 # ct.protocol.stopViewId = ct.protocol.viewCount-1
-# ct.protocol.scanTypes = [1, 0, 0]  # flags for airscan, offset scan, phantom scan
+# ct.protocol.scanTypes = [1, 0, 0, 0]  # flags for airscan, offset scan, phantom scan, prep
 # ct.load_cfg("Protocol_Sample_axial", "Physics_Sample", "Recon_Sample_2d")  # new cfg overrides existing parameters
 
 ##--------- Run simulation
