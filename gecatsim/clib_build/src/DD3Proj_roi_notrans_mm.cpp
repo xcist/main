@@ -1,5 +1,11 @@
 // Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
+#ifdef WIN32
+#define DLLEXPORT __declspec(dllexport)
+#else
+#define DLLEXPORT
+#endif
+
 #include <math.h> // fabs(), sqrt(), sin(), cos()
 #include <stdlib.h> // malloc(), free()
 #include <stdio.h>
@@ -412,7 +418,7 @@ void DD3ProjView_roi_notrans_mm(float x0,
 * DD3 projector
 */
 extern "C"{
-
+DLLEXPORT
 	void DD3Proj_roi_notrans_mm(float x0,
 		float y0,
                                     float z0,  //first src loc in absolute coords

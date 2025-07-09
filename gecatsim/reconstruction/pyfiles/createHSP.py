@@ -72,6 +72,9 @@ def createHSP(Length, kernelType):
             FFT_F[nn2 - i - 1] = f((i) / nn) * 0.997 * (i + 1 + 0.003) / nn2
         FFT_F = FFT_F * complex(0, 1)
 
+    elif kernelType == "none":
+        FFT_F = np.ones(nn2) * complex(0, 1)
+
     else: 
         raise Exception("******** Error! An unsupported kernel was specified: {:s}. ********".format(kernelType))
 

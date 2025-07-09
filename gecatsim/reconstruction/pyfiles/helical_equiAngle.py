@@ -174,7 +174,9 @@ def helical_equiAngle(cfg, prep):
                 IndexYB=UI-1
             PProj[i,j,:]=coeXB*coeYB*Proj[IndexXB,IndexYB,:]+coeXU*coeYB*Proj[IndexXU,IndexYB,:]+coeXB*coeYU*Proj[IndexXB,IndexYU,:]+coeXU*coeYU*Proj[IndexXU,IndexYU,:]
 
-    Proj = PProj.transpose(1,2,0)
+    # https://github.com/xcist/main/issues/122
+    Projflip = np.flip(PProj, axis=2)
+    Proj = Projflip.transpose(1, 2, 0)
 
     #scio.savemat('testrebin.mat', {'rebin': PProj})
 

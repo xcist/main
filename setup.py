@@ -6,7 +6,7 @@
 from setuptools import setup
 
 setup(name='gecatsim',
-      version='1.3.3',
+      version='1.5.4',
       description='Simulation toolkit for X-ray based cancer imaging',
       long_description=open('README.md').read(),
       long_description_content_type='text/markdown',
@@ -26,6 +26,7 @@ setup(name='gecatsim',
                     r'lib/*.*',
                     r'material/*', r'material/edlp/*/*.dat',
                     r'phantom/*.*', r'phantom/CatSimLogo_1024/*.*', r'phantom/poly_bin/poly*',
+                    r'pyfiles/FlatPanel/*.*',
                     r'pyfiles/*.*',
                     r'reconstruction/*.*', r'reconstruction/lib/*.*', r'reconstruction/pyfiles/*.*', r'reconstruction/src/*.*',
                     r'response_matrix/*.*',

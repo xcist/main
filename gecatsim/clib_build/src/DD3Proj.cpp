@@ -254,7 +254,7 @@ void DD3ProjView(float x0,
        * Initialize image Z parameters
        *     (this is the only place were dzdx comes into play)
        */
-      imgZstep=imgXstep;//*dzdx;
+      imgZstep=imgXstep*dzdx;
       imgZ=z0-(nrplanes/2.+z0)*imgZstep;
 
       /*
@@ -289,7 +289,7 @@ void DD3ProjView(float x0,
 	    {
 	      deltaZ=(*detZcopy + *(detZcopy+1))/2.* *scalesCopy;
 	      detZstep=fabs(*(detZcopy+1)- *detZcopy)* *scalesCopy;
-              invCos=sqrt(y0*y0+deltaX*deltaX+dzdx*dzdx*deltaZ*deltaZ)/fabs(y0);
+          invCos=sqrt(y0*y0+deltaX*deltaX+deltaZ*deltaZ)/fabs(y0);
 	      *sinogram++ = invCos / (detXstep*detZstep) * *viewCopy++;
 	    } // divide by cos(alpha) and divide by det. stepsizes
 	  else

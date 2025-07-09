@@ -37,21 +37,21 @@ jobs:
         run: |
           python -m pytest -v -s --junitxml=xunit.xml --cov=gecatsim --cov-report=xml --cov-report=html
       - name: Upload test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-results
           path: xunit.xml
         # Use always() to always run this step to publish test results when there are test failures
         if: ${{ always() }}
       - name: Upload code coverage results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-results
           path: coverage.xml
         # Use always() to always run this step to publish test results when there are test failures
         if: ${{ always() }}
       - name: Upload code coverage results in html
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: html-coverage-results
           path: htmlcov
@@ -67,16 +67,17 @@ jobs:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
 
       - name: Download test results
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: test-results
       - name: Download code coverage results
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: coverage-results
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarcloud-github-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_SCANNER_OPTS: "-X"
