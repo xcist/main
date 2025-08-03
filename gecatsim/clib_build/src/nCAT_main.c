@@ -6334,3 +6334,10 @@ DLLEXPORT void polygon_projector(double subviewWeight, double *thisView, float *
   ncat_projector_threaded(subviewWeight, thisView, sourcePoints, nSubSources, srcHullPoints, nSrcHullPoints, firstDetIndex, nModulesIn, modTypeInds, Up, Right, Center, UNUSED_tvLength, numThreads, UNUSED);
   set_para_for_Polygon(0);
 }
+
+DLLEXPORT void make_vol_ncat_polygon(float *volume, int Nx, double xoff, double dx, int Ny, double yoff, double dy, int Nz, double zoff, double dz, int oversampling, int UNUSED_num_volumes, int material_volumes)
+{
+  set_para_for_Polygon(1);
+  make_vol_ncat(volume, Nx, xoff, dx, Ny, yoff, dy, Nz, zoff, dz, oversampling, UNUSED_num_volumes, material_volumes);
+  set_para_for_Polygon(0);
+}
