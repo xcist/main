@@ -23,16 +23,7 @@ def dumpjson(filename, jsondict):
     json.dump(jsondict, out_file, indent = 4) 
     out_file.close()
 
-def catvoxel(configfilename, cfg=None, adjust=None, preadjust=None, silent=False):
-
-    if cfg is None:
-        ct = xc.CatSim(configfilename)
-        cfg = ct.self_to_cfg()
-
-    if hasattr(cfg, "make_img_kv"):
-        cfg.spec.Evec = np.array(cfg.make_img_kv)
-    else:
-        cfg.spec.Evec = np.array([120])
+def catvoxel(cfg):
 
     if not hasattr(cfg, "material_volumes"):
         cfg.material_volumes = 0
@@ -43,6 +34,11 @@ def catvoxel(configfilename, cfg=None, adjust=None, preadjust=None, silent=False
         else:
             print('Voxelized phantom files will not be written.')
     else:
+        if hasattr(cfg, "make_img_kv"):
+            cfg.spec.Evec = np.array(cfg.make_img_kv)
+        else:
+            cfg.spec.Evec = np.array([120])
+
         print(f"A single volume of attenuation coefficients will be produced.\nAttenuation coefficients will be determined at {cfg.make_img_kv} keV.")
 
     # PHANTOM 
@@ -50,20 +46,17 @@ def catvoxel(configfilename, cfg=None, adjust=None, preadjust=None, silent=False
     Materials = cfg.phantom.Materials
     NumberOfMaterials = cfg.phantom.numberOfMaterials
 
-    try:
-        cfg.Nx
-    except AttributeError:
-        cfg.Nx = cfg.recon_size
-        cfg.Ny = cfg.recon_size
-        cfg.Nz = cfg.recon_planes
-        cfg.dx = cfg.recon_fov / cfg.recon_size
-        cfg.dy = cfg.recon_fov / cfg.recon_size
-        cfg.dz = cfg.recon_slice_thickness
-        cfg.xoff = -cfg.recon_xcenter / cfg.dx + (cfg.Nx + 1) / 2
-        cfg.yoff = -cfg.recon_ycenter / cfg.dy + (cfg.Ny + 1) / 2
-        cfg.zoff = -cfg.recon_zcenter / cfg.dz + (cfg.Nz + 1) / 2
-        print('Phantom setup updated:')
-        PrintPhantomSetup(cfg)
+    cfg.Nx = cfg.recon.imageSize
+    cfg.Ny = cfg.recon.imageSize
+    cfg.Nz = cfg.recon.sliceCount
+    cfg.dx = cfg.recon.fov / cfg.recon.imageSize
+    cfg.dy = cfg.recon.fov / cfg.recon.imageSize
+    cfg.dz = cfg.recon.sliceThickness
+    cfg.xoff = -cfg.recon.centerOffset[0] / cfg.dx + (cfg.Nx + 1) / 2
+    cfg.yoff = -cfg.recon.centerOffset[1] / cfg.dy + (cfg.Ny + 1) / 2
+    cfg.zoff = -cfg.recon.centerOffset[2] / cfg.dz + (cfg.Nz + 1) / 2
+    print('Phantom setup updated:')
+    PrintPhantomSetup(cfg)
 
     print(f'Oversampling = {cfg.vol_os}')
 
@@ -166,7 +159,3 @@ def PrintPhantomSetup(cfg):
     print(f'Y voxel offset: cfg.yoff = {cfg.yoff}')
     print(f'Z voxel offset: cfg.zoff = {cfg.zoff}')
 
-if __name__=="__main__":
-    #catvoxel("test_catvoxel_3D_CTDI_16cm.cfg")
-    #catvoxel("test_catvoxel_2D_NCAT.cfg")
-    #catvoxel("test_catvoxel_poly.cfg")
