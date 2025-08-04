@@ -1,4 +1,5 @@
 import gecatsim as xc
+from gecatsim.pyfiles import catvoxel
 '''
 examples to use catvoxel.
 Jiayong Zhang
