@@ -9,9 +9,6 @@ CXXFLAGS = -Wall -fPIC -O3
 
 LDFLAGS = -fPIC -lpthread
 
-p_nlog_inline.o: p_nlog_inline.c
-	gcc -O0 -g -Wall -static -msse -fPIC -c p_nlog_inline.c
-
 64bitLibrary = libcatsim.so
 
 libcatsim.so: $(OBJECTS)
@@ -20,7 +17,7 @@ libcatsim.so: $(OBJECTS)
 	@echo . Building system-specific library ...
 	@echo .
 	@echo .
-	$(CXX) $(CXXFLAGS) -static-libgcc -static-libstdc++ -o $(64bitLibrary) -shared $(OBJECTS) $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) -static-libgcc -o $(64bitLibrary) -shared $(OBJECTS) $(LDFLAGS)
 	mv libcatsim.so ../../lib/
 	@echo .
 	@echo .
