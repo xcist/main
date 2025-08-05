@@ -70,8 +70,8 @@ def Phantom_Analytic_Get(cfg):
             print("Converting pp format to ppm...")
             if os.path.exists(PhantomFilename):
                 # first, replace potential CRLF to LF, to avoid issues in the c parser code
-                Phantom_Analytic_replace_CRLF(PhantomFilename)
-                Phantom_Analytic_pp_to_ppm(PhantomFilename.split('.')[0])
+                PhantomFilename = Phantom_Analytic_replace_CRLF(PhantomFilename)
+                Phantom_Analytic_pp_to_ppm(os.path.splitext(PhantomFilename)[0], ppmPhantomFilename)
             else:
                 sys.exit('Phantom file {} not found'.format(PhantomFilename))
     else:
@@ -198,10 +198,17 @@ def Phantom_Analytic_replace_CRLF(PhantomFilename):
     with open(PhantomFilename, 'rb') as open_file:
         content = open_file.read()
 
+    if WINDOWS_LINE_ENDING not in content: return PhantomFilename
+
+    print("Warning: found windows EOL symbols in the phantom file.\n")
+
     content = content.replace(WINDOWS_LINE_ENDING, UNIX_LINE_ENDING)
 
-    with open(PhantomFilename, 'wb') as open_file:
+    tmpPhantomFilename = PhantomFilename.replace(".pp", "_tmp.pp")
+    with open(tmpPhantomFilename, 'wb') as open_file:
         open_file.write(content)
+
+    return tmpPhantomFilename
     
 def Phantom_Analytic_BoundObjects(phantObject=None,params=None):
     
@@ -882,7 +889,7 @@ def Phantom_Polygonal_ReadPolygon(Verts):
 
     return Vx,nV
 
-def Phantom_Analytic_pp_to_ppm(PhantomFileBasename, Scale=1):
+def Phantom_Analytic_pp_to_ppm(PhantomFileBasename, ppmPhantomFilename, Scale=1):
 
     if not PhantomFileBasename:
         raise ValueError('PhantomFileBasename must be specified')
@@ -896,8 +903,6 @@ def Phantom_Analytic_pp_to_ppm(PhantomFileBasename, Scale=1):
         lns = f.readlines()
     # Delete the temporary file
     os.remove(tmpPhantomFilename)
-
-    ppmPhantomFilename = f'{PhantomFileBasename}.ppm'
 
     with open(ppmPhantomFilename, 'w') as f:
         ind = [i for i, line in enumerate(lns) if line.startswith('#')]
