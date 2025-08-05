@@ -14,14 +14,16 @@ def Phantom_Analytic(cfg):
     phobj, phobject, numObjects, T, cumCP, NumCP, materialIndex, X, K, Q, Eta, S, D = Phantom_Analytic_Get(cfg)
 
     cfg.phantom.numberOfMaterials = len(phobject['materialList'])
-    set_materials(cfg, phobject['materialList'])
+    cfg.phantom.Materials = phobject['materialList']
+    set_materials(cfg)
     set_volume(cfg, numObjects, T, cumCP, NumCP, materialIndex, X, K, Q, Eta, S, D)
 
     print('... done reading phantom.')
     return cfg
 
 
-def set_materials(cfg, materialList):
+def set_materials(cfg):
+    materialList = cfg.phantom.Materials
     Evec = cfg.spec.Evec
     nMat = len(materialList)
     Mus = np.zeros([Evec.size, nMat], dtype=np.float64)

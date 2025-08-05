@@ -118,5 +118,5 @@ def set_material(cfg):
     fun.restype = None
     fun(nMat, Evec.size, Mus)
     
-    return nMat
+    return nMat, materialList
 
