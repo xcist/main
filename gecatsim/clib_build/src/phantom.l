@@ -5,7 +5,6 @@
 *   Organization: GE Global Research and GE Healthcare, General Electric Company
 *   Version:  6.0.3
 *   Date:  Feb 3, 2015
-*   Class: GE Confidential. General Electric Proprietary Data (c) 2012 General Electric Company
 * -----------------------------------------------------------------------*/
 #include <stdio.h>
 #include <string.h>
