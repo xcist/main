@@ -6,6 +6,7 @@ from ctypes import *
 from numpy.ctypeslib import ndpointer
 from gecatsim.pyfiles.GetMu import GetMu
 from gecatsim.pyfiles.CommonTools import *
+from gecatsim.pyfiles.C_Phantom_Analytic_FORBILD_to_tmp import C_Phantom_Analytic_FORBILD_to_tmp
     
 def Phantom_Analytic(cfg):
     
@@ -65,10 +66,13 @@ def Phantom_Analytic_Get(cfg):
     PhantomBaseName, PhantomExtension = BaseName.split('.')
     if 'pp' == PhantomExtension:
         ppmPhantomFilename = PhantomFilename.replace('.pp','.ppm')
-        if cfg.force_phantom_conversion or os.path.getmtime(PhantomFilename) > os.path.getmtime(ppmPhantomFilename):
-            if os.path.exist(PhantomFilename):
-                pass
-                # Phantom_Analytic_pp_to_ppm(PhantomFilename.split('.')[0])
+        if cfg.phantom.force_phantom_conversion or os.path.getmtime(PhantomFilename) > os.path.getmtime(ppmPhantomFilename):
+            print("Converting pp format to ppm...")
+            if os.path.exists(PhantomFilename):
+                # first, replace potential CRLF to LF, to avoid issues in the c parser code
+                PhantomFilename = Phantom_Analytic_replace_CRLF(PhantomFilename)
+                Phantom_Analytic_pp_to_ppm(os.path.splitext(PhantomFilename)[0], ppmPhantomFilename)
+                if "_tmpCRLF" in PhantomFilename: os.remove(PhantomFilename)
             else:
                 sys.exit('Phantom file {} not found'.format(PhantomFilename))
     else:
@@ -187,6 +191,25 @@ def get_clip_dD(c0=None,c1=None):
     delta = r1*cosA
     
     return delta
+                
+def Phantom_Analytic_replace_CRLF(PhantomFilename):
+    WINDOWS_LINE_ENDING = b'\r\n'
+    UNIX_LINE_ENDING = b'\n'
+
+    with open(PhantomFilename, 'rb') as open_file:
+        content = open_file.read()
+
+    if WINDOWS_LINE_ENDING not in content: return PhantomFilename
+
+    print("Warning: found windows EOL symbols in the phantom file.\n")
+
+    content = content.replace(WINDOWS_LINE_ENDING, UNIX_LINE_ENDING)
+
+    tmpPhantomFilename = PhantomFilename.replace(".pp", "_tmpCRLF.pp")
+    with open(tmpPhantomFilename, 'wb') as open_file:
+        open_file.write(content)
+
+    return tmpPhantomFilename
     
 def Phantom_Analytic_BoundObjects(phantObject=None,params=None):
     
@@ -382,12 +405,13 @@ def Phantom_Analytic_BoundObjects(phantObject=None,params=None):
     
 #FIXME: not tested
 def clip_polygon(vX=None,nV=None,clipVec=None,clipS=None):
+    """
+    This function clips the bounding polyhedron with the clipping planes.
+    This helps to reduce the volume of the bounding polyhedron and thereby improves efficiency.
+    In some (rare) cases, this clipping is also necessary to prevent the source from being inside the polyhedron.
+    If the source is inside the bounding polyhedron, no horizon can be computed and the simulator will fail.
+    """
 
-    # This function clips the bounding polyhedron with the clipping planes.
-	# This helps to reduce the volume of the bounding polyhedron and thereby improves efficiency.
-	# In some (rare) cases, this clipping is also necessary to prevent the source from being inside the polyhedron.
-	# If the source is inside the bounding polyhedron, no horizon can be computed and the simulator will fail.
-    
     numVert = vX.shape[1]
     newVerts = 0
     thresh = 0.01
@@ -757,166 +781,101 @@ def Phantom_Analytic_SetObjects(objs=None, debug=False):
 
     return phantObject, numObjects, T, cumCP, NumCP, materialIndex, X, K, Q, Eta, S, D
 
-# NOTE:not verified yet
-#def Phantom_Analytic_pp_to_ppm(PhantomFileBasename, Scale=1., debug=False):
-#
-#    print('Converting phantom file {}.pp to .ppm file...'.format(PhantomFileBasename))
-#
-#    ppPhantomFilename = PhantomFileBasename + '.pp'
-#    tmpPhantomFilename = PhantomFileBasename + '.tmp'
-#
-#    #TODO: need to change this to python wrapper
-#    feval('C_Phantom_Analytic_FORBILD_to_tmp',Scale,ppPhantomFilename,tmpPhantomFilename)
-#
-#    print('Reading and deleting {}.'.format(tmpPhantomFilename))
-#
-#    with open(tmpPhantomFilename, 'r') as f:
-#        lns = f.readlines()
-#
-#    os.remove(tmpPhantomFilename)
-#
-#    ppmPhantomFilename = PhantomFileBasename + '.ppm'
-#    print('Writing {}.'.format(ppmPhantomFilename))
-#
-#    f = open(ppmPhantomFilename, 'w')
-#    ind = [i for i in range(len(lns)) if '35' in lns[i, 1]]
-#    if len(ind) < 2:
-#        sys.exit('material table not found')
-#    else:
-#        f.write('materialList = {')
-#        for i in range(1,ind(2) - 2):
-#            f.write('\'%s\' ', lns[i + 1])
-#        f.write('};\n\n')
-#        offset = ind[2]
-#    
-#    i=0
-#    while (offset < size(lns,1) - 15):
-#        i += 1
-#        tmpo,tmpc,lns,offset,clip = read_object(lns, offset)
-#        # TODO: first save string then flush all at once
-#        f.write('object.center({%d},:) = [{%f} {%f} {%f}];\n'.format(i,tmpo.cent(1),tmpo.cent(2),tmpo.cent(3)));
-#        f.write('object.half_axes({%d},:) = [{%f} {%f} {%f}];\n'.format(i,tmpo.hax(1),tmpo.hax(2),tmpo.hax(3)));
-#        f.write('object.euler_angs({%d},:) = [{%f} {%f} {%f}];\n'.format(i,tmpo.ea(1),tmpo.ea(2),tmpo.ea(3)));
-#        f.write('object.density({%d}) = {%f};\\n'.format(i,tmpo.density))
-#        f.write('object.type({%d}) = {%d};\\n'.format(i,tmpo.type))
-#        f.write('object.material({%d}) = {%d};\\n'.format(i,tmpo.material))
-#        f.write('object.axial_lims({%d},:) = [0 0];\\n'.format(i))
-#        f.write('object.shape(%d) = 0;\\n',i)
-#        f.write('object.clip{%d} = ['.format(i))
-#        for j in range(1,tmpc.shape[0]):
-#            f.write('{%f} {%f} {%f} {%f};'.format(tmpc(j,1),tmpc(j,2),tmpc(j,3),tmpc(j,4)))
-#        f.write('];\\n\\n')
-#        clip[i]=tmpc
-#        obj[i]=tmpo
-#    
-#    f.close()
-#    print('... done writing {}'.format(ppmPhantomFilename))
-    
-#def read_object(lines=None,offset=None):
-#
-#    obj.type = lines[1 + offset]
-#    for i in range(4):
-#        A[i] = float(lines[i + 4 + offset])
-#    
-#    if np.linalg.norm(A - [0,0,0,1]) > 1e-05:
-#        sys.exit('Unexpected transform')
-#    
-#    obj.cent = np.copy(A[:3,3].T)
-#    B = A[0:3, 0:3]
-#    obj.hax = np.sqrt(np.sum(B*B))
-#    B /= np.ones(3,1)*obj.hax
-#    B = B.T
-#    obj.ea = euler_angs(B)*180/pi
-#    obj.transform = copy(A)
-#    tmp=sscanf(lines(15 + offset,arange()),'%s',1)
-#    tmp = lines[15+offset]
-#    #NOTE: we can step matlab code and compare python code
-#    if tmp(1) == 'C':
-#        i=1
-#        while tmp(1) == 'C':
-#            v = list(map(float, lines[16+offset, 21:]))
-#            clip[i,0:3] = v
-#            clip[i,4] = float(lines[16 + offset, 26:])
-#            clip[i,:] = -clip(i)
-#            offset += 3
-#            tmp = lines[15+offset]
-#            i += 1
-#    else:
-#        clip=[]
-#    
-#    if np.sum((obj.type[1:3]) == 'Cyl') == 3:
-#        obj.type = 2
-#        obj.hax[3]=obj.hax(3) / 2
-#    else:
-#        if sum(obj.type[:3] == 'Cub') == 3:
-#            obj.type = 2
-#            old=0
-#            if old:
-#                Bt=copy(B)
-#            else:
-#                Bt=B.T
-#
-#            clip = clip + [Bt[:,1].T, obj.hax(1)/2 + obj.cent*Bt[:,1]]
-#            clip = clip + [-Bt[:,1].T, obj.hax(1)/2 - obj.cent*Bt[:,1]]
-#            clip = clip + [Bt[:,2].T, obj.hax(2)/2 + obj.cent*Bt[:,2]]
-#            clip = clip + [-Bt[:,2].T, obj.hax(2)/2 - obj.cent*Bt[:,2]]
-#            obj.hax[:2] = obj.hax[:2]*np.sqrt(2)
-#            obj.hax /= 2
-#        else:
-#            if np.sum((obj.type[:3]) == 'Sph') == 3:
-#                obj.type = 1
-#            else:
-#                if np.sum(obj.type[:3] == 'Ell') == 3:
-#                    obj_type = 1
-#                else:
-#                    sys.exit('Unrecognized obj type\\n\\r')
-#    
-#    
-#    obj.material = lines[18 + offset]
-#    obj.density = lines[19 + offset]
-#    offset += 21
-#
-#    return obj, clip, lines, offset
-    
-def euler_angs(R=None):
+def read_object(lines, offset):
+    obj = {}
+    clip = []
+    obj['type'] = lines[1 + offset].strip().split()[1]
+    A = np.zeros((4, 4))
+    for i in range(4):
+        A[i, :] = [float(x) for x in lines[i + 5 + offset].strip().split()]
+    if np.linalg.norm(A[3, :] - np.array([0, 0, 0, 1])) > 1e-5:
+        raise ValueError('Unexpected transform')
 
-    # R =
-	# [  cos(p1)*cos(p3)-sin(p1)*cos(p2)*sin(p3),  cos(p1)*sin(p3)+sin(p1)*cos(p2)*cos(p3), sin(p1)*sin(p2)]
-	# [ -sin(p1)*cos(p3)-cos(p1)*cos(p2)*sin(p3), -sin(p1)*sin(p3)+cos(p1)*cos(p2)*cos(p3), cos(p1)*sin(p2)]
-	# [                          sin(p2)*sin(p3),                         -sin(p2)*cos(p3),         cos(p2)]
-    
-    p2 = np.real(np.acos(R(3,3)))
-    
-    if np.abs(np.sin(p2)) > 1e-06:
-        p1 = atan2(R(1,3) / np.sin(p2),R(2,3) / np.sin(p2))
-        p3=atan2(R(3,1) / sin(p2),- R(3,2) / sin(p2))
+    obj['cent'] = A[0:3, 3]
+    B = A[0:3, 0:3]
+    obj['hax'] = np.sqrt(np.sum(B * B, axis=0))
+    B = B / obj['hax']
+    B = B.T
+    try:
+        obj['ea'] = euler_angs(B) * 180 / np.pi
+    except ValueError:
+        breakpoint()
+
+    obj['transform'] = A
+    tmp = lines[15 + offset].strip().split()[0]
+    if tmp[0] == 'C':  # clipping planes
+        i = 0
+        while tmp[0] == 'C':
+            v = [float(x) for x in lines[15 + offset].strip().split(',')[1:]]
+            clip.append(v)
+            clip[i][3] = float(lines[16 + offset].strip().split()[1])
+            clip[i] = [-x for x in clip[i]]
+            offset += 3
+            tmp = lines[15 + offset].strip().split()[0]
+            i += 1
     else:
-        if sign1(cos(p2)) > 0:
-    # R =
-	# [  cos(p1+p3), -R(2,1), 0]
-	# [ -sin(p1+p3),  R(1,1), 0]
-	# [           0,       0, 1]
-            p2=0
-            p3=0
-            p1=atan2(R(1,2),R(1,1))
+        clip = []
+
+    if obj['type'][:3] == 'Cyl':
+        obj['type'] = 2
+        obj['hax'][2] = obj['hax'][2] / 2  # length needs to be divided by two for half axis
+    else:
+        if obj['type'][:3] == 'Cub':
+            obj['type'] = 2  # change to cylinder
+            old = False
+            if old:
+                Bt = B
+            else:
+                Bt = B.T
+            clip.extend([np.concatenate((Bt[:, 0], [obj['hax'][0] / 2 + np.dot(obj['cent'], Bt[:, 0])])),
+                         np.concatenate((-Bt[:, 0], [obj['hax'][0] / 2 - np.dot(obj['cent'], Bt[:, 0])])),
+                         np.concatenate((Bt[:, 1], [obj['hax'][1] / 2 + np.dot(obj['cent'], Bt[:, 1])])),
+                         np.concatenate((-Bt[:, 1], [obj['hax'][1] / 2 - np.dot(obj['cent'], Bt[:, 1])]))])
+            obj['hax'][0:2] = obj['hax'][0:2] * np.sqrt(2)  # cyl needs to be larger by sqrt(2) to contain cube
+            obj['hax'] = obj['hax'] / 2  # (/2 changes from full width to half)
         else:
-    # R =
-	# [  cos(p1-p3),  R(2,1), 0]
-	# [ -sin(p1-p3), -R(1,1), 0]
-	# [           0,       0,-1]
-            p2=copy(pi)
-            p3=0
-            p1=atan2(- R(1,2),R(1,1))
+            if obj['type'][:3] == 'Sph':
+                obj['type'] = 1
+            else:
+                if obj['type'][:3] == 'Ell':
+                    obj['type'] = 1
+                else:
+                    raise ValueError('Unrecognized obj type')
+
+    obj['material'] = int(lines[18 + offset].strip().split()[1])
+    obj['density'] = float(lines[19 + offset].strip().split()[1])
+    offset += 21
+
+    return obj, np.array(clip), lines, offset
     
-    Rnew=concat([[dot(cos(p1),cos(p3)) - dot(dot(sin(p1),cos(p2)),sin(p3)),dot(cos(p1),sin(p3)) + dot(dot(sin(p1),cos(p2)),cos(p3)),dot(sin(p1),sin(p2))],[dot(- sin(p1),cos(p3)) - dot(dot(cos(p1),cos(p2)),sin(p3)),dot(- sin(p1),sin(p3)) + dot(dot(cos(p1),cos(p2)),cos(p3)),dot(cos(p1),sin(p2))],[dot(sin(p2),sin(p3)),dot(- sin(p2),cos(p3)),cos(p2)]])
-# Phantom_Analytic_pp_to_ppm.m:193
-    err = np.linalg.norm(Rnew - R,[],1)
-    if err > 1e-05:
-        sys.exit('Error computing Euler angles')
-    
-    ea = [p1,p2,p3]
-    
-    return ea
+def euler_angs(R):
+    p2 = np.real(np.arccos(R[2, 2]))  # could also be -arccos, but we don't care which it is since the end result (R matrix) is the same
+    if np.abs(np.sin(p2)) > 1e-6:
+        p1 = np.arctan2(R[0, 2] / np.sin(p2), R[1, 2] / np.sin(p2))
+        p3 = np.arctan2(R[2, 0] / np.sin(p2), -R[2, 1] / np.sin(p2))
+    elif np.sign(np.cos(p2)) > 0:
+        p2 = 0
+        p3 = 0
+        p1 = np.arctan2(R[0, 1], R[0, 0])
+    else:
+        p2 = np.pi
+        p3 = 0
+        p1 = np.arctan2(-R[0, 1], R[0, 0])
+    Rnew = np.array([[np.cos(p1) * np.cos(p3) - np.sin(p1) * np.cos(p2) * np.sin(p3),
+                      np.cos(p1) * np.sin(p3) + np.sin(p1) * np.cos(p2) * np.cos(p3),
+                      np.sin(p1) * np.sin(p2)],
+                     [-np.sin(p1) * np.cos(p3) - np.cos(p1) * np.cos(p2) * np.sin(p3),
+                      -np.sin(p1) * np.sin(p3) + np.cos(p1) * np.cos(p2) * np.cos(p3),
+                      np.cos(p1) * np.sin(p2)],
+                     [np.sin(p2) * np.sin(p3),
+                      -np.sin(p2) * np.cos(p3),
+                      np.cos(p2)]])
+
+    err = np.linalg.norm((Rnew - R).reshape(-1))
+    if err > 1e-5:
+        breakpoint()
+        raise ValueError('Error computing Euler angles')
+    return np.array([p1, p2, p3])
 
 def Phantom_Polygonal_ReadPolygon(Verts):
 
@@ -930,3 +889,48 @@ def Phantom_Polygonal_ReadPolygon(Verts):
         Vx = tmp[nv_sz1*nv_sz2:].reshape(vx_sz2,vx_sz1).T
 
     return Vx,nV
+
+def Phantom_Analytic_pp_to_ppm(PhantomFileBasename, ppmPhantomFilename, Scale=1):
+
+    if not PhantomFileBasename:
+        raise ValueError('PhantomFileBasename must be specified')
+
+    ppPhantomFilename = f'{PhantomFileBasename}.pp'
+    tmpPhantomFilename = f'{PhantomFileBasename}.tmp'
+
+    C_Phantom_Analytic_FORBILD_to_tmp(np.double(Scale), ppPhantomFilename, tmpPhantomFilename)
+
+    with open(tmpPhantomFilename, 'r') as f:
+        lns = f.readlines()
+    # Delete the temporary file
+    os.remove(tmpPhantomFilename)
+
+    with open(ppmPhantomFilename, 'w') as f:
+        ind = [i for i, line in enumerate(lns) if line.startswith('#')]
+        if len(ind) < 2:
+            raise ValueError('material table not found')
+        else:
+            f.write('materialList = {')
+            for i in range(ind[0] + 1, ind[1]):
+                mn = lns[i].strip().split()
+                f.write(f"'{mn[0]}' ")
+            f.write('};\n\n')
+            offset = ind[1]
+
+        i = 0
+        while offset < len(lns) - 15:
+            i += 1
+            tmpo, tmpc, lns, offset = read_object(lns, offset)
+            f.write(f'object.center({i},:) = [{tmpo["cent"][0]:.6f} {tmpo["cent"][1]:.6f} {tmpo["cent"][2]:.6f}];\n')
+            f.write(f'object.half_axes({i},:) = [{tmpo["hax"][0]:.6f} {tmpo["hax"][1]:.6f} {tmpo["hax"][2]:.6f}];\n')
+            f.write(f'object.euler_angs({i},:) = [{tmpo["ea"][0]:.6f} {tmpo["ea"][1]:.6f} {tmpo["ea"][2]:.6f}];\n')
+            f.write(f'object.density({i}) = {tmpo["density"]:.6f};\n')
+            f.write(f'object.type({i}) = {tmpo["type"]};\n')
+            f.write(f'object.material({i}) = {tmpo["material"]};\n')
+            f.write(f'object.axial_lims({i},:) = [0 0];\n')
+            f.write(f'object.shape({i}) = 0;\n')
+            f.write(f'object.clip{{{i}}} = [')
+            for j in range(tmpc.shape[0]):
+                f.write(f'{tmpc[j, 0]:.6f} {tmpc[j, 1]:.6f} {tmpc[j, 2]:.6f} {tmpc[j, 3]:.6f};')
+            f.write('];\n\n')
+

@@ -1,3 +1,5 @@
+// Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/tree/master/license
+
 #include <cmath>
 #include <string.h>
 #include <stdlib.h>
