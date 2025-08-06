@@ -72,6 +72,7 @@ def Phantom_Analytic_Get(cfg):
                 # first, replace potential CRLF to LF, to avoid issues in the c parser code
                 PhantomFilename = Phantom_Analytic_replace_CRLF(PhantomFilename)
                 Phantom_Analytic_pp_to_ppm(os.path.splitext(PhantomFilename)[0], ppmPhantomFilename)
+                if "_tmpCRLF" in PhantomFilename: os.remove(PhantomFilename)
             else:
                 sys.exit('Phantom file {} not found'.format(PhantomFilename))
     else:
@@ -204,7 +205,7 @@ def Phantom_Analytic_replace_CRLF(PhantomFilename):
 
     content = content.replace(WINDOWS_LINE_ENDING, UNIX_LINE_ENDING)
 
-    tmpPhantomFilename = PhantomFilename.replace(".pp", "_tmp.pp")
+    tmpPhantomFilename = PhantomFilename.replace(".pp", "_tmpCRLF.pp")
     with open(tmpPhantomFilename, 'wb') as open_file:
         open_file.write(content)
 
