@@ -438,18 +438,6 @@ extern "C" {
     Report("done\r\n");
   }
 
-  bool SecondElapsed() {
-    static time_t tsec = 0;
-    struct timeval tval;
-    gettimeofday(&tval,NULL);
-    if (tval.tv_sec != tsec) {
-      tsec = tval.tv_sec;
-      return true;
-    }
-    return false;
-  }
-
-
   Vec LinearVec(int count, int delta) {
     Vec t = VecAllocate(count);
     for (int i=0;i<count;i++)
