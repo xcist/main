@@ -16,7 +16,6 @@
 #include <cmath>
 #include <fstream>
 #include <sstream>
-#include <sys/time.h>
 extern "C" {
 #include "spline.h"
 }
@@ -24,14 +23,16 @@ extern "C" {
 #include "label.h"
 
 #ifdef WIN32
+#include <sys/time.h>
 #include <sys/timeb.h>
 #endif
 
-extern FILE *phantomin;
+FILE *phantomin;
 extern LinearPhantom parsePhantomDefFile(double scaleFactor, MaterialTable &mtab);
 extern void printMaterialTable(FILE *fp);
 
 LinearPhantom phant;
+TreePhantom* tree;
 MaterialTable mtab;
 float* srcpos = NULL;
 float* detpos = NULL;
@@ -250,7 +251,21 @@ extern "C" {
   EXPORT  void GetMaterialName(int index, char* matname) {
     strcpy(matname,mtab[index].c_str());
   }
- 
+  
+  EXPORT void ParsePhantom(double scalefact, char *filename) {
+    FILE *fp = fopen(filename,"r");
+    if (!fp) {
+      std::cerr << "ERROR: unable to open " << filename << " for parsing...\r\n";
+      return;
+    }
+    phantomin = fp;
+    phant = parsePhantomDefFile(scalefact,mtab);
+    printf("    Found a total of %d objects\r\n", (int)phant.size());
+    tree = TreePhantom::BuildTreePhantomFromLinear(phant);
+    
+    fclose(fp);
+  }
+
   EXPORT void TranslatePhantom_FORBILD_to_tmp(double scalefact, char *filename_in, char *filename_out) {
 
     FILE *fp = fopen(filename_in,"r");

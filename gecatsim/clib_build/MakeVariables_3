@@ -6,6 +6,7 @@ BaseObject.cpp \
 ClipPlane.cpp \
 Transformation.cpp \
 Intersection.cpp \
+TreePhantom.cpp \
 Cube.cpp \
 Sphere.cpp \
 Cylinder.cpp \
