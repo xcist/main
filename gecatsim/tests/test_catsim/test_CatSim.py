@@ -14,7 +14,7 @@ class TestCatSim(unittest.TestCase):
         ct = xc.CatSim("../examples/cfg/Phantom_Sample", "../examples/cfg/Scanner_Sample_generic",
                        "../examples/cfg/Protocol_Sample_axial")  # initialization
 
-        ct.cfg.protocol.scanTypes = [1, 1, 1]
+        ct.cfg.protocol.scanTypes = [1, 1, 1, 1]
         air_scan_mock.return_value = ct.cfg
 
         ct.run_all()
@@ -32,7 +32,7 @@ class TestCatSim(unittest.TestCase):
         ct = xc.CatSim("../examples/cfg/Phantom_Sample", "../examples/cfg/Scanner_Sample_generic",
                        "../examples/cfg/Protocol_Sample_axial")  # initialization
 
-        ct.cfg.protocol.scanTypes = [1, 0, 0]
+        ct.cfg.protocol.scanTypes = [1, 0, 0, 0]
         air_scan_mock.return_value = ct.cfg
 
         ct.run_all()
@@ -50,7 +50,7 @@ class TestCatSim(unittest.TestCase):
         ct = xc.CatSim("../examples/cfg/Phantom_Sample", "../examples/cfg/Scanner_Sample_generic",
                        "../examples/cfg/Protocol_Sample_axial")  # initialization
 
-        ct.cfg.protocol.scanTypes = [0, 1, 0]
+        ct.cfg.protocol.scanTypes = [0, 1, 0, 0]
         air_scan_mock.return_value = ct.cfg
 
         ct.run_all()
@@ -68,7 +68,7 @@ class TestCatSim(unittest.TestCase):
         ct = xc.CatSim("../examples/cfg/Phantom_Sample", "../examples/cfg/Scanner_Sample_generic",
                        "../examples/cfg/Protocol_Sample_axial")  # initialization
 
-        ct.cfg.protocol.scanTypes = [0, 0, 1]
+        ct.cfg.protocol.scanTypes = [0, 0, 1, 0]
         air_scan_mock.return_value = ct.cfg
 
         ct.run_all()
@@ -87,7 +87,7 @@ class TestCatSim(unittest.TestCase):
 
         one_scan_mock.assert_called_once_with(ct.get_current_cfg())
 
-        assert ct.get_current_cfg().sim.thisScanType == [1, 0, 0]
+        assert ct.get_current_cfg().sim.thisScanType == [1, 0, 0, 0]
 
     @patch('gecatsim.pyfiles.CatSim.one_scan', create=True)
     def test_offset_scan(self, one_scan_mock):
@@ -97,7 +97,7 @@ class TestCatSim(unittest.TestCase):
         ct.offset_scan(ct.get_current_cfg())
 
         one_scan_mock.assert_called_once_with(ct.get_current_cfg())
-        assert ct.get_current_cfg().sim.thisScanType == [0, 1, 0]
+        assert ct.get_current_cfg().sim.thisScanType == [0, 1, 0, 0]
 
     @patch('gecatsim.pyfiles.PrepView.prep_view', create=True)
     def test_phantom_scan(self, prep_view_mock):

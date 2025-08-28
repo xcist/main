@@ -32,21 +32,21 @@ class CatSim:
     def air_scan(self, *para, doPrint=True):
         cfg = self.get_current_cfg(*para)
         if doPrint: print('Airscan')
-        cfg.sim.thisScanType = [1, 0, 0]
+        cfg.sim.thisScanType = [1, 0, 0, 0]
         cfg = one_scan(cfg)
         return cfg
     
     def offset_scan(self, *para):
         cfg = self.get_current_cfg(*para)
         print('Offset scan')
-        cfg.sim.thisScanType = [0, 1, 0]
+        cfg.sim.thisScanType = [0, 1, 0, 0]
         cfg = one_scan(cfg)
         return cfg
 
     def phantom_scan(self, *para):
         cfg = self.get_current_cfg(*para)
         print('Phantom scan')
-        cfg.sim.thisScanType = [0, 0, 1]
+        cfg.sim.thisScanType = [0, 0, 1, 0]
         cfg = one_scan(cfg)
         return cfg
     
