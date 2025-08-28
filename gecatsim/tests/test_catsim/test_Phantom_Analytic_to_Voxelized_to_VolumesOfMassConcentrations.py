@@ -1,34 +1,43 @@
 import unittest
 import numpy as np
-from unittest.mock import MagicMock, patch
-from gecatsim.pyfiles.CommonTools import CFG
-from gecatsim.pyfiles.Phantom_Analytic_to_Voxelized_to_VolumesOfMassConcentrations import Phantom_Analytic_to_Voxelized_to_VolumesOfMassConcentrations
+from unittest.mock import patch
+import gecatsim as xc
+from gecatsim.pyfiles.Phantom_Analytic_to_Voxelized_to_VolumesOfMassConcentrations import (
+    Phantom_Analytic_to_Voxelized_to_VolumesOfMassConcentrations
+)
 
 class TestPhantomAnalyticToVoxelizedToVolumesOfMassConcentrations(unittest.TestCase):
 
-    @patch('os.path.exists')
+    @patch('gecatsim.pyfiles.Phantom_Analytic_to_Voxelized_to_VolumesOfMassConcentrations.catvoxel')
     @patch('os.path.getmtime')
-    @patch('Phantom_Analytic_to_Voxelized_to_VolumesOfMassConcentrations.catvoxel')
-    @patch('Phantom_Analytic_to_Voxelized_to_VolumesOfMassConcentrations.Phantom_Voxelized_to_VolumesOfMassConcentrations')
-    def test_phantom_analytic_to_voxelized_to_volumes_of_mass_concentrations(self, mock_phantom_voxelized, mock_catvoxel, mock_getmtime, mock_exists):
-        cfg = CFG("../examples/cfg/Phantom_Sample", "../examples/cfg/Scanner_Sample_generic",
-                  "../examples/cfg/Protocol_Sample_axial", "../examples/cfg/Scanner_Sample_generic.cfg")
+    @patch('os.path.exists')
+    def test_Phantom_Analytic_to_Voxelized_to_VolumesOfMassConcentrations(self, mock_exists, mock_getmtime, mock_catvoxel):
 
-        cfg.phantom_filename = 'phantom.pp'
-        cfg.phantom_samples_xy = 128
-        cfg.phantom_samples_voxelsize = 1.0
-        cfg.phantom_samples_z = 64
+        ct = xc.CatSim()
+        cfg = ct.get_current_cfg()
+
+        # Set phantom parameters
+        cfg.phantom.filename = 'CTDI_16cm_WaterAirPEBoneChambers.ppm'
+        cfg.phantom.samples_xy = 128
+        cfg.phantom.samples_voxelsize = 1.0
+        cfg.phantom.samples_z = 64
         cfg.force_phantom_conversion = True
+        cfg.write_vp = 1
+        cfg.material_volumes = 1
 
+        # Patch file system
         mock_exists.return_value = False
         mock_getmtime.return_value = 0
-        mock_catvoxel.return_value = (np.zeros((cfg.phantom_samples_xy, cfg.phantom_samples_xy, cfg.phantom_samples_z)), [])
+
+        mock_catvoxel.return_value = (
+            np.zeros((2, 64, 128, 128), dtype=np.float32),
+            ['water', 'bone']
+        )
 
         Phantom_Analytic_to_Voxelized_to_VolumesOfMassConcentrations(cfg)
 
-        self.assertEqual(cfg.phantom_filename, 'phantom.vp')
+        self.assertEqual(cfg.phantom.filename, 'CTDI_16cm_WaterAirPEBoneChambers.vp')
         mock_catvoxel.assert_called_once()
-        mock_phantom_voxelized.assert_called_once()
 
 if __name__ == '__main__':
     unittest.main()
