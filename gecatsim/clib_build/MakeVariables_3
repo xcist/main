@@ -6,6 +6,10 @@ BaseObject.cpp \
 ClipPlane.cpp \
 Transformation.cpp \
 Intersection.cpp \
+TreePhantom.cpp \
+Cube.cpp \
+Sphere.cpp \
+Cylinder.cpp \
 Interpolate.cpp \
 main.cpp \
 Photon.cpp \
@@ -22,7 +26,7 @@ negative_log.cpp
 
 OBJECTS = $(patsubst %.cpp,%.o,$(CPPSOURCES))
 OBJECTS += $(patsubst %.c,%.o,$(CSOURCES))
-OBJECTS += p_nlog_inline.o
+OBJECTS += phantom.tab.o phantom.lex.o
 
 # use path to user installed gcc instead of simple gcc on mac
 CC = gcc #/usr/local/opt/gcc/bin/gcc-14 

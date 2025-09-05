@@ -1,6 +1,7 @@
 // Copyright 2020, General Electric Company. All rights reserved. See https://github.com/xcist/code/blob/master/LICENSE
 
 #include "BaseObject.h"
+#include "TreePhantom.h"
 #include "MatVec.h"
 #include "CrossSection.hpp"
 #include "CrossSectionHandler.hpp"
@@ -15,7 +16,6 @@
 #include <cmath>
 #include <fstream>
 #include <sstream>
-#include <sys/time.h>
 extern "C" {
 #include "spline.h"
 }
@@ -23,12 +23,16 @@ extern "C" {
 #include "label.h"
 
 #ifdef WIN32
+#include <sys/time.h>
 #include <sys/timeb.h>
 #endif
 
-extern FILE *phantomin;
+FILE *phantomin;
+extern LinearPhantom parsePhantomDefFile(double scaleFactor, MaterialTable &mtab);
 extern void printMaterialTable(FILE *fp);
 
+LinearPhantom phant;
+TreePhantom* tree;
 MaterialTable mtab;
 float* srcpos = NULL;
 float* detpos = NULL;
@@ -247,7 +251,59 @@ extern "C" {
   EXPORT  void GetMaterialName(int index, char* matname) {
     strcpy(matname,mtab[index].c_str());
   }
- 
+  
+  EXPORT void ParsePhantom(double scalefact, char *filename) {
+    FILE *fp = fopen(filename,"r");
+    if (!fp) {
+      std::cerr << "ERROR: unable to open " << filename << " for parsing...\r\n";
+      return;
+    }
+    phantomin = fp;
+    phant = parsePhantomDefFile(scalefact,mtab);
+    printf("    Found a total of %d objects\r\n", (int)phant.size());
+    tree = TreePhantom::BuildTreePhantomFromLinear(phant);
+    
+    fclose(fp);
+  }
+
+  EXPORT void TranslatePhantom_FORBILD_to_tmp(double scalefact, char *filename_in, char *filename_out) {
+
+    FILE *fp = fopen(filename_in,"r");
+
+    if (!fp) {
+      std::cerr << "ERROR: unable to open " << filename_in << " for parsing...\r\n";
+      return;
+    }
+    phantomin = fp;
+	int result1 = ftell(fp);
+	int result2 = ftell(phantomin);
+
+    phant = parsePhantomDefFile(scalefact,mtab);
+    printf("    Found a total of %d objects\r\n", (int)phant.size());
+    fclose(fp);
+
+    fp = fopen(filename_out,"w");
+    fprintf(fp,"#################### MATERIAL TABLE START ####################\n");
+    printMaterialTable(fp);
+    fprintf(fp,"#################### MATERIAL TABLE END ######################\n");
+    std::vector<BaseObject*>::iterator myIter;
+    BaseObject* myObjectPtr;
+    
+    for(myIter=phant.begin();myIter!=phant.end();myIter++)
+      {
+	myObjectPtr = *myIter;
+	ostringstream stream1;
+	const char *ch;
+	string string1;
+	myObjectPtr->PrintMe(stream1);
+	string1 = stream1.str();
+	//cout << string1;
+	ch=string1.data();
+	fprintf(fp,"%s\n",ch);
+      }
+    fclose(fp);
+  }
+
   EXPORT void SetupDiscretePhantom(int pixels, int slices, float voxelsize, int numZ, int *zlist) {
     if (DiscretePhantom) delete DiscretePhantom ;
     DiscretePhantom = new Phantom;
@@ -381,18 +437,6 @@ extern "C" {
     Form.InitializeTable(DiscretePhantom,RayleighFormFactor,0,wlMax,1e5);
     Report("done\r\n");
   }
-
-  bool SecondElapsed() {
-    static time_t tsec = 0;
-    struct timeval tval;
-    gettimeofday(&tval,NULL);
-    if (tval.tv_sec != tsec) {
-      tsec = tval.tv_sec;
-      return true;
-    }
-    return false;
-  }
-
 
   Vec LinearVec(int count, int delta) {
     Vec t = VecAllocate(count);

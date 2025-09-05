@@ -1,23 +1,13 @@
 # Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/tree/master/license
-"""
-Aim
-    Wrapper for call to C function by the same or similar name
-"""
-from numpy.ctypeslib import ndpointer
+
+from ctypes import *
+import gecatsim as xc
 from gecatsim.pyfiles.CommonTools import *
 
-# Function to convert FORBILD phantom
-def C_Phantom_Analytic_FORBILD_to_tmp(cfg,scale, pp_phantom_filename, tmp_phantom_filename):
-    # Print headline (assuming a similar function exists in Python)
-    print("\nConverting a FORBILD phantom in C.\n")
+def C_Phantom_Analytic_FORBILD_to_tmp(Scale, ppPhantomFilename, tmpPhantomFilename):
 
-    fun = cfg.clib.TranslatePhantom_FORBILD_to_tmp
-    fun.argtypes = [
-        ctypes.c_double(scale),
-        ctypes.c_char_p(pp_phantom_filename.encode('utf-8')),
-        ctypes.c_char_p(tmp_phantom_filename.encode('utf-8'))
-    ]
-    fun.restype = None
-    fun(scale, pp_phantom_filename, tmp_phantom_filename)
-
-    return
+    clib = load_C_lib()
+    func = clib.TranslatePhantom_FORBILD_to_tmp
+    func.argtypes = [c_double, c_char_p, c_char_p]
+    func.restype = None
+    func(Scale, ppPhantomFilename.encode('utf-8'), tmpPhantomFilename.encode('utf-8'))
