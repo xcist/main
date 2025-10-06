@@ -1,0 +1,32 @@
+# Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/tree/master/license
+
+CPPSOURCES = \
+MatVec.cpp \
+BaseObject.cpp \
+ClipPlane.cpp \
+Transformation.cpp \
+Intersection.cpp \
+Cube.cpp \
+Sphere.cpp \
+Cylinder.cpp \
+Interpolate.cpp \
+main.cpp \
+Photon.cpp \
+CrossSectionHandler.cpp \
+Volume.cpp \
+Detector.cpp \
+CrossSection.cpp \
+Phantom.cpp \
+DD3Proj.cpp \
+DD3Proj_roi_notrans_mm.cpp \
+voxelized_projector.cpp \
+getMemorySize.cpp \
+negative_log.cpp
+
+OBJECTS = $(patsubst %.cpp,%.o,$(CPPSOURCES))
+OBJECTS += $(patsubst %.c,%.o,$(CSOURCES))
+OBJECTS += phantom.tab.o phantom.lex.o
+
+# use path to user installed gcc instead of simple gcc on mac
+CC = gcc #/usr/local/opt/gcc/bin/gcc-14 
+CXX = g++ #/usr/local/opt/gcc/bin/g++-14
