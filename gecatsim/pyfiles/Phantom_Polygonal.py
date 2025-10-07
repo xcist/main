@@ -10,7 +10,9 @@ from gecatsim.pyfiles.Phantom_Polygonal_ReadPolygon import extract_polygonal_obj
 
 def Phantom_Polygonal(cfg):
     ###----------- pass material Mu to C
-    set_material(cfg)
+    nMat, materialList = set_material(cfg)
+    cfg.phantom.numberOfMaterials = nMat
+    cfg.phantom.Materials = materialList   
     ###----------- pass volume info to C
     set_volume(cfg)
     return cfg

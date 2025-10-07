@@ -8,7 +8,9 @@ from gecatsim.pyfiles.CommonTools import *
 
 def Phantom_NCAT(cfg):
     ###----------- pass material Mu and volume to C
-    nMat = set_material(cfg)
+    nMat, materialList = set_material(cfg)
+    cfg.phantom.numberOfMaterials = nMat
+    cfg.phantom.Materials = materialList
     ###----------- pass volume info to C
     set_volume(cfg, nMat)
     return cfg
@@ -65,7 +67,7 @@ def set_material(cfg):
     fun.restype = None
     fun(nMat, Evec.size, Mus)
     
-    return nMat
+    return nMat, materialList
 
 
 def set_volume(cfg, nMat):

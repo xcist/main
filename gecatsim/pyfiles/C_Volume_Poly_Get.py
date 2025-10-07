@@ -16,6 +16,8 @@ def C_Volume_Poly_Get(cfg, volume, Nx, xoff, dx, Ny, yoff, dy, Nz, zoff, dz, ove
                     c_int,
                     c_double,
                     c_double,
+                    c_int,
+                    c_int,
                     c_int];
     func.restype = None
 
