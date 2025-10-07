@@ -33,13 +33,12 @@ def catvoxel(cfg):
             print('Voxelized phantom files will be written.')
         else:
             print('Voxelized phantom files will not be written.')
+    if hasattr(cfg, "make_img_kv"):
+        cfg.spec.Evec = np.array(cfg.make_img_kv)
     else:
-        if hasattr(cfg, "make_img_kv"):
-            cfg.spec.Evec = np.array(cfg.make_img_kv)
-        else:
-            cfg.spec.Evec = np.array([120])
+        cfg.spec.Evec = np.array([120])
 
-        print(f"A single volume of attenuation coefficients will be produced.\nAttenuation coefficients will be determined at {cfg.make_img_kv} keV.")
+    print(f"A single volume of attenuation coefficients will be produced.\nAttenuation coefficients will be determined at {cfg.spec.Evec} keV.")
 
     # PHANTOM 
     cfg = feval(cfg.phantom.callback, cfg)
