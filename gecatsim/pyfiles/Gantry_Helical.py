@@ -4,7 +4,10 @@ import math
 import copy
 from gecatsim.pyfiles.CommonTools import *
 
-def Gantry_Helical(cfg, viewId):
+def Gantry_Helical(cfg):
+    viewId = cfg.viewId
+    subViewId = cfg.subViewId
+    
     ### calculate transform matrices
     srcTransform, srcRotation, detTransform, detRotation = helical_transform(cfg, viewId)
     

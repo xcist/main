@@ -3,6 +3,7 @@
 import copy, time
 import matplotlib.pyplot as plt
 from gecatsim.pyfiles.CommonTools import *
+from gecatsim.pyfiles.RunModels import RunModels
 from tqdm import tqdm
 from gecatsim.pyfiles.PhantomProjectorWrapper import PhantomWrapper, ProjectorWrapper
 from gecatsim.pyfiles.C_Projector_SetData import C_Projector_SetData
@@ -16,47 +17,17 @@ def one_scan(cfg):
         viewIndex = tqdm(range(cfg.sim.startViewId, cfg.sim.stopViewId+1))
     else:
         viewIndex = range(cfg.sim.startViewId, cfg.sim.stopViewId+1)
+    
     for viewId in viewIndex:
-    # for viewId in range(cfg.sim.startViewId, cfg.sim.stopViewId+1):
-        # detector
-        if viewId == cfg.sim.startViewId or cfg.physics.recalcDet:
-            cfg = feval(cfg.scanner.detectorCallback, cfg)
-
-        # source
-        if viewId == cfg.sim.startViewId or cfg.physics.recalcSrc:
-            cfg = feval(cfg.scanner.focalspotCallback, cfg)
-
-        # ray angles
-        if viewId == cfg.sim.startViewId or cfg.physics.recalcRayAngle:
-            cfg = feval(cfg.physics.rayAngleCallback, cfg)
-
-        # spectrum
-        if viewId == cfg.sim.startViewId or cfg.physics.recalcSpec:
-            cfg = feval(cfg.protocol.spectrumCallback, cfg)
-
-        # filters (bowtie and flat)
-        if viewId == cfg.sim.startViewId or cfg.physics.recalcFilt:
-            cfg = feval(cfg.protocol.filterCallback, cfg)
-
-        # flux
-        if viewId == cfg.sim.startViewId or cfg.physics.recalcFlux:
-            cfg = feval(cfg.physics.fluxCallback, cfg)
-
-        # phantom and material
-        if (viewId == cfg.sim.startViewId or cfg.physics.recalcPht) and cfg.sim.isPhantomScan:
-            cfg = PhantomWrapper(cfg)
-        
-        # Pass det and src to C projectors
-        C_Projector_SetData(cfg, viewId)
-        
         for subViewId in range(cfg.sim.subViewCount):
+            # initialze or update models
+            modelQueue = ['detector','source','gantry','ray_angles','spectrum','filters','flux','phantom']
+            cfg = RunModels(cfg, viewId, subViewId, modelQueue)
+
             # initial subview
             cfg.thisSubView = copy.copy(cfg.detFlux)
             
             if cfg.sim.isPhantomScan:
-                # apply gantry rotation and table movement
-                cfg = feval(cfg.protocol.scanTrajectory, cfg, viewId)
-
                 # projector
                 cfg = ProjectorWrapper(cfg, viewId, subViewId)
 
@@ -72,8 +43,6 @@ def one_scan(cfg):
 
         # save cfg.thisView to file
         cfg = feval(cfg.physics.outputCallback, cfg, viewId)
-        
-    #print("Scan sim time: %.1f s" % (time.time()-cfg.sim.timer))
     
     return cfg
 
