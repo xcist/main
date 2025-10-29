@@ -8,17 +8,21 @@ from gecatsim.pyfiles.CommonTools import *
 #
 # Pass det and src to C projectors
 #
-def C_Projector_SetData(cfg, viewId):
+def C_Projector_SetData(cfg, viewId, subViewId):
     if not cfg.sim.isPhantomScan:
         return
     
-    if viewId == cfg.sim.startViewId or cfg.physics.recalcDet:
+    if (viewId==cfg.sim.startViewId and subViewId==0) \
+        or (cfg.physics.recalcDet==1 and subViewId==0) \
+        or cfg.physics.recalcDet==2:
         projectorIDs = get_projector_id(cfg)
         for projectorID in projectorIDs:
             func = 'set_detector_' + projectorID
             eval(func)(cfg)
-            
-    if viewId == cfg.sim.startViewId or cfg.physics.recalcSrc:
+    
+    if (viewId==cfg.sim.startViewId and subViewId==0) \
+        or (cfg.physics.recalcSrc==1 and subViewId==0) \
+        or cfg.physics.recalcSrc==2:
         projectorIDs = get_projector_id(cfg)
         for projectorID in projectorIDs:
             func = 'set_source_' + projectorID
