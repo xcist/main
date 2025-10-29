@@ -140,7 +140,7 @@ for i in range(len(std) * 2):
     Dcurv_vec_out = R @ curv_vec_out
 
     clip = np.column_stack((-Dcent_line_vec, Dcent_line_vec_out))
-    clip = np.vstack((clip, (center @ clip).reshape(1, -1)))
+    clip = np.vstack((clip, (center.T @ clip).reshape(1, -1)))
 
     euler_angs = euler_angles(R) * 180 / np.pi
 

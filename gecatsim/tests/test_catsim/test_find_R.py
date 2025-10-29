@@ -9,7 +9,7 @@ class TestFindR(unittest.TestCase):
         x2 = np.array([0, 1, 0])
         y1 = np.array([0, 1, 0])
         y2 = np.array([-1, 0, 0])
-        expected_R = np.array([[0, 1, 0], [-1, 0, 0], [0, 0, 1]])
+        expected_R = np.array([[0, -1, 0], [1, 0, 0], [0, 0, 1]])
         R = find_R(x1, x2, y1, y2)
         np.testing.assert_almost_equal(R, expected_R, decimal=5)
 

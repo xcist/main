@@ -27,7 +27,7 @@ def find_R(x1, x2, y1, y2):
     y2 = y2 / np.linalg.norm(y2)
     y3 = np.cross(y1, y2)
 
-    A = np.dot(np.array([x1, x2, x3]).T, np.array([y1, y2, y3]).T)
+    A = np.dot(np.array([x1, x2, x3]).T, np.array([y1, y2, y3]))
     U, S, Vt = np.linalg.svd(A)
     R = np.dot(Vt.T, U.T)
     return R

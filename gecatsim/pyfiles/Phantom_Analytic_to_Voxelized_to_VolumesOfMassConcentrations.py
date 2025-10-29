@@ -26,10 +26,10 @@ def Phantom_Analytic_to_Voxelized_to_VolumesOfMassConcentrations(cfg):
             f'cfg.xoff = {(cfg.phantom.samples_xy + 1) / 2};',
             f'cfg.Ny = {cfg.phantom.samples_xy};',
             f'cfg.dy = {cfg.phantom.samples_voxelsize};',
-            f'yoff = {(cfg.phantom.samples_xy + 1) / 2};',
+            f'cfg.yoff = {(cfg.phantom.samples_xy + 1) / 2};',
             f'cfg.Nz = {cfg.phantom.samples_z};',
             f'cfg.dz = {cfg.phantom.samples_voxelsize};',
-            f'zoff = {(cfg.phantom.samples_z + 1) / 2};'
+            f'cfg.zoff = {(cfg.phantom.samples_z + 1) / 2};'
         ]
 
         cfg.write_vp = 1

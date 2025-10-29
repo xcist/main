@@ -20,7 +20,7 @@ def GetLorentzian(ptch, kernelsize, cfg):
     v = np.concatenate((np.arange(0, kernelsize // 2 + 1), np.flip(np.arange(1, kernelsize // 2)))) / kernelsize / ptch
 
     # Rotation --------------------------------------------------
-    r2 = np.tile(u, (kernelsize, 1)) ** 2 + np.tile(v, (kernelsize, 1)).T ** 2
+    r2 = np.tile(u, (kernelsize, 1)) ** 2 + (np.tile(v, (kernelsize, 1)) ** 2).T
     H = (c * a / (a + r2) + (1 - c) * b / (b + r2)) ** 1
 
     return H
