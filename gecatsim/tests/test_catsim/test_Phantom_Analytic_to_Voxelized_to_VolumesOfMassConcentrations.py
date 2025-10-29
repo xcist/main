@@ -36,7 +36,7 @@ class TestPhantomAnalyticToVoxelizedToVolumesOfMassConcentrations(unittest.TestC
 
         Phantom_Analytic_to_Voxelized_to_VolumesOfMassConcentrations(cfg)
 
-        self.assertEqual(cfg.phantom.filename, 'CTDI_16cm_WaterAirPEBoneChambers.vp')
+        self.assertEqual(cfg.phantom_filename, 'CTDI_16cm_WaterAirPEBoneChambers.vp')
         mock_catvoxel.assert_called_once()
 
 if __name__ == '__main__':
