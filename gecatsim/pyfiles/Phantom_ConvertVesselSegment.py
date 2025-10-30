@@ -135,9 +135,9 @@ for i in range(len(std) * 2):
         start = np.array([start_point_x[i], start_point_y[i], start_point_z[i]])
 
     R = find_R(curv_vec, cent_line_vec, Dcurv_vec, Dcent_line_vec).T
-    center = start - R @ a0t
-    Dcent_line_vec_out = R @ cent_line_vec_out
-    Dcurv_vec_out = R @ curv_vec_out
+    center = start - R.T @ a0t
+    Dcent_line_vec_out = R.T @ cent_line_vec_out
+    Dcurv_vec_out = R.T @ curv_vec_out
 
     clip = np.column_stack((-Dcent_line_vec, Dcent_line_vec_out))
     clip = np.vstack((clip, (center.T @ clip).reshape(1, -1)))
