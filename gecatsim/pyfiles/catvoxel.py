@@ -45,15 +45,15 @@ def catvoxel(cfg):
     Materials = cfg.phantom.Materials
     NumberOfMaterials = cfg.phantom.numberOfMaterials
 
-    cfg.Nx = cfg.recon.imageSize
-    cfg.Ny = cfg.recon.imageSize
-    cfg.Nz = cfg.recon.sliceCount
-    cfg.dx = cfg.recon.fov / cfg.recon.imageSize
-    cfg.dy = cfg.recon.fov / cfg.recon.imageSize
-    cfg.dz = cfg.recon.sliceThickness
-    cfg.xoff = -cfg.recon.centerOffset[0] / cfg.dx + (cfg.Nx + 1) / 2
-    cfg.yoff = -cfg.recon.centerOffset[1] / cfg.dy + (cfg.Ny + 1) / 2
-    cfg.zoff = -cfg.recon.centerOffset[2] / cfg.dz + (cfg.Nz + 1) / 2
+    cfg.Nx = int(cfg.recon.imageSize)
+    cfg.Ny = int(cfg.recon.imageSize)
+    cfg.Nz = int(cfg.recon.sliceCount)
+    cfg.dx = np.double(cfg.recon.fov / cfg.recon.imageSize)
+    cfg.dy = np.double(cfg.recon.fov / cfg.recon.imageSize)
+    cfg.dz = np.double(cfg.recon.sliceThickness)
+    cfg.xoff = np.double(-cfg.recon.centerOffset[0] / cfg.dx + (cfg.Nx + 1) / 2)
+    cfg.yoff = np.double(-cfg.recon.centerOffset[1] / cfg.dy + (cfg.Ny + 1) / 2)
+    cfg.zoff = np.double(-cfg.recon.centerOffset[2] / cfg.dz + (cfg.Nz + 1) / 2)
     print('Phantom setup updated:')
     PrintPhantomSetup(cfg)
 
