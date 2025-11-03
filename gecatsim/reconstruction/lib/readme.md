@@ -14,7 +14,11 @@ Same as for Linux but make sure to use the "gcc" compiler and not the "clang" co
 You may need to install gcc manually (e.g., brew install gcc).
 If needed, specify the full path to the gcc compiler when compiling, e.g.:
 
-`/usr/local/bin/gcc-14 -fPIC -fopenmp -shared -o fdk_equiAngle_macos.so interface_fdk_angle.c`
+`/opt/homebrew/bin/gcc-15 -fPIC -fopenmp -shared -o fdk_equiAngle_macos.so interface_fdk_angle.c`
+
+For older Macs with the Intel chip, gcc might be in a different location:
+
+`/usr/local/bin/gcc-15 -fPIC -fopenmp -shared -o fdk_equiAngle_macos.so interface_fdk_angle.c`
 
 # For Windows
 in cmd, run `xxx\mingw64\bin\gcc.exe -Wall -O -g -fPIC -shared -o fdk_equiAngle.dll .\interface_fdk_angle.c `
