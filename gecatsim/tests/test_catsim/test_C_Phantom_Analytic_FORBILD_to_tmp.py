@@ -1,25 +1,24 @@
-import unittest.mock
-from unittest.mock import MagicMock
-import gecatsim.pyfiles.CommonTools as c
+import unittest
+from unittest.mock import MagicMock, patch
 from gecatsim.pyfiles.C_Phantom_Analytic_FORBILD_to_tmp import C_Phantom_Analytic_FORBILD_to_tmp
-
 
 class TestC_Phantom_Analytic_FORBILD_to_tmp(unittest.TestCase):
 
-    def test_C_Phantom_Analytic_FORBILD_to_tmp(self):
-        cfg = c.CFG("../examples/cfg/Phantom_Sample", "../examples/cfg/Scanner_Sample_generic",
-                    "../examples/cfg/Protocol_Sample_axial")
+    @patch('gecatsim.pyfiles.C_Phantom_Analytic_FORBILD_to_tmp.load_C_lib')
+    def test_C_Phantom_Analytic_FORBILD_to_tmp(self, mock_load_C_lib):
 
-        cfg.clib.TranslatePhantom_FORBILD_to_tmp = MagicMock()
+        mock_clib = MagicMock()
+        mock_func = MagicMock()
+        mock_clib.TranslatePhantom_FORBILD_to_tmp = mock_func
+        mock_load_C_lib.return_value = mock_clib
 
         scale = 1.0
         pp_phantom_filename = "input.pp"
         tmp_phantom_filename = "output.tmp"
 
-        C_Phantom_Analytic_FORBILD_to_tmp(cfg, scale, pp_phantom_filename, tmp_phantom_filename)
+        C_Phantom_Analytic_FORBILD_to_tmp(scale, pp_phantom_filename, tmp_phantom_filename)
 
-        assert cfg.clib.TranslatePhantom_FORBILD_to_tmp.call_count == 1
-
+        mock_func.assert_called_once_with(scale, b"input.pp", b"output.tmp")
 
 if __name__ == '__main__':
     unittest.main()
