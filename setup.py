@@ -6,7 +6,7 @@
 from setuptools import setup
 
 setup(name='gecatsim',
-      version='1.5.4',
+      version='1.6.5',
       description='Simulation toolkit for X-ray based cancer imaging',
       long_description=open('README.md').read(),
       long_description_content_type='text/markdown',
