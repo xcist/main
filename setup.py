@@ -32,7 +32,7 @@ class BuildAssetsCommand(build_ext):
         super().run()
 
 setup(name='gecatsim',
-      version='1.6.5',
+      version='1.6.6',
       ext_modules = [Extension("dummy", sources=[])],
       cmdclass = {"build_ext": BuildAssetsCommand},
       description='Simulation toolkit for X-ray based cancer imaging',
