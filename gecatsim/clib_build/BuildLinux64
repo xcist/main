@@ -1,6 +1,6 @@
 # Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/tree/master/license
 
 cd src
-make -f ../Makefile
+make -j4 -f ../Makefile
 make -f ../Makefile clean
 cd ..
