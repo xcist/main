@@ -20,13 +20,13 @@ class BuildAssetsCommand(build_ext):
             print(script)
             if os.path.exists(script):
                 print("Building the catsim library with: ", script)
-                if sys.platform.startswith("win"):
-                    # Prefer cross-platform steps written in Python,
-                    # but if you must, call via bash provided by Git-Bash/MSYS2.
-                    bash = os.environ.get("BASH", "bash")
-                    subprocess.check_call([bash, script])
-                else:
-                    subprocess.check_call(["bash", script], cwd = os.path.join(os.path.dirname(__file__), "gecatsim", "clib_build"))
+                #if sys.platform.startswith("win"):
+                #    # Prefer cross-platform steps written in Python,
+                #    # but if you must, call via bash provided by Git-Bash/MSYS2.
+                #    bash = os.environ.get("BASH", "bash")
+                #    subprocess.check_call([bash, script])
+                #else:
+                subprocess.check_call(["bash", script], cwd = os.path.join(os.path.dirname(__file__), "src", "gecatsim", "clib_build"))
             else:
                 print("Error! script not found!")
             # Continue with normal build
