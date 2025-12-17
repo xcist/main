@@ -26,7 +26,7 @@ class BuildAssetsCommand(build_ext):
                 #    bash = os.environ.get("BASH", "bash")
                 #    subprocess.check_call([bash, script])
                 #else:
-                subprocess.check_call(["bash", script], cwd = os.path.join(os.path.dirname(__file__), "src", "gecatsim", "clib_build"))
+                subprocess.check_call(["bash", script], cwd = os.path.join(os.path.dirname(__file__), "gecatsim", "clib_build"))
             else:
                 print("Error! script not found!")
             # Continue with normal build
