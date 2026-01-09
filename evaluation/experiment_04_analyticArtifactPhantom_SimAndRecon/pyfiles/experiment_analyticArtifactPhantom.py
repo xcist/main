@@ -45,7 +45,7 @@
 
 import os
 import copy
-import catsim.pyfiles as catsim
+import gecatsim.pyfiles as catsim
 from my_commonTools import *
 
 def setExperimentParameters(cfg):
@@ -125,6 +125,7 @@ cfg.physics.srcYSampleCount = 1
 cfg.physics.viewSampleCount = 1
 cfg.physics.enableQuantumNoise = 0                              # Will be revised for certain experiments.
 cfg.physics.enableElectronicNoise = 0                           # Will be revised for certain experiments.
+cfg.physics.disable_low_signal_correction = 1                   # Disable the low signal correction
 
 cfg.recon.fov = 300.0
 cfg.recon.sliceThickness = cfg.scanner.detectorRowSize*cfg.scanner.sid/cfg.scanner.sdd

@@ -26,17 +26,19 @@ def prep_view(cfg):
     if hasattr(cfg.physics, "callback_pre_log") and cfg.physics.callback_pre_log:
         airscan, offsetScan, phantomScan = feval(cfg.physics.callback_pre_log, cfg, airscan, offsetScan, phantomScan)
     
-    
+
     ###--------- log
     prep = (phantomScan-offsetScan)/(airscan-offsetScan)
     
-    ### simple low-signal correction and -log
-    #smallValue = 1e-12
-    #prep[prep<smallValue] = smallValue
-    #prep = -np.log(prep)
+    if getattr(cfg.physics, "disable_low_signal_correction", False):
+        ### simple low-signal correction and -log
+        smallValue = 1e-12
+        prep[prep<smallValue] = smallValue
+        prep = -np.log(prep)
+    else:
+        ### signal-domain low-signal correction and -log
+        prep = LowSignalCorr(cfg, prep)
     
-    ### signal-domain low-signal correction and -log
-    prep = LowSignalCorr(cfg, prep)
     prep[prep<0] = 0
     
     

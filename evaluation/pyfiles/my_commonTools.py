@@ -7,8 +7,8 @@
 
 import os
 import numpy as np
-import catsim as xc
-import reconstruction.pyfiles.recon as recon
+import gecatsim as xc
+import gecatsim.reconstruction.pyfiles.recon as recon
 
 def initializeExperimentDirectory(cfg):
 
