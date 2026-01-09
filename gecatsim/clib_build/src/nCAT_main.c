@@ -3222,7 +3222,27 @@ int isEmptyString(char *line)
   return 1;
 }
 
-DLLEXPORT void Parse_Phantom(char *filename, int *materials, float *coord_origin_offset, float scale) //  JDP
+int get_line(char *buffer, int buffer_size, FILE *fp) {
+  for (;;) {
+    char *q = fgets(buffer, buffer_size, fp);
+    if (q == NULL) {
+      if (feof(fp)) {
+        return EOF;
+      }
+      if (ferror(fp)) {
+        return -1;
+      }
+    }
+    if (isEmptyString(q)) {
+      continue;
+    }
+    break;
+  }
+  return 1;
+}
+
+DLLEXPORT void Parse_Phantom(char *filename, int *materials,
+                             float *coord_origin_offset, float scale) //  JDP
 /*  This routine parses a NURBS phantom file output from the NCAT */
 {
   FILE *fp;
@@ -3231,7 +3251,11 @@ DLLEXPORT void Parse_Phantom(char *filename, int *materials, float *coord_origin
   float temp, tx, ty, tz;
   char line[160];
   int tmp = 0;
-  int ID;
+  int num_ids = 0;
+  int num_fractions = 0;
+  char temp_char = 0;
+  int ID[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  float fraction[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
   use_tri_model = 0;
   if ((fp = fopen(filename, "r")) == NULL)
@@ -3333,13 +3357,53 @@ DLLEXPORT void Parse_Phantom(char *filename, int *materials, float *coord_origin
       dbug(0, "Error: Maximum number of nurbs models (%d) exceeded.\r\nSee Parse_Phantom routine in nCAT_main.c\r\n", max_num_models);
       exit(1);
     }
-    fscanf(fp, "%i", &ID);
-    nrb_model[k].MU_ID = ID; // Material integer ID for the object, ID's I use are in ct_global_vars.h file
-    materials[ID] = 1;       // Place a 1 in the materials array to let it know material[ID] is included
+    // reads MU IDs
+    get_line(line, sizeof(line) - 1, fp);
+    dbug(1, line);
+    num_ids =
+        sscanf(line, "%i,%i,%i,%i,%i,%i,%i,%i,%i,%i", &ID[0], &ID[1], &ID[2],
+               &ID[3], &ID[4], &ID[5], &ID[6], &ID[7], &ID[8], &ID[9]);
+
+    // Tries to read M parameter for old ct format. If not, use new ct format.
+    get_line(line, sizeof(line) - 1, fp);
+    dbug(1, line);
+
+    sscanf(line, "%i %cM", &m, &temp_char);
+    fraction[0] = 1.0;
+    dbug(1, "temp_char: %c\n", temp_char);
+    if (temp_char != ':') {
+      num_fractions = sscanf(
+          line, "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f", &fraction[0], &fraction[1],
+          &fraction[2], &fraction[3], &fraction[4], &fraction[5], &fraction[6],
+          &fraction[7], &fraction[8], &fraction[9]);
+      if (num_fractions == EOF || num_fractions != num_ids) {
+        dbug(0,
+             "Error: Number of material fractions doesn't match number of "
+             "material ids in phantom surface declaration.\r\n num_fractions: "
+             "%i, num_ids: %i. \r\n See "
+             "Parse_Phantom routine in nCAT_main.c\r\n",
+             max_num_models, num_ids, num_fractions);
+        exit(1);
+      }
+      get_line(line, sizeof(line) - 1, fp);
+      dbug(1, line);
+      sscanf(line, "%i", &m);
+    }
+    for (i = 0; i < 8; i++) {
+      nrb_model[k].MU[i].MU_ID =
+          ID[i]; // Material integer ID for the object, ID's I use are in
+                 // ct_global_vars.h file
+      nrb_model[k].MU[i].FRACTION = fraction[i];
+      materials[ID[i]] = 1; // Place a 1 in the materials array to let it know
+                            // material[ID] is included
+      if (ID[i] < 0 | fraction[i] < 0) {
+        dbug(1, "%s %i %f", k, ID[i], fraction[i]);
+      }
+      ID[i] = 0;
+      fraction[i] = 0;
+    }
 
     /* Read in M and N parameters */
-    fscanf(fp, "%i", &m);
-    fscanf(fp, "%s", line);
     fscanf(fp, "%i", &n);
     fscanf(fp, "%s", line);
 
@@ -3392,13 +3456,14 @@ DLLEXPORT void Parse_Phantom(char *filename, int *materials, float *coord_origin
     dbug(2, "f\n");
 
     k++;
-    tmp = fscanf(fp, "%s", line);
+    tmp = get_line(line, sizeof(line), fp);
   }
   NUM_NRB = k;
   fclose(fp);
   NUM_MODELS = NUM_NRB;
   
   dbug(0, "Done parsing nCAT phantom.\r\n");
+  return;
 }
 
 int Intersect_segments(LINE_SEG A, LINE_SEG B) /*A = higher priority segment*/
@@ -3616,8 +3681,28 @@ void Break_segment2(SEG_ARRAY lines, SEG_ARRAY *segments)
     }
 }
 
-void Calc_line_int(SEG_ARRAY lines, SEG_ARRAY segments, float mu_table[MAXIMUM_NUMBER_OF_MATERIALS][300], int energy_ID, float *line_int)
-{
+float get_attenuation(SURFACE surface,
+                      float mu_table[MAXIMUM_NUMBER_OF_MATERIALS][300],
+                      int energy_ID
+
+) {
+  float atten = 0;
+  int id;
+  float frac;
+  int j;
+
+  for (j = 0; j < 8; j++) {
+    id = surface.MU[j].MU_ID;
+    frac = surface.MU[j].FRACTION;
+    dbug(1, "id: %i, frac: %f\n", id, frac);
+    atten = atten + mu_table[id][energy_ID] * frac;
+  }
+  return atten;
+}
+
+void Calc_line_int(SEG_ARRAY lines, SEG_ARRAY segments,
+                   float mu_table[MAXIMUM_NUMBER_OF_MATERIALS][300],
+                   int energy_ID, float *line_int) {
 
   // THIS FUNCTION IS NOW OBSOLETE
 
@@ -3631,14 +3716,16 @@ void Calc_line_int(SEG_ARRAY lines, SEG_ARRAY segments, float mu_table[MAXIMUM_N
     for (i = 0; i < segments.length; i++)
     {
       dist = segments.sp[i].x2 - segments.sp[i].x1;
-      atten = mu_table[nrb_model[segments.sp[i].organ_id].MU_ID][energy_ID];
+      atten = get_attenuation(nrb_model[segments.sp[i].organ_id], mu_table,
+                              energy_ID);
       *line_int += (atten * dist);
       // dbug(1,"dist[%d]: %1.14f  atten: %1.14f\r\n",i,dist,atten);
     }
 
     dist = lines.sp[lines.length - 1].x2 - lines.sp[lines.length - 1].x1;
     dbug(1, "dist[X]: %1.14f\r\n", dist);
-    atten = mu_table[nrb_model[lines.sp[lines.length - 1].organ_id].MU_ID][energy_ID];
+    atten = get_attenuation(nrb_model[lines.sp[lines.length - 1].organ_id],
+                            mu_table, energy_ID);
     *line_int += (atten * dist);
   }
 }
@@ -3682,7 +3769,8 @@ void Calc_line_int2(SEG_ARRAY segments, float mu_table[MAXIMUM_NUMBER_OF_MATERIA
     // dbug(0,"%d %d\r\n",i, segments.sp[i].organ_id);
     // dbug(0,"%d\r\n",nrb_model[segments.sp[i].organ_id].MU_ID);
     dist = segments.sp[i].x2 - segments.sp[i].x1;
-    atten = mu_table[nrb_model[segments.sp[i].organ_id].MU_ID][energy_ID];
+    atten = get_attenuation(nrb_model[segments.sp[i].organ_id], mu_table,
+                            energy_ID);
     *line_int += (atten * dist);
     // dbug(1,"dist[%d]: %1.14f  atten: %1.14f\r\n",i,dist,atten);
   }
@@ -5903,14 +5991,14 @@ void intersections_NCAT_all(SEG_ARRAY *segments, float *a, float *alpha, float *
     // Update: June 2019: I went ahead and switched this to Break_segment2... seems to work fine
   }
 }
-
+/*
 DLLEXPORT void make_vol_ncat(float *volume, int Nx, double xoff, double dx, int Ny, double yoff, double dy, int Nz, double zoff, double dz, int oversampling, int UNUSED_num_volumes, int material_volumes)
 
 {
   int i, j, k, l, m, p, energyBinsToSkip = 0, volume_offset, muid, muidp;
   float a[3], alpha[3], alpha_inv[3], *matl_tabl, tmp;
   double rayLength, xbrd;
-  SEG_ARRAY segments; /*Array of line segments*/
+  SEG_ARRAY segments; /*Array of line segments
 
   other_initializations();
   matl_tabl = malloc(sizeof(float) * n_materials);
@@ -6048,7 +6136,7 @@ DLLEXPORT void make_vol_ncat(float *volume, int Nx, double xoff, double dx, int 
   }
   free(matl_tabl);
 }
-
+*/
 void intersections_NCAT(double *detCenter, double *right, double *up, double *sampling, int nSubDets, float *sourcePoints, double *thisView, int detIndex, double subviewWeight, double *detWeights)
 
 {
