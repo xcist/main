@@ -46,7 +46,8 @@ class test_Gantry_Helical(unittest.TestCase):
         cfg.src.nCorners = 4
         cfg.src.nSamples = 4
 
-        cfg = Gantry_Helical(cfg, 0)
+        cfg.viewId = 0
+        cfg = Gantry_Helical(cfg)
 
         assert cfg.srcNew is not None
         assert cfg.srcNew.corners is not None
