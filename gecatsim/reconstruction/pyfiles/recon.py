@@ -5,6 +5,9 @@ from gecatsim.pyfiles.CommonTools import *
 import matplotlib.pyplot as plt
 import numpy as np
 # Need to import new recons as they are added
+from gecatsim.reconstruction.pyfiles.art_equiAngle import art_equiAngle
+from gecatsim.reconstruction.pyfiles.sirt_equiAngle import sirt_equiAngle
+from gecatsim.reconstruction.pyfiles.cgls_equiAngle import cgls_equiAngle
 
 def recon_direct(cfg):
     prep = load_prep(cfg)
