@@ -1,4 +1,4 @@
-materialList = {'pmma' 'water' 'air' 'polyethylene' 'ICRU_skeleton_cortical_bone_adult' };
+materialList = {'PMMA' 'water' 'air' 'polyethylene' 'ICRU_skeleton_cortical_bone_adult' };
 
 object.center(1,:) = [0.000000 0.000000 0.000000];
 object.half_axes(1,:) = [80.000000 80.000000 75.000000];
