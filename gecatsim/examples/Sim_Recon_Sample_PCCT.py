@@ -4,6 +4,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 ###------------ import XCIST-CatSim
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 import gecatsim as xc
 import gecatsim.reconstruction.pyfiles.recon as recon
 
@@ -12,7 +15,12 @@ import gecatsim.reconstruction.pyfiles.recon as recon
 # add any additional search directories
 #my_path.add_search_path("my-experiments")
 
-ct = xc.CatSim("./cfg/Phantom_Sample", "./cfg/Scanner_PCCT", "./cfg/Physics_Sample")  # initialization
+example_dir = os.path.dirname(os.path.abspath(__file__))
+ct = xc.CatSim(
+    os.path.join(example_dir, "cfg", "Phantom_Sample"),
+    os.path.join(example_dir, "cfg", "Scanner_PCCT"),
+    os.path.join(example_dir, "cfg", "Physics_Sample"),
+)  # initialization
 
 ##--------- Make changes to parameters (optional)
 ct.resultsName = "test"

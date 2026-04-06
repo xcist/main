@@ -1,10 +1,14 @@
 # Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/tree/master/license
 
 ###------------ import XCIST-CatSim
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 import gecatsim as xc
 
 ##--------- Initialize 
-ct = xc.CatSim("./cfg/Phantom_Sample_Hybrid")  # initialization
+example_dir = os.path.dirname(os.path.abspath(__file__))
+ct = xc.CatSim(os.path.join(example_dir, "cfg", "Phantom_Sample_Hybrid"))  # initialization
 
 ##--------- Make changes to parameters (optional)
 
