@@ -1,17 +1,21 @@
 # Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/tree/master/license
 
 ###------------ import XCIST-CatSim
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 import numpy as np
 import gecatsim as xc
 import gecatsim.reconstruction.pyfiles.recon as recon
 
 ##--------- Initialize 
-ct = xc.CatSim("./cfg/Phantom_Sample_XCAT")  # initialization
+example_dir = os.path.dirname(os.path.abspath(__file__))
+ct = xc.CatSim(os.path.join(example_dir, "cfg", "Phantom_Sample_XCAT"))  # initialization
 
 ##--------- Make changes to parameters (optional)
 ct.resultsName = "test_XCAT"
 
-ct.phantom.filename = '../phantom/vmale50_chest_less_surfaces.nrb'
+ct.phantom.filename = os.path.join(example_dir, "..", "phantom", "vmale50_chest_less_surfaces.nrb")
 
 ct.protocol.viewsPerRotation = 500
 ct.protocol.viewCount = ct.protocol.viewsPerRotation

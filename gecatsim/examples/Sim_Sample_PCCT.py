@@ -1,6 +1,9 @@
 # Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/tree/master/license
 
 ###------------ import XCIST-CatSim
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 import gecatsim as xc
 import gecatsim.reconstruction.pyfiles.recon as recon
 from gecatsim.pyfiles.CommonTools import *
@@ -10,7 +13,13 @@ from gecatsim.pyfiles.CommonTools import *
 #my_path = xc.pyfiles.CommonTools.my_path
 #my_path.add_search_path("my-experiments")
 
-ct = xc.CatSim("./cfg/Scanner_PCCT", "./cfg/Phantom_Sample", "./cfg/Protocol_Sample_axial",'./cfg/Physics_Sample')  # initialization
+example_dir = os.path.dirname(os.path.abspath(__file__))
+ct = xc.CatSim(
+    os.path.join(example_dir, "cfg", "Scanner_PCCT"),
+    os.path.join(example_dir, "cfg", "Phantom_Sample"),
+    os.path.join(example_dir, "cfg", "Protocol_Sample_axial"),
+    os.path.join(example_dir, "cfg", "Physics_Sample"),
+)  # initialization
 
 ##--------- PCCT
 ct.scanner.detectorMaterial = "CZT"            # detector sensor material

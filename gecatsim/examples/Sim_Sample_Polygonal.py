@@ -1,17 +1,21 @@
 # Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/tree/master/license
 
 ###------------ import XCIST-CatSim
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 import numpy as np
 import gecatsim as xc
 import gecatsim.reconstruction.pyfiles.recon as recon
 
 ##--------- Initialize
-ct = xc.CatSim("./cfg/Phantom_Sample_Polygonal")  # initialization
+example_dir = os.path.dirname(os.path.abspath(__file__))
+ct = xc.CatSim(os.path.join(example_dir, "cfg", "Phantom_Sample_Polygonal"))  # initialization
 
 ##--------- Make changes to parameters (optional)
 ct.resultsName = "test_Polygonal"
 
-ct.phantom.filename = '../phantom/female_adult_average_lung_lesions_reduced.nrb'
+ct.phantom.filename = os.path.join(example_dir, "..", "phantom", "female_adult_average_lung_lesions_reduced.nrb")
 
 # Here the phantom position and scaling are only for illustrating purpose due to the object's small size.
 ct.phantom.centerOffset = [54, 51, -102]      # offset of phantom center relative to origin (in mm)

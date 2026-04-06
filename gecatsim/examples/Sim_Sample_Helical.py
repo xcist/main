@@ -1,15 +1,19 @@
 # Copyright 2024, GE Precision HealthCare. All rights reserved. See https://github.com/xcist/main/tree/master/license
 
 ###------------ import XCIST-CatSim
+import os
+import sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 import gecatsim as xc
 from gecatsim.reconstruction.pyfiles import recon
 
 ##--------- Initialize 
-ct = xc.CatSim("./cfg/Phantom_Sample_Analytic",
-               "./cfg/Protocol_Sample_Helical",
-               "./cfg/Scanner_Sample_generic",
-               "./cfg/Physics_Sample",
-               "./cfg/Recon_Sample_Helical",
+example_dir = os.path.dirname(os.path.abspath(__file__))
+ct = xc.CatSim(os.path.join(example_dir, "cfg", "Phantom_Sample_Analytic"),
+                 os.path.join(example_dir, "cfg", "Protocol_Sample_Helical"),
+                 os.path.join(example_dir, "cfg", "Scanner_Sample_generic"),
+                 os.path.join(example_dir, "cfg", "Physics_Sample"),
+                 os.path.join(example_dir, "cfg", "Recon_Sample_Helical"),
 
         )  # initialization
 
