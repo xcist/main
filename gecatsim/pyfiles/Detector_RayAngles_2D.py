@@ -30,7 +30,7 @@ def Detector_RayAngles_2D(cfg):
 
         xyzDet = nm.repmat(det.modCoords[m, :], nCells, 1) + \
             det.cellCoords @ (np.c_[det.uvecs[m, :], det.vvecs[m, :]].T)
-        xyzR = xyzDet - nm.repmat(xyzSrc, nCells, 1);
+        xyzR = xyzDet - nm.repmat(xyzSrc, nCells, 1)
 
         cellInd = range(startInd, startInd+nCells)
         rayDistance[cellInd] = vectornorm(xyzR.T)

@@ -20,49 +20,59 @@ def Xray_Filter(cfg):
 
 def flat_filter(cfg):
     '''
-    Apply the transmittance of flat filter at source side, dim: [Ebin, totalNumCells]
+    Apply the transmittance of flat filter at source side, optimized version
     '''
-    cosineFactors = 1/np.cos(cfg.det.gammas)/np.cos(cfg.det.alphas)
+    cosineFactors = 1 / (np.cos(cfg.det.gammas) * np.cos(cfg.det.alphas))
     
     Evec = cfg.sim.Evec
-    trans = np.ones([cfg.det.totalNumCells, cfg.spec.nEbin], dtype = np.single)
+    trans = np.ones([cfg.det.totalNumCells, cfg.spec.nEbin], dtype=np.single)
     
     if hasattr(cfg.protocol, "flatFilter"):
-        for ii in range(0, round(len(cfg.protocol.flatFilter)/2)):
+        # Pre-allocate array for mu values
+        mu_total = np.zeros_like(Evec, dtype=np.single)
+        
+        for ii in range(0, len(cfg.protocol.flatFilter) // 2):
             material = cfg.protocol.flatFilter[2*ii]
             depth = cfg.protocol.flatFilter[2*ii+1]
             mu = GetMu(material, Evec)
-            trans *= np.exp(-depth*0.1*cosineFactors @ mu.reshape(1, mu.size))
-    cfg.src.filterTrans *= trans
+            mu_total += depth * 0.1 * mu
+        
+        # Single exponential calculation instead of multiple
+        trans *= np.exp(-np.outer(cosineFactors, mu_total))
     
+    cfg.src.filterTrans *= trans
     return cfg
 
 def bowtie_filter(cfg):
     '''
-    Apply the transmittance of bowtie filter, dim: [Ebin, totalNumCells]
+    Apply the transmittance of bowtie filter, optimized version
     '''
     if not cfg.protocol.bowtie:
         return cfg
     
-    # find bowtie file
     bowtieFile = my_path.find("bowtie", cfg.protocol.bowtie, ".txt")
-
-    # read bowtie file
     data = np.loadtxt(bowtieFile, dtype=np.single, comments=['#', '%'])
     
     gammas0 = data[:, 0]
-    t0 = data[:, 1:] # thickness in cm
+    t0 = data[:, 1:]
     bowtieMaterials = ['Al', 'graphite', 'Cu', 'Ti']
     
     Evec = cfg.spec.Evec
     gammas1 = cfg.det.gammas
+    cos_alphas_inv = 1.0 / np.cos(cfg.det.alphas)
     
-    muT = 0
-    for i in range(len(bowtieMaterials)):
-        mu = GetMu(bowtieMaterials[i], Evec)
-        f = interpolate.interp1d(gammas0, t0[:, i], kind='linear', fill_value='extrapolate')
-        t1 = f(gammas1)/np.cos(cfg.det.alphas)
-        muT += t1 @ mu.reshape(1, mu.size)
+    # Pre-compute all mu values
+    mu_array = np.array([GetMu(material, Evec) for material in bowtieMaterials], dtype=np.single)
+    
+    # Vectorized interpolation for all materials at once
+    f_interps = [interpolate.interp1d(gammas0, t0[:, i], kind='linear', fill_value='extrapolate', assume_sorted=True) 
+                 for i in range(len(bowtieMaterials))]
+    
+    # Compute total attenuation in one operation
+    muT = np.zeros((len(gammas1), len(Evec)), dtype=np.single)
+    for i, f in enumerate(f_interps):
+        t1 = f(gammas1) * cos_alphas_inv
+        muT += np.outer(t1, mu_array[i])
     
     trans = np.exp(-muT)
     cfg.src.filterTrans *= trans

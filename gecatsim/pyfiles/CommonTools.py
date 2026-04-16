@@ -26,33 +26,19 @@ def make_col(a):
     return a
 
 
-def feval(func_name, *args):
-    module_paths = [
-        func_name,
-        f"gecatsim.pyfiles.{func_name}",
-        f"gecatsim.pyfiles.FlatPanel.{func_name}"
-    ]
-
-    module = None
-    for path in module_paths:
-        try:
-            module = importlib.import_module(path)
-            break
-        except ModuleNotFoundError:
-            continue
-
-    if module is None:
-        raise ImportError(f"Could not import module: {func_name}. Tried paths: {module_paths}")
-
-    # Extract the function name (the part after the last dot)
-    func_name_only = func_name.split('.')[-1]
-
+def feval(funcName, *args):
     try:
-        func = getattr(module, func_name_only)
-    except AttributeError:
-        raise AttributeError(f"Function '{func_name_only}' not found in module '{module.__name__}'")
+        md = __import__(funcName)
+    except:
+        md = __import__("xcist.src.app.pyfiles."+funcName, fromlist=[funcName])  # equal to: from gecatsim.foo import foo
+    strip_leading_module = '.'.join(funcName.split('.')[1:])
+    func_name_only = funcName.split('.')[-1]
 
-    return func(*args)
+    if len(strip_leading_module) > 0:
+        eval_name = f"md.{strip_leading_module}.{func_name_only}"
+    else:
+        eval_name = f"md.{func_name_only}"
+    return eval(eval_name)(*args)
 
 
 def load_C_lib():
@@ -74,16 +60,35 @@ def load_C_lib():
 
 
 class emptyCFG:
-    pass
+    
+    def __str__(self):
+        attrs = ', '.join(f"{key}={value!r}" for key, value in self.__dict__.items())
+        return f"{self.__class__.__name__}({attrs})"
+    
+    def __repr__(self):
+        return self.__str__()
+    
 
+
+import sys
 
 class PathHelper:
     def __init__(self):
         self._base_dir = os.getcwd()
         # Locate paths of lib and data.
         self.paths = {}
-        self.paths["main"] = os.path.dirname(os.path.abspath(__file__))
-        self.paths["top"] = os.path.split(self.paths["main"])[0]
+        
+        # Handle PyInstaller bundled environment
+        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+            # Running as compiled executable
+            bundle_dir = sys._MEIPASS
+            self.paths["main"] = os.path.join(bundle_dir, 'app', 'pyfiles')
+            self.paths["top"] = os.path.join(bundle_dir, 'app')
+        else:
+            # Running as normal Python script
+            self.paths["main"] = os.path.dirname(os.path.abspath(__file__))
+            self.paths["top"] = os.path.split(self.paths["main"])[0]
+        
         self.paths["bowtie"] = os.path.join(self.paths["top"], 'bowtie')
         self.paths["cfg"] = os.path.join(self.paths["top"], 'cfg')
         self.paths["dose"] = os.path.join(self.paths["top"], 'dose')
@@ -259,16 +264,11 @@ def source_cfg(*para):
         
     # initialize structs in cfg and structs
     attrList = ['sim', 'det', 'detNew', 'src', 'srcNew', 'spec', 'protocol', 'scanner', 'phantom', 'physics', 'recon', 'dose']
-    
     for attr in attrList:
-        # Ensure cfg has the attribute
         if not hasattr(cfg, attr):
             setattr(cfg, attr, emptyCFG())
-
-        # Define the variable in the local scope if not already defined
-        if attr not in locals():
-            globals()[attr] = emptyCFG()
-            # exec("%s = emptyCFG()" % attr)  # globals()[attr] = ... is more explicit and safer for dynamic variable creation
+        if not attr in dir():
+            exec("%s = emptyCFG()" % attr)
         
     # execute scripts in cfg file
     exec(open(cfg_file).read())
@@ -381,27 +381,60 @@ def overlap2d(oldimg, old_pos_x, old_pos_y, pos_x, pos_y):
 def rawread(fname, dataShape, dataType):
     # dataType is for numpy, ONLY allows: 'float'/'single', 'double', 'int'/'int32', 'uint'/'uint32', 'int8', 'int16' 
     #          they are single, double, int32, uin32, int8, int16
-    with open(fname, 'rb') as fin:
-        data = fin.read()
-    
     # https://docs.python.org/3/library/struct.html
-    switcher = {'float': ['f', 4, np.single], 
-                'single': ['f', 4, np.single], 
-                'double': ['d', 8, np.double], 
+    switcher = {'float': ['f', 4, np.float32], 
+                'float32': ['f', 4, np.float32],
+                'single': ['f', 4, np.float32], 
+                'double': ['d', 8, np.float64], 
                 'int': ['i', 4, np.int32], 
                 'uint': ['I', 4, np.uint32],  
                 'int32': ['i', 4, np.int32], 
                 'uint32': ['I', 4, np.uint32], 
+                'uint8': ['B', 1, np.uint8],
                 'int8': ['b', 1, np.int8], 
                 'int16': ['h', 2, np.int16]}
-    fmt = switcher[dataType]
-    data = struct.unpack("%d%s" % (len(data)/fmt[1], fmt[0]), data)
     
-    data = np.array(data, dtype=fmt[2])
+    fmt_char, byte_size, np_dtype = switcher[dataType]
+    
+    # Use numpy.fromfile for direct binary reading - much faster
+    try:
+        data = np.fromfile(fname, dtype=np_dtype)
+    except:
+        # Fallback to manual reading if fromfile fails
+        with open(fname, 'rb') as fin:
+            raw_data = fin.read()
+        num_elements = len(raw_data) // byte_size
+        data = struct.unpack(f"{num_elements}{fmt_char}", raw_data)
+        data = np.array(data, dtype=np_dtype)
+    
     if dataShape:
         data = data.reshape(dataShape)
     
     return data
+    
+    # with open(fname, 'rb') as fin:
+    #     data = fin.read()
+    
+    # # https://docs.python.org/3/library/struct.html
+    # switcher = {'float': ['f', 4, np.single], 
+    #             'float32': ['f', 4, np.float32],
+    #             'single': ['f', 4, np.single], 
+    #             'double': ['d', 8, np.double], 
+    #             'int': ['i', 4, np.int32], 
+    #             'uint': ['I', 4, np.uint32],  
+    #             'int32': ['i', 4, np.int32], 
+    #             'uint32': ['I', 4, np.uint32], 
+    #             'uint8': ['B', 1, np.uint8],
+    #             'int8': ['b', 1, np.int8], 
+    #             'int16': ['h', 2, np.int16]}
+    # fmt = switcher[dataType]
+    # data = struct.unpack("%d%s" % (len(data)/fmt[1], fmt[0]), data)
+    
+    # data = np.array(data, dtype=fmt[2])
+    # if dataShape:
+    #     data = data.reshape(dataShape)
+    
+    # return data
 
 def rawwrite(fname, data):
     with open(fname, 'wb') as fout:

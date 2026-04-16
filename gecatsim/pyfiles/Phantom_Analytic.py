@@ -648,10 +648,12 @@ def Phantom_Analytic_SetObjects(objs=None, debug=False):
             phantObject[i]['s'] = objs['clip'][i][:,3].T
         else:
             #TODO: consider change to []
-            #phantObject[i]['eta'] = []
-            #phantObject[i]['s'] = []
-            phantObject[i]['eta'] = None
-            phantObject[i]['s'] = None
+            # phantObject[i]['eta'] = []
+            # phantObject[i]['s'] = []
+            # phantObject[i]['eta'] = None
+            # phantObject[i]['s'] = None
+            phantObject[i]['eta'] = np.empty((3, 0))
+            phantObject[i]['s'] = np.empty(0)
         p1=pars[6]*np.pi / 180
         p2=pars[7]*np.pi / 180
         p3=pars[8]*np.pi / 180
