@@ -27,7 +27,7 @@ int n_row_oversample = 1;
 int n_col_oversample_add_xtalk = 1;
 int n_row_oversample_add_xtalk = 1;
 
-struct module_info
+struct analytic_module_info
 {
   double *Height;
   double *Width;
@@ -43,7 +43,7 @@ struct module_info
   int moduleOverlapType;
 };
 
-struct module_info modules = {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,0};
+struct analytic_module_info analytic_modules = {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,0};
 
 struct pnt
 {
@@ -61,7 +61,7 @@ struct bounding_info
 
 struct bounding_info bounding = {NULL,NULL};
 
-struct phantom_info
+struct analytic_phantom_info
 {
   int numObjects;
   int *objectType;
@@ -77,7 +77,7 @@ struct phantom_info
   double xbounds[2];
 };
 
-struct phantom_info phantom = {0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,{0,0}};
+struct analytic_phantom_info analytic_phantom = {0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,{0,0}};
 
 struct material_info
 {
@@ -86,7 +86,7 @@ struct material_info
   double *muTable;
 };
 
-struct material_info materials = {0,0,NULL};
+struct material_info analytic_materials = {0,0,NULL};
 
 struct projector_args
 {

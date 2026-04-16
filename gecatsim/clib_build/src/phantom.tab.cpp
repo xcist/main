@@ -64,7 +64,7 @@
 typedef struct phantomlval {
   double val;
   double vec[3];
-  char str[128];
+  char str[2048];
 } PHANTOMLVAL;
 
 #endif
@@ -290,7 +290,7 @@ typedef struct phantomlval {
 typedef union YYSTYPE {
   double val;
   double vec[3];
-  char str[128];
+  char str[2048];
 } YYSTYPE;
 /* Line 191 of yacc.c.  */
 //#line 283 "phantom.tab.cpp"

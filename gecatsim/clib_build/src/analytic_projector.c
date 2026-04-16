@@ -32,7 +32,7 @@ int n_col_oversample_add_xtalk = 1;
 int n_row_oversample_add_xtalk = 1;
 
 
-struct module_info
+struct analytic_module_info
 {
   double *Height;
   double *Width;
@@ -48,7 +48,7 @@ struct module_info
   int moduleOverlapType;
 };
 
-struct module_info modules = {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,0};
+struct analytic_module_info analytic_modules = {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0,0};
 
 struct pnt
 {
@@ -67,7 +67,7 @@ struct bounding_info
 
 struct bounding_info bounding = {NULL,NULL};
 
-struct phantom_info
+struct analytic_phantom_info
 {
   int numObjects;
   int *objectType;
@@ -83,16 +83,16 @@ struct phantom_info
   double xbounds[2];
 };
 
-struct phantom_info phantom = {0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,{0,0}};
+struct analytic_phantom_info analytic_phantom = {0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,{0,0}};
 
-struct material_info
+struct analytic_material_info
 {
   int materialCount;
   int eBinCount;
   double *muTable;
 };
 
-struct material_info materials = {0,0,NULL};
+struct analytic_material_info analytic_materials = {0,0,NULL};
 
 struct projector_args
 {
@@ -463,12 +463,12 @@ int quartic_intersect_C(double *a0,double *Qlp,double *Qrp,double shp,double *al
   int i,out;
   double scale,displ,a0t[3],tmp[3],aa,b,c,d,e,f,C[5],*Ql,*Qr,sh;
   
-  Ql = &phantom.Qmatrix[obj*18];
-  //  printf("%1.12lf %1.12lf",phantom.Qmatrix[obj);
+  Ql = &analytic_phantom.Qmatrix[obj*18];
+  //  printf("%1.12lf %1.12lf",analytic_phantom.Qmatrix[obj);
   //  for(i = 1;i<9;i++) printf("L %1.12lf %1.12lf diff: %1.12lf\r\n",Ql[i],Qlp[i],Ql[i]-Qlp[i]);
-  Qr = &phantom.Qmatrix[obj*18+9];
+  Qr = &analytic_phantom.Qmatrix[obj*18+9];
   //  for(i = 1;i<9;i++) printf("R %1.12lf %1.12lf diff: %1.12lf\r\n",Qr[i],Qrp[i],Qr[i]-Qrp[i]);
-  sh = phantom.shape[obj];
+  sh = analytic_phantom.shape[obj];
   //  printf("s diff: %1.12lf\r\n",sh-shp);
   
   scale = 1.0;
@@ -505,9 +505,9 @@ int quartic_intersect(double *a0,double *alpha,double *tc,int obj)
   int i,out;
   double scale,displ,a0t[3],tmp[3],aa,b,c,d,e,f,C[5],*Ql,*Qr,sh;
   
-  Ql = &phantom.Qmatrix[obj*18];
-  Qr = &phantom.Qmatrix[obj*18+9];
-  sh = phantom.shape[obj];
+  Ql = &analytic_phantom.Qmatrix[obj*18];
+  Qr = &analytic_phantom.Qmatrix[obj*18+9];
+  sh = analytic_phantom.shape[obj];
   scale = 1.0;
   displ = 0;
   for(i = 0;i<3;i++) displ += a0[i]*a0[i];
@@ -541,12 +541,12 @@ DLLEXPORT int clip_all(double *a,double *alpha,double rayLength,double *tc2,int 
   double b[3], s1, s2, tcrit, tmin, tmax, *eta, *s, den;
   int j, cp, firstPlane, materialIndex;
 
-  firstPlane = phantom.clipStartIndex[i];
-  eta = &phantom.clipNormalVector[firstPlane*3];
-  s = &phantom.clipDistance[firstPlane];
-  cp = phantom.nClipPlanes[i];
-  den = phantom.density[i];
-  materialIndex = phantom.materialInd[i];
+  firstPlane = analytic_phantom.clipStartIndex[i];
+  eta = &analytic_phantom.clipNormalVector[firstPlane*3];
+  s = &analytic_phantom.clipDistance[firstPlane];
+  cp = analytic_phantom.nClipPlanes[i];
+  den = analytic_phantom.density[i];
+  materialIndex = analytic_phantom.materialInd[i];
   tmin = -VERY_BIG;tmax = VERY_BIG;
   for(j = 0;j<3;j++) b[j] = a[j]+rayLength*alpha[j];
   
@@ -604,8 +604,8 @@ DLLEXPORT int quadratic_intersect(double *a0,double *alpha,int pars11,double *tc
   int out;
   double A,B,C,tmp,*Q,k;
     // The quadratic formula is of the form    A t^2 + B t + C = 0
-  Q = &phantom.Qmatrix[obj*18];
-  k = phantom.shape[obj];
+  Q = &analytic_phantom.Qmatrix[obj*18];
+  k = analytic_phantom.shape[obj];
   C = quadratic_form(a0,Q,a0)-k;
   B = 2.0*quadratic_form(alpha,Q,a0);
   A = quadratic_form(alpha,Q,alpha);
@@ -665,29 +665,29 @@ double* my_memcpyd(double *src, double *dest, int bytes)
 DLLEXPORT void set_src_info(double *sourceWeights, int nSubSources)
 
 {
-  modules.sourceWeights = my_memcpyd(sourceWeights, modules.sourceWeights, nSubSources*sizeof(double));
-  modules.nSubSources = nSubSources;
+  analytic_modules.sourceWeights = my_memcpyd(sourceWeights, analytic_modules.sourceWeights, nSubSources*sizeof(double));
+  analytic_modules.nSubSources = nSubSources;
 }
 
 DLLEXPORT void set_module_info(double *Height, double *Width, int *Pix, double *Coords, int *Sub, double *Sampling, double *Weight, int nModuleTypes, int maxPix, int maxSubDets, int moduleOverlapType)
 
 {
   int i;
-  modules.Height = my_memcpyd(Height, modules.Height, nModuleTypes*sizeof(double));
-  modules.Width = my_memcpyd(Width, modules.Width, nModuleTypes*sizeof(double));
+  analytic_modules.Height = my_memcpyd(Height, analytic_modules.Height, nModuleTypes*sizeof(double));
+  analytic_modules.Width = my_memcpyd(Width, analytic_modules.Width, nModuleTypes*sizeof(double));
   for(i = 0; i < nModuleTypes; i++)
     {
-      modules.Height[i] = MAX(1e-7,modules.Height[i]);
-      modules.Width[i] = MAX(1e-7,modules.Width[i]);
+      analytic_modules.Height[i] = MAX(1e-7,analytic_modules.Height[i]);
+      analytic_modules.Width[i] = MAX(1e-7,analytic_modules.Width[i]);
     }
-  modules.Pix = my_memcpyi(Pix, modules.Pix, nModuleTypes*sizeof(int));
-  modules.Coords = my_memcpyd(Coords, modules.Coords, maxPix*2*nModuleTypes*sizeof(double));
-  modules.Sub = my_memcpyi(Sub, modules.Sub, nModuleTypes*sizeof(int));
-  modules.Sampling = my_memcpyd(Sampling, modules.Sampling, 2*maxSubDets*nModuleTypes*sizeof(double));
-  modules.Weight = my_memcpyd(Weight, modules.Weight, maxSubDets*nModuleTypes*sizeof(double));
-  modules.maxPixPerModule = maxPix;
-  modules.maxSubDets = maxSubDets;
-  modules.moduleOverlapType = moduleOverlapType;
+  analytic_modules.Pix = my_memcpyi(Pix, analytic_modules.Pix, nModuleTypes*sizeof(int));
+  analytic_modules.Coords = my_memcpyd(Coords, analytic_modules.Coords, maxPix*2*nModuleTypes*sizeof(double));
+  analytic_modules.Sub = my_memcpyi(Sub, analytic_modules.Sub, nModuleTypes*sizeof(int));
+  analytic_modules.Sampling = my_memcpyd(Sampling, analytic_modules.Sampling, 2*maxSubDets*nModuleTypes*sizeof(double));
+  analytic_modules.Weight = my_memcpyd(Weight, analytic_modules.Weight, maxSubDets*nModuleTypes*sizeof(double));
+  analytic_modules.maxPixPerModule = maxPix;
+  analytic_modules.maxSubDets = maxSubDets;
+  analytic_modules.moduleOverlapType = moduleOverlapType;
 }
 
 DLLEXPORT void set_bounding_info(int numObjs, int *vertexStartInd, double *vertLocs, int numVerts)
@@ -697,38 +697,38 @@ DLLEXPORT void set_bounding_info(int numObjs, int *vertexStartInd, double *vertL
 
   bounding.vertexStartIndex = my_memcpyi(vertexStartInd, bounding.vertexStartIndex, (numObjs+1)*sizeof(int));
   bounding.vertexLocations = my_memcpyd(vertLocs, bounding.vertexLocations, sizeof(double)*numVerts*3);
-  phantom.xbounds[0]=VERY_BIG;
-  phantom.xbounds[1]=-VERY_BIG;
+  analytic_phantom.xbounds[0]=VERY_BIG;
+  analytic_phantom.xbounds[1]=-VERY_BIG;
   for(i=0;i<numVerts;i++) {
-    if (bounding.vertexLocations[i*3]>phantom.xbounds[1]) phantom.xbounds[1]=bounding.vertexLocations[i*3];
-    if (bounding.vertexLocations[i*3]<phantom.xbounds[0]) phantom.xbounds[0]=bounding.vertexLocations[i*3];
+    if (bounding.vertexLocations[i*3]>analytic_phantom.xbounds[1]) analytic_phantom.xbounds[1]=bounding.vertexLocations[i*3];
+    if (bounding.vertexLocations[i*3]<analytic_phantom.xbounds[0]) analytic_phantom.xbounds[0]=bounding.vertexLocations[i*3];
   }
 }
 
 DLLEXPORT void set_phantom_info(int numObjs, int *objType, int *clipStInd, int *nPlanes, int *matInd, double *objCent, double *shp, double *Qmat, double *clipNormVec, double *clipDist, double *den, int totalNumPlanes)
 
 {
-  phantom.numObjects = numObjs;
+  analytic_phantom.numObjects = numObjs;
 
-  phantom.objectType = my_memcpyi(objType, phantom.objectType, numObjs*sizeof(int));
-  phantom.clipStartIndex = my_memcpyi(clipStInd, phantom.clipStartIndex, (numObjs+1)*sizeof(int));
-  phantom.nClipPlanes = my_memcpyi(nPlanes, phantom.nClipPlanes, numObjs*sizeof(int));
-  phantom.materialInd = my_memcpyi(matInd, phantom.materialInd, numObjs*sizeof(int));
+  analytic_phantom.objectType = my_memcpyi(objType, analytic_phantom.objectType, numObjs*sizeof(int));
+  analytic_phantom.clipStartIndex = my_memcpyi(clipStInd, analytic_phantom.clipStartIndex, (numObjs+1)*sizeof(int));
+  analytic_phantom.nClipPlanes = my_memcpyi(nPlanes, analytic_phantom.nClipPlanes, numObjs*sizeof(int));
+  analytic_phantom.materialInd = my_memcpyi(matInd, analytic_phantom.materialInd, numObjs*sizeof(int));
 
-  phantom.objectCenter = my_memcpyd(objCent, phantom.objectCenter, numObjs*sizeof(double)*3);
-  phantom.shape = my_memcpyd(shp, phantom.shape, numObjs*sizeof(double));
-  phantom.Qmatrix = my_memcpyd(Qmat, phantom.Qmatrix, numObjs*sizeof(double)*18);
-  phantom.clipNormalVector = my_memcpyd(clipNormVec, phantom.clipNormalVector, sizeof(double)*totalNumPlanes*3);
-  phantom.clipDistance = my_memcpyd(clipDist, phantom.clipDistance, sizeof(double)*totalNumPlanes);
-  phantom.density = my_memcpyd(den, phantom.density, numObjs*sizeof(double));
+  analytic_phantom.objectCenter = my_memcpyd(objCent, analytic_phantom.objectCenter, numObjs*sizeof(double)*3);
+  analytic_phantom.shape = my_memcpyd(shp, analytic_phantom.shape, numObjs*sizeof(double));
+  analytic_phantom.Qmatrix = my_memcpyd(Qmat, analytic_phantom.Qmatrix, numObjs*sizeof(double)*18);
+  analytic_phantom.clipNormalVector = my_memcpyd(clipNormVec, analytic_phantom.clipNormalVector, sizeof(double)*totalNumPlanes*3);
+  analytic_phantom.clipDistance = my_memcpyd(clipDist, analytic_phantom.clipDistance, sizeof(double)*totalNumPlanes);
+  analytic_phantom.density = my_memcpyd(den, analytic_phantom.density, numObjs*sizeof(double));
 }
 
 DLLEXPORT void set_material_info(int materialCount, int eBinCount, double *muTable)
 
 {
-  materials.materialCount = materialCount;
-  materials.eBinCount = eBinCount;
-  materials.muTable = my_memcpyd(muTable, materials.muTable, eBinCount*materialCount*sizeof(double));
+  analytic_materials.materialCount = materialCount;
+  analytic_materials.eBinCount = eBinCount;
+  analytic_materials.muTable = my_memcpyd(muTable, analytic_materials.muTable, eBinCount*materialCount*sizeof(double));
 }
 
 DLLEXPORT void intersections_full_list(int *objlist, int lenObjList,double *a,double *alpha,double rayLength,double *t_ends,int *matls,double *dens,int *num_segs)
@@ -743,8 +743,8 @@ DLLEXPORT void intersections_full_list(int *objlist, int lenObjList,double *a,do
 
   for(n = 0;n<lenObjList;n++){
     i = objlist[n];         // Loop over objects of interest
-    p11 = phantom.objectType[i];
-    for(j = 0;j<3;j++) a0[j] = (a[j]-phantom.objectCenter[i*3+j]);              // vector pointing from obj. center to src
+    p11 = analytic_phantom.objectType[i];
+    for(j = 0;j<3;j++) a0[j] = (a[j]-analytic_phantom.objectCenter[i*3+j]);              // vector pointing from obj. center to src
     for(j = 0;j<4;j++) tc2[j] = 0.0;
     if((p11 != 3) && (p11 != 7))                  // If not a torus or vessel segment
       out = quadratic_intersect(a0,alpha,p11,tc2,i);
@@ -875,30 +875,30 @@ DLLEXPORT void make_vol(float *volume, int Nx, double xoff, double dx, int Ny, d
   int i, j, k, l, m, p, *matls, *objlist, num_segs, energyBinsToSkip = 0, volume_offset;
   double a[3], alpha[3], *t_ends, *dens, rayLength, xbrd, *matl_tabl;
 
-  matl_tabl = malloc(sizeof(double)*materials.materialCount);
-  matls = malloc(sizeof(int)*phantom.numObjects*4);
-  objlist = malloc(sizeof(int)*phantom.numObjects);
-  t_ends = malloc(sizeof(double)*phantom.numObjects*4);
-  dens = malloc(sizeof(double)*phantom.numObjects*4);
-  for(i = 0;i<materials.materialCount;i++) {
+  matl_tabl = malloc(sizeof(double)*analytic_materials.materialCount);
+  matls = malloc(sizeof(int)*analytic_phantom.numObjects*4);
+  objlist = malloc(sizeof(int)*analytic_phantom.numObjects);
+  t_ends = malloc(sizeof(double)*analytic_phantom.numObjects*4);
+  dens = malloc(sizeof(double)*analytic_phantom.numObjects*4);
+  for(i = 0;i<analytic_materials.materialCount;i++) {
     if (material_volumes) 
       matl_tabl[i] = 1.0/(oversampling*oversampling);
     else
-      matl_tabl[i] = materials.muTable[i+materials.materialCount*energyBinsToSkip]/(oversampling*oversampling);
+      matl_tabl[i] = analytic_materials.muTable[i+analytic_materials.materialCount*energyBinsToSkip]/(oversampling*oversampling);
     printf("\n\rmat%d:  %1.12lf\n\r",i,matl_tabl[i]*oversampling*oversampling);
   }
   dy = dy/oversampling;
   yoff = oversampling*(yoff-1)+(oversampling+1)*0.5;
   dz = dz/oversampling;
   zoff = oversampling*(zoff-1)+(oversampling+1)*0.5;
-  for(i = 0;i<phantom.numObjects;i++) objlist[i] = i;
+  for(i = 0;i<analytic_phantom.numObjects;i++) objlist[i] = i;
 
   alpha[0] = 1;
   alpha[1] = 0;
   alpha[2] = 0;
-  a[0] = phantom.xbounds[0] - 1;
-  rayLength = phantom.xbounds[1] + 1 - phantom.xbounds[0];
-  dbug(1,"\n\n\rphantom.xbounds[0]:  %1.12lf  \n\r phantom.xbounds[0]:  %1.12lf  \n\rmaterial_volumes: %d",phantom.xbounds[0],phantom.xbounds[1],material_volumes);
+  a[0] = analytic_phantom.xbounds[0] - 1;
+  rayLength = analytic_phantom.xbounds[1] + 1 - analytic_phantom.xbounds[0];
+  dbug(1,"\n\n\ranalytic_phantom.xbounds[0]:  %1.12lf  \n\r analytic_phantom.xbounds[0]:  %1.12lf  \n\rmaterial_volumes: %d",analytic_phantom.xbounds[0],analytic_phantom.xbounds[1],material_volumes);
   for(l = 0;l<Nz;l++)
     for(k = l*oversampling;k<l*oversampling+oversampling;k++){
       a[2] = (k+1-zoff)*dz;
@@ -906,7 +906,7 @@ DLLEXPORT void make_vol(float *volume, int Nx, double xoff, double dx, int Ny, d
 	for(j = m*oversampling;j<m*oversampling+oversampling;j++){
 	  a[1] = (j+1-yoff)*dy;
 	  num_segs = 0;
-	  intersections_full_list(objlist, phantom.numObjects, a, alpha, rayLength, t_ends, matls, dens, &num_segs);
+	  intersections_full_list(objlist, analytic_phantom.numObjects, a, alpha, rayLength, t_ends, matls, dens, &num_segs);
 	  for(i = 0;i<num_segs;i++){
 	    t_ends[i] = t_ends[i]+a[0];
 	    //printf("%1.12lf\r\n",t_ends[i]);
@@ -961,8 +961,8 @@ DLLEXPORT void intersections(int *objlist,int lenObjList,double *a,double *alpha
   for(n = 0;n<lenObjList;n++){
     i = objlist[n];         // Loop over objects of interest
     //    if((i == 4) && (prnt)) pnt = 1; else pnt = 0;
-    p11 = phantom.objectType[i];
-    for(j = 0;j<3;j++) a0[j] = (a[j]-phantom.objectCenter[i*3+j]);              // vector pointing from obj. center to src
+    p11 = analytic_phantom.objectType[i];
+    for(j = 0;j<3;j++) a0[j] = (a[j]-analytic_phantom.objectCenter[i*3+j]);              // vector pointing from obj. center to src
     for(j = 0;j<4;j++) tc2[j] = 0.0;
     if((p11 != 3) && (p11 != 7))                  // If not a torus or vessel segment
       out = quadratic_intersect(a0,alpha,p11,tc2,i);
@@ -1644,7 +1644,7 @@ void store_half_planes(double *pixel_R, double *pixel_U, int *indexList, int lis
 void store(double *pixel_R, double *pixel_U, int *indexList, int listLength, int objectNumber, void *boundaries)
 
 {
-  switch(modules.moduleOverlapType)
+  switch(analytic_modules.moduleOverlapType)
     {
     case 1:
       store_height_lims(pixel_U, indexList, listLength, objectNumber, boundaries);
@@ -1679,12 +1679,12 @@ void compute_object_projections(double *srcHullPoints, int nSrcHullPoints, int m
   int *vertexPoints = NULL;
   int planB;
 
-  vertexPoints = malloc(sizeof(int)*phantom.numObjects);
+  vertexPoints = malloc(sizeof(int)*analytic_phantom.numObjects);
   //dbug(3,"COP1\r\n");
   cross(right,up,normal);
 
   // Compute the maximum number of vertex points on a bounding polyhedron
-  for(i = 0;i<phantom.numObjects;i++)
+  for(i = 0;i<analytic_phantom.numObjects;i++)
     {
       vertexPoints[i] = bounding.vertexStartIndex[i+1] - bounding.vertexStartIndex[i];
       if (vertexPoints[i]>maxVertexPoints) maxVertexPoints = vertexPoints[i];
@@ -1695,7 +1695,7 @@ void compute_object_projections(double *srcHullPoints, int nSrcHullPoints, int m
   indexList = malloc(sizeof(int)*(maxVertexPoints*nSrcHullPoints+moduleEdges*2));
 
   //dbug(3,"COP1\r\n");
-  for(i = 0;i<phantom.numObjects;i++)
+  for(i = 0;i<analytic_phantom.numObjects;i++)
     {
       //dbug(3,"Loop %d\r\n",i);
       planB = 0;
@@ -1763,7 +1763,7 @@ void compute_object_projections(double *srcHullPoints, int nSrcHullPoints, int m
       //dbug(3,"loopend2 %d %d\r\n",j,nSrcHullPoints);
       //dbug(3,"listLength: %d \r\n",listLength);
       //if ((moduleTypeIndex == 146)||(moduleTypeIndex == 147)) debug_flag=2; else debug_flag = 1;
-      crop_polygon(pixel_R, pixel_U, indexList, &listLength, modules.Height[moduleTypeIndex], modules.Width[moduleTypeIndex], projPoints);
+      crop_polygon(pixel_R, pixel_U, indexList, &listLength, analytic_modules.Height[moduleTypeIndex], analytic_modules.Width[moduleTypeIndex], projPoints);
       //dbug(2,"loopend %d %d\r\n",j,nSrcHullPoints);
       //debug_flag=1;
       //if (listLength>0) dbug(2,"listLength: %d\r\n",listLength);
@@ -1788,7 +1788,7 @@ int any_objects_1(int moduleNumber, void *boundaries)
   int any_objs = 0, i;
   struct height_lims *heightLims = (struct height_lims *) boundaries;
 
-  for(i = 0;i < phantom.numObjects;i++)
+  for(i = 0;i < analytic_phantom.numObjects;i++)
     {
       //dbug(3,"Module number: %d minHeight[%d] = %lf   maxHeight[%d] = %lf     Different?  %d",moduleNumber,i,heightLims.min[i],i,heightLims.max[i],(int)(heightLims.min[i] != heightLims.max[i]));
       if (heightLims[i].min != heightLims[i].max)
@@ -1803,7 +1803,7 @@ int any_objects_2(int moduleNumber, void *boundaries)
   int any_objs = 0, i;
   struct box_lims *boxLims = (struct box_lims *) boundaries;
 
-  for(i = 0;i < phantom.numObjects;i++)
+  for(i = 0;i < analytic_phantom.numObjects;i++)
     {
       if (boxLims[i].minR != boxLims[i].maxR)
 	{any_objs++;break;}
@@ -1817,7 +1817,7 @@ void build_object_list1(double *pix_vlims, int *objectList, int *n_objlist, int 
   int i;
   struct height_lims *heightLims = (struct height_lims *) boundaries;
 
-  for(i = 0;i<phantom.numObjects;i++)
+  for(i = 0;i<analytic_phantom.numObjects;i++)
     if((heightLims[i].min <= v+pix_vlims[1]) && (heightLims[i].max >= v+pix_vlims[0]))
       {objectList[n_objlist[0]] = i;n_objlist[0]++;}
 }
@@ -1828,7 +1828,7 @@ void build_object_list2(double *pix_ulims, double *pix_vlims, int *objectList, i
   int i;
   struct box_lims *boxLims = (struct box_lims *) boundaries;
 
-  for(i = 0;i<phantom.numObjects;i++)
+  for(i = 0;i<analytic_phantom.numObjects;i++)
     {
       dbug(3,"if statement parts: %d %d %d %d\n\r",(int) (boxLims[i].minU <= uv[1]+pix_vlims[1]),(int) (boxLims[i].maxU >= uv[1]+pix_vlims[0]),(int) (boxLims[i].minR <= uv[0]+pix_ulims[1]),(int) (boxLims[i].maxR >= uv[0]+pix_ulims[0]));
       dbug(3,"parts for third one: %1.5lf %1.5lf %1.5lf %1.5lf \r\n ",boxLims[0].minR,uv[0],pix_ulims[1],uv[0]+pix_ulims[1]);
@@ -1853,13 +1853,13 @@ void intersections_loop(double *detCenter, double *right, double *up, double *sa
   double *materialBuffer = NULL;
   double *pValueSpectrum = NULL;
 
-  materialBuffer = malloc(sizeof(double)*materials.materialCount);
-  pValueSpectrum = malloc(sizeof(double)*materials.eBinCount);
+  materialBuffer = malloc(sizeof(double)*analytic_materials.materialCount);
+  pValueSpectrum = malloc(sizeof(double)*analytic_materials.eBinCount);
   for(l = 0;l<nSubDets;l++)
     {
       for(i = 0;i<3;i++)
 	subDetCenter[i] = detCenter[i]+right[i]*sampling[2*l]+up[i]*sampling[2*l+1];
-      for(k = 0;k<modules.nSubSources;k++)
+      for(k = 0;k<analytic_modules.nSubSources;k++)
 	{
 	  for(i = 0;i<3;i++)
 	    alpha[i] = subDetCenter[i]-sourcePoints[3*k+i];
@@ -1867,34 +1867,34 @@ void intersections_loop(double *detCenter, double *right, double *up, double *sa
 	  alpha[0] /= rayLength;
 	  alpha[1] /= rayLength;
 	  alpha[2] /= rayLength;
-	  for(i = 0;i<materials.materialCount;i++) materialBuffer[i] = 0.0;
+	  for(i = 0;i<analytic_materials.materialCount;i++) materialBuffer[i] = 0.0;
 	  //dbug(3,"sourcePoints:   [%4.4lf %4.4lf %4.4lf]\r\n",sourcePoints[3*k],sourcePoints[3*k+1],sourcePoints[3*k+2]);
 	  //dbug(3,"alpha:   [%4.4lf %4.4lf %4.4lf]\r\n",alpha[0],alpha[1],alpha[2]);
 	  //dbug(3,"rayLength:   [%4.4lf]\r\n",rayLength);
-	  //dbug(3,"phantom.objectCenter:   [%4.4lf %4.4lf %4.4lf]\r\n",phantom.objectCenter[0],phantom.objectCenter[1],phantom.objectCenter[2]);
+	  //dbug(3,"analytic_phantom.objectCenter:   [%4.4lf %4.4lf %4.4lf]\r\n",analytic_phantom.objectCenter[0],analytic_phantom.objectCenter[1],analytic_phantom.objectCenter[2]);
 	  intersections(&objectList[0],nListObjects,&sourcePoints[3*k],alpha,rayLength,&materialBuffer[0]);
 	  //if (materialBuffer[0]>0.0) dbug(1,"materialBuffer[0]: %4.4lf\r\n",materialBuffer[0]);
-	  for(m = 0;m<materials.eBinCount;m++){
+	  for(m = 0;m<analytic_materials.eBinCount;m++){
 	    pValueSpectrum[m] = 0;
-	    for(n = 0;n<materials.materialCount;n++)
-	      pValueSpectrum[m] += materialBuffer[n]*materials.muTable[n+materials.materialCount*m];
+	    for(n = 0;n<analytic_materials.materialCount;n++)
+	      pValueSpectrum[m] += materialBuffer[n]*analytic_materials.muTable[n+analytic_materials.materialCount*m];
 	  }
 	  //if (pValueSpectrum[0]>0.0) dbug(1,"pValueSpectrum[0]: %4.4lf\r\n",pValueSpectrum[0]);
 
 	  //------------------- Accurate Detector Model, Mingye
 	  if(Accurate_Detector_Model_is_ON)
 	  {
-		  for(m = 0;m < materials.eBinCount;m++)
+		  for(m = 0;m < analytic_materials.eBinCount;m++)
 		  {
-			  int the_index = (detIndex*n_col_oversample + (int)(l/n_row_oversample_add_xtalk))*materials.eBinCount + m;
-			  thisView[the_index] += subviewWeight*detWeights[l]*modules.sourceWeights[k]*exp(-pValueSpectrum[m]);
+			  int the_index = (detIndex*n_col_oversample + (int)(l/n_row_oversample_add_xtalk))*analytic_materials.eBinCount + m;
+			  thisView[the_index] += subviewWeight*detWeights[l]*analytic_modules.sourceWeights[k]*exp(-pValueSpectrum[m]);
 		  }
 	  }
 	  //-------------------
 	  else
 	  {
-		  for(m = 0;m < materials.eBinCount;m++)
-			thisView[detIndex*materials.eBinCount+m] += subviewWeight*detWeights[l]*modules.sourceWeights[k]*exp(-pValueSpectrum[m]);
+		  for(m = 0;m < analytic_materials.eBinCount;m++)
+			thisView[detIndex*analytic_materials.eBinCount+m] += subviewWeight*detWeights[l]*analytic_modules.sourceWeights[k]*exp(-pValueSpectrum[m]);
 	  }
 	}
     }
@@ -1915,24 +1915,24 @@ void set_Accurate_Detector_Model(double *Paras)
 	}
 
 	if(Paras[5]==1 && Paras[1]<3 && Paras[2]==1) //col_xtalk>0, first subview in the first two views 
-		if(modules.Sub[0]>n_col_oversample*n_row_oversample_add_xtalk)
+		if(analytic_modules.Sub[0]>n_col_oversample*n_row_oversample_add_xtalk)
 		{
 			int n1;
 			
-			modules.maxSubDets-=2*n_row_oversample_add_xtalk;
-			modules.Sub[0]-=2*n_row_oversample_add_xtalk;
+			analytic_modules.maxSubDets-=2*n_row_oversample_add_xtalk;
+			analytic_modules.Sub[0]-=2*n_row_oversample_add_xtalk;
 
 			double sum_weights=0;
-			for(n1=0;n1<modules.maxSubDets;n1++)
+			for(n1=0;n1<analytic_modules.maxSubDets;n1++)
 			{
-				modules.Weight[n1]=modules.Weight[n1+n_row_oversample_add_xtalk];
-				sum_weights+=modules.Weight[n1];
+				analytic_modules.Weight[n1]=analytic_modules.Weight[n1+n_row_oversample_add_xtalk];
+				sum_weights+=analytic_modules.Weight[n1];
 			}
-			for(n1=0;n1<modules.maxSubDets;n1++)
-				modules.Weight[n1]/=sum_weights;
+			for(n1=0;n1<analytic_modules.maxSubDets;n1++)
+				analytic_modules.Weight[n1]/=sum_weights;
 
-			for(n1=0;n1<2*modules.maxSubDets;n1++)
-				modules.Sampling[n1]=modules.Sampling[n1+2*n_row_oversample_add_xtalk];
+			for(n1=0;n1<2*analytic_modules.maxSubDets;n1++)
+				analytic_modules.Sampling[n1]=analytic_modules.Sampling[n1+2*n_row_oversample_add_xtalk];
 		}
 
 }
@@ -1954,8 +1954,8 @@ DLLEXPORT void Projector(double *Paras, double subviewWeight, double *thisView, 
 	//		Paras[0],Accurate_Detector_Model_is_ON,
 	//		n_col_oversample,n_row_oversample,
 	//		n_col_oversample_add_xtalk,n_row_oversample_add_xtalk,
-	//		modules.Sub[0],modules.maxSubDets,
-	//		modules.Weight[0],modules.Sampling[0]);
+	//		analytic_modules.Sub[0],analytic_modules.maxSubDets,
+	//		analytic_modules.Weight[0],analytic_modules.Sampling[0]);
 	//	fclose(fp);
 	//}
 	//-------------------
@@ -1974,36 +1974,36 @@ DLLEXPORT void Projector(double *Paras, double subviewWeight, double *thisView, 
     elapsedTime = (double)( (clk + 0.0) / CLOCKS_PER_SEC);
   }
 
-  objectList = malloc(phantom.numObjects*sizeof(int));
+  objectList = malloc(analytic_phantom.numObjects*sizeof(int));
 
-  switch(modules.moduleOverlapType)
+  switch(analytic_modules.moduleOverlapType)
     {
     case 1:
-      boundaries = malloc(sizeof(struct height_lims)*phantom.numObjects);
+      boundaries = malloc(sizeof(struct height_lims)*analytic_phantom.numObjects);
       break;
     case 2:
-      boundaries = malloc(sizeof(struct box_lims)*phantom.numObjects);
+      boundaries = malloc(sizeof(struct box_lims)*analytic_phantom.numObjects);
       break;
     case 3:
-      //boundaries = malloc(sizeof(struct polygon)*phantom.numObjects);
+      //boundaries = malloc(sizeof(struct polygon)*analytic_phantom.numObjects);
       break;
     }
 
-  //dbug(2,"Number of modules: %d     modules.moduleOverlapType : %d\r\n",nModulesIn, modules.moduleOverlapType);
+  //dbug(2,"Number of analytic_modules: %d     analytic_modules.moduleOverlapType : %d\r\n",nModulesIn, analytic_modules.moduleOverlapType);
   for(moduleNumber = 0;moduleNumber<nModulesIn;moduleNumber++)
     {
       moduleTypeIndex = modTypeInds[moduleNumber];
-      detWeights = &modules.Weight[moduleTypeIndex*modules.maxSubDets];//Weight should be transposed before being passed in
-      UV = &modules.Coords[2*modules.maxPixPerModule*moduleTypeIndex];
+      detWeights = &analytic_modules.Weight[moduleTypeIndex*analytic_modules.maxSubDets];//Weight should be transposed before being passed in
+      UV = &analytic_modules.Coords[2*analytic_modules.maxPixPerModule*moduleTypeIndex];
       //if ((moduleNumber%20)==0) 
-      //  dbug(1,"moduleTypeIndex: %d, modules.Pix[moduleTypeIndex]: %d\n\r",moduleTypeIndex,modules.Pix[moduleTypeIndex]);
-      sampling = &modules.Sampling[2*modules.maxSubDets*moduleTypeIndex];
+      //  dbug(1,"moduleTypeIndex: %d, analytic_modules.Pix[moduleTypeIndex]: %d\n\r",moduleTypeIndex,analytic_modules.Pix[moduleTypeIndex]);
+      sampling = &analytic_modules.Sampling[2*analytic_modules.maxSubDets*moduleTypeIndex];
       //dbug(2,"Module %d  mti:%d\n\r",moduleNumber,moduleTypeIndex);
-      nSubDets = modules.Sub[moduleTypeIndex];
+      nSubDets = analytic_modules.Sub[moduleTypeIndex];
       //dbug(2,"Module %db %d\n\r",moduleNumber,moduleTypeIndex);
       pix_vlims[0] = VERY_BIG;pix_vlims[1] = -VERY_BIG;
       pix_ulims[0] = VERY_BIG;pix_ulims[1] = -VERY_BIG;
-      for(i = 0;i<modules.Sub[moduleTypeIndex];i++){
+      for(i = 0;i<analytic_modules.Sub[moduleTypeIndex];i++){
 	if(sampling[2*i+1]<pix_vlims[0]) pix_vlims[0] = sampling[2*i+1];
 	if(sampling[2*i+1]>pix_vlims[1]) pix_vlims[1] = sampling[2*i+1];
 	if(sampling[2*i]<pix_ulims[0]) pix_ulims[0] = sampling[2*i];
@@ -2017,7 +2017,7 @@ DLLEXPORT void Projector(double *Paras, double subviewWeight, double *thisView, 
 
       compute_object_projections(srcHullPoints, nSrcHullPoints, moduleTypeIndex, up, right, center, boundaries);
       //dbug(2,"Module %dc\n\r",moduleNumber);
-      switch(modules.moduleOverlapType)
+      switch(analytic_modules.moduleOverlapType)
 	{
 	case 1:
 	  any_objs = any_objects_1(moduleNumber,boundaries);
@@ -2029,9 +2029,9 @@ DLLEXPORT void Projector(double *Paras, double subviewWeight, double *thisView, 
 	  printf("\nERROR: Unrecognized moduleOverlapType!\n\r");
 	}
       if (any_objs) {
-	dbug(1,"There are objects that may project onto module %d.    (%d)\n\r",moduleNumber,modules.moduleOverlapType);
+	dbug(1,"There are objects that may project onto module %d.    (%d)\n\r",moduleNumber,analytic_modules.moduleOverlapType);
         //        dbug(2,"max : %1.12lf   min : %1.12lf\r\n",boundaries[0].max,boundaries[0].min);
-	for(k = 0;k<modules.Pix[moduleTypeIndex];k++){
+	for(k = 0;k<analytic_modules.Pix[moduleTypeIndex];k++){
 	  
 	  // Compute pixel center locations
 	  detIndex = firstDetIndex[moduleNumber]+k;
@@ -2040,12 +2040,12 @@ DLLEXPORT void Projector(double *Paras, double subviewWeight, double *thisView, 
 	  
 	  // Build object list
 	  nListObjects = 0;
-	  switch(modules.moduleOverlapType)
+	  switch(analytic_modules.moduleOverlapType)
 	    {
 	    case 1:
 	      build_object_list1(pix_vlims, objectList, &nListObjects, moduleNumber, UV[k*2+1], boundaries);
-	      //if (nListObjects > phantom.numObjects)
-	      //dbug(2,"nListObjects = %d, phantom.numObjects = %d\r\n", nListObjects, phantom.numObjects);
+	      //if (nListObjects > analytic_phantom.numObjects)
+	      //dbug(2,"nListObjects = %d, analytic_phantom.numObjects = %d\r\n", nListObjects, analytic_phantom.numObjects);
 	      //if (nListObjects > 0)
 	      //dbug(2,"nListObjects = %d, k = %d\r\n", nListObjects, k);
 	      break;
@@ -2078,21 +2078,21 @@ DLLEXPORT void Projector(double *Paras, double subviewWeight, double *thisView, 
 		  //------------------- Accurate Detector Model, Mingye
 		  if(Accurate_Detector_Model_is_ON)
 		  {
-			  for(m = 0;m<materials.eBinCount;m++)
+			  for(m = 0;m<analytic_materials.eBinCount;m++)
 				  for(l = 0;l<nSubDets;l++)
 				  {
-					  int the_index=(detIndex*n_col_oversample+(int)(l/n_row_oversample_add_xtalk))*materials.eBinCount+m;
+					  int the_index=(detIndex*n_col_oversample+(int)(l/n_row_oversample_add_xtalk))*analytic_materials.eBinCount+m;
 					  thisView[the_index] += subviewWeight*detWeights[l];
 				  }
 		  }
 		  //-------------------
 		  else
 		  {
-			  for(m = 0;m<materials.eBinCount;m++)
-				  thisView[detIndex*materials.eBinCount+m] += subviewWeight;
+			  for(m = 0;m<analytic_materials.eBinCount;m++)
+				  thisView[detIndex*analytic_materials.eBinCount+m] += subviewWeight;
 		  }
 
-	    // thisView[detIndex*materials.eBinCount+m] = thisView[detIndex*materials.eBinCount+m]+subviewWeight[n]*detWeights[l]*sourceWeights;
+	    // thisView[detIndex*analytic_materials.eBinCount+m] = thisView[detIndex*analytic_materials.eBinCount+m]+subviewWeight[n]*detWeights[l]*sourceWeights;
 	  }   // else
 	}    // Loop over pixels (not subpixels)
       }    // if any_objects
@@ -2100,24 +2100,24 @@ DLLEXPORT void Projector(double *Paras, double subviewWeight, double *thisView, 
 	//      sum_det_w = 0;                  
 	//      for(l = 0;l<nSubDets;l++) sum_det_w += detWeights[l];
 	// We are assuming the detector weights sum to one and that the sourceWeights sum to one also.
-	for(k = 0;k<modules.Pix[moduleTypeIndex];k++){
+	for(k = 0;k<analytic_modules.Pix[moduleTypeIndex];k++){
 	  detIndex = firstDetIndex[moduleNumber]+k;
 
 	  //------------------- Accurate Detector Model, Mingye
 	  if(Accurate_Detector_Model_is_ON)
 	  {
-		  for(m = 0;m<materials.eBinCount;m++)
+		  for(m = 0;m<analytic_materials.eBinCount;m++)
 			  for(l = 0;l<nSubDets;l++)
 			  {
-				  int the_index=(detIndex*n_col_oversample+(int)(l/n_row_oversample_add_xtalk))*materials.eBinCount+m;
+				  int the_index=(detIndex*n_col_oversample+(int)(l/n_row_oversample_add_xtalk))*analytic_materials.eBinCount+m;
 				  thisView[the_index] += subviewWeight*detWeights[l];
 			  }
 	  }
 	  //-------------------
 	  else
 	  {
-		  for(m = 0;m<materials.eBinCount;m++)
-			  thisView[detIndex*materials.eBinCount+m] += subviewWeight;
+		  for(m = 0;m<analytic_materials.eBinCount;m++)
+			  thisView[detIndex*analytic_materials.eBinCount+m] += subviewWeight;
 	  }
 
 	}
@@ -2125,10 +2125,10 @@ DLLEXPORT void Projector(double *Paras, double subviewWeight, double *thisView, 
       if (debug_flag>0)
 	{
 	  min_val = VERY_BIG;
-	  for(k = 0;k<modules.Pix[moduleTypeIndex];k++){
+	  for(k = 0;k<analytic_modules.Pix[moduleTypeIndex];k++){
 	    detIndex = firstDetIndex[moduleNumber]+k;
-	    for(m = 0;m<materials.eBinCount;m++)
-	      if (thisView[detIndex*materials.eBinCount+m]<min_val) min_val = thisView[detIndex*materials.eBinCount+m];
+	    for(m = 0;m<analytic_materials.eBinCount;m++)
+	      if (thisView[detIndex*analytic_materials.eBinCount+m]<min_val) min_val = thisView[detIndex*analytic_materials.eBinCount+m];
 	  }
 	  dbug(1,"minval: %f (module #%d)\n\r", min_val,moduleNumber);
 	}
@@ -2232,8 +2232,8 @@ DLLEXPORT void Projector_threaded(double *Paras, double subviewWeight, double *t
 	//		Paras[0],Accurate_Detector_Model_is_ON,
 	//		n_col_oversample,n_row_oversample,
 	//		n_col_oversample_add_xtalk,n_row_oversample_add_xtalk,
-	//		modules.Sub[0],modules.maxSubDets,
-	//		modules.Weight[0],modules.Sampling[0]);
+	//		analytic_modules.Sub[0],analytic_modules.maxSubDets,
+	//		analytic_modules.Weight[0],analytic_modules.Sampling[0]);
 	//	fclose(fp);
 	//}
 	//-------------------
