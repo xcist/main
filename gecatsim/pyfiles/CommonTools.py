@@ -30,7 +30,7 @@ def feval(funcName, *args):
     try:
         md = __import__(funcName)
     except:
-        md = __import__("xcist.src.app.pyfiles."+funcName, fromlist=[funcName])  # equal to: from gecatsim.foo import foo
+        md = __import__("gecatsim.src.app.pyfiles."+funcName, fromlist=[funcName])  # equal to: from gecatsim.foo import foo
     strip_leading_module = '.'.join(funcName.split('.')[1:])
     func_name_only = funcName.split('.')[-1]
 
