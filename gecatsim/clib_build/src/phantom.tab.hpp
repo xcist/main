@@ -110,7 +110,7 @@
 typedef union YYSTYPE {
   double val;
   double vec[3];
-  char str[128];
+  char str[2048];
 } YYSTYPE;
 /* Line 1275 of yacc.c.  */
 #line 113 "phantom.tab.hpp"
