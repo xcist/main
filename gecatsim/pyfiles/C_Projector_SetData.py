@@ -31,6 +31,8 @@ def C_Projector_SetData(cfg, viewId, subViewId):
 def get_projector_id(cfg):
     if not isinstance(cfg.phantom.callback, list):
         phantom_callbacks = [cfg.phantom.callback]
+    elif isinstance(cfg.phantom.callback, list) and isinstance(cfg.phantom.callback[0], list):
+        phantom_callbacks = cfg.phantom.callback[cfg.viewId]
     else:
         phantom_callbacks = cfg.phantom.callback
     projectorIDs = []

@@ -51,7 +51,8 @@ def C_Projector_Voxelized(cfg, viewId, subViewId):
             unused7 = 7
             freeTheMemory = 0
             
-            if viewId==cfg.sim.stopViewId and subViewId==cfg.sim.subViewCount-1 \
+            # ZJY recalcPht is helpful in reducing memory usage in dynamic phantom
+            if (cfg.physics.recalcPht or (viewId==cfg.sim.stopViewId and subViewId==cfg.sim.subViewCount-1))\
                 and srcId==src.nSamples-1 and matId==cfg.phantom.numberOfMaterials-1:
                 freeTheMemory = 1
             

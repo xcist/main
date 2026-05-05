@@ -27,18 +27,33 @@ def make_col(a):
 
 
 def feval(funcName, *args):
-    try:
-        md = __import__(funcName)
-    except:
-        md = __import__("gecatsim.src.app.pyfiles."+funcName, fromlist=[funcName])  # equal to: from gecatsim.foo import foo
-    strip_leading_module = '.'.join(funcName.split('.')[1:])
-    func_name_only = funcName.split('.')[-1]
+    module_paths = [
+        funcName,
+        f"gecatsim.pyfiles.{funcName}",
+        f"gecatsim.pyfiles.FlatPanel.{funcName}",
+        f"gecatsim.src.app.pyfiles.{funcName}"
+    ]
 
-    if len(strip_leading_module) > 0:
-        eval_name = f"md.{strip_leading_module}.{func_name_only}"
-    else:
-        eval_name = f"md.{func_name_only}"
-    return eval(eval_name)(*args)
+    module = None
+    for path in module_paths:
+        try:
+            module = importlib.import_module(path)
+            break
+        except ModuleNotFoundError:
+            continue
+
+    if module is None:
+        raise ImportError(f"Could not import module: {funcName}. Tried paths: {module_paths}")
+
+    # Extract the function name (the part after the last dot)
+    funcName_only = funcName.split('.')[-1]
+
+    try:
+        func = getattr(module, funcName_only)
+    except AttributeError:
+        raise AttributeError(f"Function '{funcName_only}' not found in module '{module.__name__}'")
+
+    return func(*args)
 
 
 def load_C_lib():
@@ -265,10 +280,14 @@ def source_cfg(*para):
     # initialize structs in cfg and structs
     attrList = ['sim', 'det', 'detNew', 'src', 'srcNew', 'spec', 'protocol', 'scanner', 'phantom', 'physics', 'recon', 'dose']
     for attr in attrList:
+        # Ensure cfg has the attribute
         if not hasattr(cfg, attr):
             setattr(cfg, attr, emptyCFG())
-        if not attr in dir():
-            exec("%s = emptyCFG()" % attr)
+
+        # Define the variable in the local scope if not already defined
+        if attr not in locals():
+            globals()[attr] = emptyCFG()
+            # exec("%s = emptyCFG()" % attr)  # globals()[attr] = ... is more explicit and safer for dynamic variable creation
         
     # execute scripts in cfg file
     exec(open(cfg_file).read())
